@@ -17,6 +17,7 @@
 #define SCREEN_HEIGHT 450
 
 void draw_simulation(Simulation *sim);
+Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
@@ -38,18 +39,10 @@ int main(void) {
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT,
              "raylib [core] example - basic window");
 
-  // Initialize camera
-  Camera2D camera = {0};
-  camera.target = (Vector2){0.0f, 0.0f};
-  camera.offset = (Vector2){SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-
   Vector2D pos_min, pos_max;
   get_position_range(sim, &pos_min, &pos_max);
-  float range_x = 1.5 * (pos_max.x - pos_min.x);
-  float range_y = 1.5 * (pos_max.y - pos_min.y);
-  camera.zoom = (SCREEN_WIDTH / range_x < SCREEN_HEIGHT / range_y)
-                    ? (SCREEN_WIDTH / range_x)
-                    : (SCREEN_HEIGHT / range_y);
+  Camera2D camera = setup_camera(pos_min, pos_max);
+
 
   while (!WindowShouldClose()) {
     /*step_simulation(sim);*/
@@ -61,6 +54,20 @@ int main(void) {
     EndMode2D();
     EndDrawing();
   }
+}
+
+Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max) {
+  Camera2D camera = {0};
+  camera.target = (Vector2){0.0f, 0.0f};
+  camera.offset = (Vector2){SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+
+  float range_x = 1.5 * (pos_max.x - pos_min.x);
+  float range_y = 1.5 * (pos_max.y - pos_min.y);
+  camera.zoom = (SCREEN_WIDTH / range_x < SCREEN_HEIGHT / range_y)
+                    ? (SCREEN_WIDTH / range_x)
+                    : (SCREEN_HEIGHT / range_y);
+
+  return camera;
 
   deinit_simulation(sim);
   CloseWindow();
