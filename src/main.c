@@ -38,9 +38,11 @@ int main(void) {
   camera.target = (Vector2){0.0f, 0.0f};
   camera.offset = (Vector2){SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
 
-  // Calculate zoom to fit the entire simulation on screen
-  float range_x = sim->position_range[1].x - sim->position_range[0].x;
-  float range_y = sim->position_range[1].y - sim->position_range[0].y;
+  // Retrieve position range and calculate zoom to fit the entire simulation on screen
+  Vector2D min, max;
+  get_position_range(sim, &min, &max);
+  float range_x = max.x - min.x;
+  float range_y = max.y - min.y;
   camera.zoom = fminf(SCREEN_WIDTH / range_x, SCREEN_HEIGHT / range_y);
 
   while (!WindowShouldClose()) {
