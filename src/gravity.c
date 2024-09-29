@@ -216,6 +216,8 @@ Vector2D calculate_force(Particle *p1, Particle *p2,
   double distance = calculate_distance(&p1->position, &p2->position);
   double distance_squared = distance * distance;
 
+  // TODO(lily): Scale the force down to zero as the overlap of the particles
+  // increases instead of disabling the force
   double min_distance = p1->size + p2->size;
   if (distance > min_distance) {
     double force_magnitude =
