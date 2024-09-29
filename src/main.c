@@ -17,7 +17,7 @@
 #define MASS_RANGE_MAX 2000.0f
 
 #define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 450
+#define SCREEN_HEIGHT 600
 
 Color interpolate_color(float mass, float mass_min, float mass_max);
 void draw_simulation(Simulation *sim);
@@ -25,19 +25,19 @@ Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
-      0.01,       // time step
-      4,          // substeps
+      0.1,        // time step
+      2,          // substeps
       true,       // collision enabled
-      4,          // collision iterations
+      2,          // collision iterations
       6.67430e-4, // gravitational constant
 
-      250,                  // particle count
+      400,                  // particle count
       DISTRIBUTION_UNIFORM, // position distribution
-      DISTRIBUTION_NORMAL,  // size distribution
-      DISTRIBUTION_UNIFORM, // mass distribution
+      DISTRIBUTION_UNIFORM, // size distribution
+      DISTRIBUTION_NORMAL,  // mass distribution
 
-      {{-100.0, 100.0}, {100.0, -100.0}}, // position range
-      {1.0, 2.0},                         // size range
+      {{-600.0, 600.0}, {600.0, -600.0}}, // position range
+      {4.0, 8.0},                         // size range
       {MASS_RANGE_MIN, MASS_RANGE_MAX},   // mass range
   });
   assert(sim != NULL);
