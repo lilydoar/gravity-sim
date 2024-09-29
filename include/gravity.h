@@ -113,4 +113,13 @@ int get_particles_by_area(Vector2D top_left, Vector2D bottom_right,
  */
 uint64_t get_particle_count(Simulation sim);
 
+/**
+ * Retrieves the position range of the simulation.
+ *
+ * @param sim The Simulation handle.
+ * @param min A pointer to store the minimum position vector.
+ * @param max A pointer to store the maximum position vector.
+ */
+void get_position_range(Simulation sim, Vector2D *min, Vector2D *max);
+
 #endif // GRAVITY_H
