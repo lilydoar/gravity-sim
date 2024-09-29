@@ -36,77 +36,77 @@ float random_normal_float(float mean, float stddev) {
   float z0 = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * M_PI * u2);
   return z0 * stddev + mean;
 }
-  // Allocate memory for the simulation
-  SimulationStruct *sim = (SimulationStruct *)malloc(sizeof(SimulationStruct));
-  if (!sim) {
-    return NULL; // Allocation failed
+// Allocate memory for the simulation
+SimulationStruct *sim = (SimulationStruct *)malloc(sizeof(SimulationStruct));
+if (!sim) {
+  return NULL; // Allocation failed
+}
+
+// Initialize the simulation with the given options
+sim->particle_count = options.particle_count;
+sim->enable_collisions = options.enable_collisions;
+sim->time_step = options.time_step;
+sim->substeps = options.substeps;
+
+// Allocate memory for particles
+sim->particles = (Particle *)malloc(sizeof(Particle) * sim->particle_count);
+if (!sim->particles) {
+  free(sim);
+  return NULL; // Allocation failed
+}
+
+// Initialize particles based on the specified distributions
+for (uint64_t i = 0; i < sim->particle_count; ++i) {
+  // Initialize position
+  switch (options.position_distribution) {
+  case DISTRIBUTION_UNDEFINED:
+  case DISTRIBUTION_UNIFORM:
+    sim->particles[i].position.x = random_uniform_double(
+        options.position_range[0].x, options.position_range[1].x);
+    sim->particles[i].position.y = random_uniform_double(
+        options.position_range[0].y, options.position_range[1].y);
+    break;
+  case DISTRIBUTION_NORMAL:
+    // TODO: Implement normal distribution for position
+    break;
+  default:
+    break;
   }
 
-  // Initialize the simulation with the given options
-  sim->particle_count = options.particle_count;
-  sim->enable_collisions = options.enable_collisions;
-  sim->time_step = options.time_step;
-  sim->substeps = options.substeps;
-
-  // Allocate memory for particles
-  sim->particles = (Particle *)malloc(sizeof(Particle) * sim->particle_count);
-  if (!sim->particles) {
-    free(sim);
-    return NULL; // Allocation failed
+  // Initialize size
+  switch (options.size_distribution) {
+  case DISTRIBUTION_UNDEFINED:
+  case DISTRIBUTION_UNIFORM:
+    sim->particles[i].size =
+        random_uniform_float(options.size_range[0], options.size_range[1]);
+    break;
+  case DISTRIBUTION_NORMAL:
+    // TODO: Implement normal distribution for size
+    break;
+  default:
+    break;
   }
 
-  // Initialize particles based on the specified distributions
-  for (uint64_t i = 0; i < sim->particle_count; ++i) {
-    // Initialize position
-    switch (options.position_distribution) {
-    case DISTRIBUTION_UNDEFINED:
-    case DISTRIBUTION_UNIFORM:
-      sim->particles[i].position.x = random_uniform_double(
-          options.position_range[0].x, options.position_range[1].x);
-      sim->particles[i].position.y = random_uniform_double(
-          options.position_range[0].y, options.position_range[1].y);
-      break;
-    case DISTRIBUTION_NORMAL:
-      // TODO: Implement normal distribution for position
-      break;
-    default:
-      break;
-    }
-
-    // Initialize size
-    switch (options.size_distribution) {
-    case DISTRIBUTION_UNDEFINED:
-    case DISTRIBUTION_UNIFORM:
-      sim->particles[i].size = random_uniform_float(
-          options.size_range[0], options.size_range[1]);
-      break;
-    case DISTRIBUTION_NORMAL:
-      // TODO: Implement normal distribution for size
-      break;
-    default:
-      break;
-    }
-
-    // Initialize mass
-    switch (options.mass_distribution) {
-    case DISTRIBUTION_UNDEFINED:
-    case DISTRIBUTION_UNIFORM:
-      sim->particles[i].mass = random_uniform_float(
-          options.mass_range[0], options.mass_range[1]);
-      break;
-    case DISTRIBUTION_NORMAL:
-      // TODO: Implement normal distribution for mass
-      break;
-    default:
-      break;
-    }
-
-    // Initialize velocity
-    sim->particles[i].velocity.x = 0.0; // Initial x velocity
-    sim->particles[i].velocity.y = 0.0; // Initial y velocity
+  // Initialize mass
+  switch (options.mass_distribution) {
+  case DISTRIBUTION_UNDEFINED:
+  case DISTRIBUTION_UNIFORM:
+    sim->particles[i].mass =
+        random_uniform_float(options.mass_range[0], options.mass_range[1]);
+    break;
+  case DISTRIBUTION_NORMAL:
+    // TODO: Implement normal distribution for mass
+    break;
+  default:
+    break;
   }
 
-  return (Simulation)sim;
+  // Initialize velocity
+  sim->particles[i].velocity.x = 0.0; // Initial x velocity
+  sim->particles[i].velocity.y = 0.0; // Initial y velocity
+}
+
+return (Simulation)sim;
 }
 
 void deinit_simulation(Simulation sim) {
