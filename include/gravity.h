@@ -18,11 +18,16 @@ typedef struct {
   Vector2D velocity;
 } Particle;
 
-// Define a structure for simulation options
+typedef enum {
+  DISTRIBUTION_UNDEFINED,
+  DISTRIBUTION_UNIFORM,
+  DISTRIBUTION_NORMAL
+} ParticleDistribution;
 typedef struct {
   bool enable_collisions; // Flag to enable or disable collision handling
   
   int64_t particle_count; // The number of starting particles
+  ParticleDistribution distribution; // Distribution type for spawning particles
 } SimulationOptions;
 
 /**
