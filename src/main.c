@@ -20,7 +20,7 @@
 #define SCREEN_HEIGHT 600
 
 Color interpolate_color(float mass, float mass_min, float mass_max);
-void draw_simulation(Simulation *sim);
+void draw_simulation(Simulation sim);
 Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
 
 int main(void) {
