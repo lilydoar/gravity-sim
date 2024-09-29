@@ -6,6 +6,7 @@
 
 #define GRAVITATIONAL_CONSTANT 6.67430e-7
 
+double calculate_distance(Vector2D *v1, Vector2D *v2);
 Vector2D calculate_force(Particle *p1, Particle *p2,
                          double gravitational_constant);
 void verlet_integration(Particle *p, Vector2D total_force, double time_step);
@@ -201,14 +202,19 @@ void step_simulation(Simulation sim) {
   }
 }
 
+double calculate_distance(Vector2D *v1, Vector2D *v2) {
+  double dx = v2->x - v1->x;
+  double dy = v2->y - v1->y;
+  return sqrt(dx * dx + dy * dy);
+}
+
 Vector2D calculate_force(Particle *p1, Particle *p2,
                          double gravitational_constant) {
   Vector2D force = {0.0, 0.0};
   Vector2D distance_vector = {p2->position.x - p1->position.x,
                               p2->position.y - p1->position.y};
-  double distance_squared = distance_vector.x * distance_vector.x +
-                            distance_vector.y * distance_vector.y;
-  double distance = sqrt(distance_squared);
+  double distance = calculate_distance(&p1->position, &p2->position);
+  double distance_squared = distance * distance;
 
   double min_distance = p1->size + p2->size;
   if (distance > min_distance) {
