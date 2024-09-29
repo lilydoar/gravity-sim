@@ -19,6 +19,7 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
 
+Color interpolate_color(float mass);
 void draw_simulation(Simulation *sim);
 Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
 
@@ -65,6 +66,19 @@ int main(void) {
   return 0;
 }
 
+Color interpolate_color(float mass) {
+    // Calculate the interpolation factor
+    float factor = (mass - MASS_RANGE_MIN) / (MASS_RANGE_MAX - MASS_RANGE_MIN);
+
+    // Interpolate color
+    return (Color){
+        (unsigned char)(PARTICLE_COLOR_MIN.r + factor * (PARTICLE_COLOR_MAX.r - PARTICLE_COLOR_MIN.r)),
+        (unsigned char)(PARTICLE_COLOR_MIN.g + factor * (PARTICLE_COLOR_MAX.g - PARTICLE_COLOR_MIN.g)),
+        (unsigned char)(PARTICLE_COLOR_MIN.b + factor * (PARTICLE_COLOR_MAX.b - PARTICLE_COLOR_MIN.b)),
+        255 // Assuming full opacity
+    };
+}
+
 Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max) {
   Camera2D camera = {0};
   camera.target = (Vector2){0.0f, 0.0f};
@@ -83,20 +97,8 @@ void draw_simulation(Simulation *sim) {
   uint64_t particle_count = get_particle_count(sim);
   for (uint64_t i = 0; i < particle_count; ++i) {
     Particle p = get_particle_state(sim, i);
-    // Calculate the interpolation factor
-    float factor =
-        (p.mass - MASS_RANGE_MIN) / (MASS_RANGE_MAX - MASS_RANGE_MIN);
-
-    // Interpolate color
-    Color color = {
-        (unsigned char)(PARTICLE_COLOR_MIN.r +
-                        factor * (PARTICLE_COLOR_MAX.r - PARTICLE_COLOR_MIN.r)),
-        (unsigned char)(PARTICLE_COLOR_MIN.g +
-                        factor * (PARTICLE_COLOR_MAX.g - PARTICLE_COLOR_MIN.g)),
-        (unsigned char)(PARTICLE_COLOR_MIN.b +
-                        factor * (PARTICLE_COLOR_MAX.b - PARTICLE_COLOR_MIN.b)),
-        255 // Assuming full opacity
-    };
+    // Interpolate color based on mass
+    Color color = interpolate_color(p.mass);
 
     // Draw particle with interpolated color
     DrawCircleV(
