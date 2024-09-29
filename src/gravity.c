@@ -2,6 +2,7 @@
 #define GRAVITY_C
 
 #include "gravity.h"
+#include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -14,7 +15,27 @@ typedef struct {
   uint64_t substeps;       // Number of substeps
 } SimulationStruct;
 
-Simulation init_simulation(SimulationOptions options) {
+double random_uniform_double(double min, double max) {
+  return min + (double)rand() / RAND_MAX * (max - min);
+}
+
+float random_uniform_float(float min, float max) {
+  return min + (float)rand() / RAND_MAX * (max - min);
+}
+
+double random_normal_double(double mean, double stddev) {
+  double u1 = (double)rand() / RAND_MAX;
+  double u2 = (double)rand() / RAND_MAX;
+  double z0 = sqrt(-2.0 * log(u1)) * cos(2.0 * M_PI * u2);
+  return z0 * stddev + mean;
+}
+
+float random_normal_float(float mean, float stddev) {
+  float u1 = (float)rand() / RAND_MAX;
+  float u2 = (float)rand() / RAND_MAX;
+  float z0 = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * M_PI * u2);
+  return z0 * stddev + mean;
+}
   // Allocate memory for the simulation
   SimulationStruct *sim = (SimulationStruct *)malloc(sizeof(SimulationStruct));
   if (!sim) {
@@ -40,14 +61,10 @@ Simulation init_simulation(SimulationOptions options) {
     switch (options.position_distribution) {
     case DISTRIBUTION_UNDEFINED:
     case DISTRIBUTION_UNIFORM:
-      sim->particles[i].position.x =
-          options.position_range[0].x +
-          (double)rand() / RAND_MAX *
-              (options.position_range[1].x - options.position_range[0].x);
-      sim->particles[i].position.y =
-          options.position_range[0].y +
-          (double)rand() / RAND_MAX *
-              (options.position_range[1].y - options.position_range[0].y);
+      sim->particles[i].position.x = random_uniform_double(
+          options.position_range[0].x, options.position_range[1].x);
+      sim->particles[i].position.y = random_uniform_double(
+          options.position_range[0].y, options.position_range[1].y);
       break;
     case DISTRIBUTION_NORMAL:
       // TODO: Implement normal distribution for position
@@ -60,10 +77,8 @@ Simulation init_simulation(SimulationOptions options) {
     switch (options.size_distribution) {
     case DISTRIBUTION_UNDEFINED:
     case DISTRIBUTION_UNIFORM:
-      sim->particles[i].size =
-          options.size_range[0] +
-          (float)rand() / RAND_MAX *
-              (options.size_range[1] - options.size_range[0]);
+      sim->particles[i].size = random_uniform_float(
+          options.size_range[0], options.size_range[1]);
       break;
     case DISTRIBUTION_NORMAL:
       // TODO: Implement normal distribution for size
@@ -76,10 +91,8 @@ Simulation init_simulation(SimulationOptions options) {
     switch (options.mass_distribution) {
     case DISTRIBUTION_UNDEFINED:
     case DISTRIBUTION_UNIFORM:
-      sim->particles[i].mass =
-          options.mass_range[0] +
-          (float)rand() / RAND_MAX *
-              (options.mass_range[1] - options.mass_range[0]);
+      sim->particles[i].mass = random_uniform_float(
+          options.mass_range[0], options.mass_range[1]);
       break;
     case DISTRIBUTION_NORMAL:
       // TODO: Implement normal distribution for mass
