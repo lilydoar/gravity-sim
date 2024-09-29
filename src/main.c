@@ -1,11 +1,15 @@
 #include "gravity.h"
-#include <stdint.h>
 #include "raylib.h"
 #include <assert.h>
+#include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #define SPACE_GREY                                                             \
   CLITERAL(Color) { 52, 61, 70, 255 }
+
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 450
 
 void draw_simulation(Simulation *sim);
 
@@ -20,13 +24,14 @@ int main(void) {
       DISTRIBUTION_UNDEFINED, // size distribution
       DISTRIBUTION_UNDEFINED, // mass distribution
 
-      {{0.0, 0.0}, {100.0, 100.0}}, // position range
-      {1.0, 2.0},                   // size range
-      {1.0, 2.0},                   // mass range
+      {{-100.0, 100.0}, {100.0, -100.0}}, // position range
+      {10.0, 20.0},                       // size range
+      {1.0, 2.0},                         // mass range
   });
   assert(sim != NULL);
 
-  InitWindow(800, 450, "raylib [core] example - basic window");
+  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT,
+             "raylib [core] example - basic window");
 
   while (!WindowShouldClose()) {
     step_simulation(sim);
@@ -48,9 +53,11 @@ void draw_simulation(Simulation *sim) {
   for (uint64_t i = 0; i < particle_count; ++i) {
     Particle p = get_particle_state(i);
     // Calculate screen position
-    float screen_x = (float)(GetScreenWidth() / 2 + p->position.x);
-    float screen_y = (float)(GetScreenHeight() / 2 + p->position.y);
+    /*float screen_x = (float)(SCREEN_WIDTH) / 2 + p.position.x;*/
+    /*float screen_y = (float)(SCREEN_HEIGHT) / 2 + p.position.y;*/
+    float screen_x = 0.0;
+    float screen_y = 0.0;
     // Draw particle as a red circle
-    DrawCircleV((Vector2){screen_x, screen_y}, p->size, RED);
+    DrawCircleV((Vector2){screen_x, screen_y}, p.size, RED);
   }
 }
