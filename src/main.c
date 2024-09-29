@@ -13,8 +13,8 @@
 #define PARTICLE_COLOR_MAX                                                     \
   CLITERAL(Color) { 192, 197, 206, 255 }
 
-#define MASS_RANGE_MIN 1.0f
-#define MASS_RANGE_MAX 2.0f
+#define MASS_RANGE_MIN 10.0f
+#define MASS_RANGE_MAX 200.0f
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
@@ -36,7 +36,7 @@ int main(void) {
 
       {{-100.0, 100.0}, {100.0, -100.0}}, // position range
       {1.0, 2.0},                         // size range
-      {1.0, 2.0},                         // mass range
+      {MASS_RANGE_MIN, MASS_RANGE_MAX},   // mass range
   });
   assert(sim != NULL);
 
@@ -48,7 +48,7 @@ int main(void) {
   Camera2D camera = setup_camera(pos_min, pos_max);
 
   while (!WindowShouldClose()) {
-    /*step_simulation(sim);*/
+    step_simulation(sim);
 
     BeginDrawing();
     BeginMode2D(camera);
@@ -67,16 +67,19 @@ int main(void) {
 }
 
 Color interpolate_color(float mass, float mass_min, float mass_max) {
-    // Calculate the interpolation factor
-    float factor = (mass - mass_min) / (mass_max - mass_min);
+  // Calculate the interpolation factor
+  float factor = (mass - mass_min) / (mass_max - mass_min);
 
-    // Interpolate color
-    return (Color){
-        (unsigned char)(PARTICLE_COLOR_MIN.r + factor * (PARTICLE_COLOR_MAX.r - PARTICLE_COLOR_MIN.r)),
-        (unsigned char)(PARTICLE_COLOR_MIN.g + factor * (PARTICLE_COLOR_MAX.g - PARTICLE_COLOR_MIN.g)),
-        (unsigned char)(PARTICLE_COLOR_MIN.b + factor * (PARTICLE_COLOR_MAX.b - PARTICLE_COLOR_MIN.b)),
-        255 // Assuming full opacity
-    };
+  // Interpolate color
+  return (Color){
+      (unsigned char)(PARTICLE_COLOR_MIN.r +
+                      factor * (PARTICLE_COLOR_MAX.r - PARTICLE_COLOR_MIN.r)),
+      (unsigned char)(PARTICLE_COLOR_MIN.g +
+                      factor * (PARTICLE_COLOR_MAX.g - PARTICLE_COLOR_MIN.g)),
+      (unsigned char)(PARTICLE_COLOR_MIN.b +
+                      factor * (PARTICLE_COLOR_MAX.b - PARTICLE_COLOR_MIN.b)),
+      255 // Assuming full opacity
+  };
 }
 
 Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max) {
