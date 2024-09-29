@@ -42,4 +42,14 @@ int main(void) {
   return 0;
 }
 
-void draw_simulation(Simulation *sim) {}
+void draw_simulation(Simulation *sim) {
+  SimulationStruct *sim_struct = (SimulationStruct *)*sim;
+  for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
+    Particle *p = &sim_struct->particles[i];
+    // Calculate screen position
+    float screen_x = (float)(GetScreenWidth() / 2 + p->position.x);
+    float screen_y = (float)(GetScreenHeight() / 2 + p->position.y);
+    // Draw particle as a red circle
+    DrawCircleV((Vector2){screen_x, screen_y}, p->size, RED);
+  }
+}
