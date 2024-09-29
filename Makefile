@@ -10,5 +10,8 @@ all: $(TARGET)
 $(TARGET): src/main.c src/gravity.c
 	$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE) $(LIB) -o $(TARGET) src/main.c src/gravity.c
 
+run: $(TARGET)
+	./$(TARGET)
+
 clean:
 	rm $(TARGET)
