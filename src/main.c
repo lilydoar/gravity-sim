@@ -19,13 +19,13 @@ int main(void) {
       1,     // substeps
       false, // collision enabled
 
-      100,                    // particle count
-      DISTRIBUTION_UNDEFINED, // position distribution
-      DISTRIBUTION_UNDEFINED, // size distribution
-      DISTRIBUTION_UNDEFINED, // mass distribution
+      100,                 // particle count
+      DISTRIBUTION_NORMAL, // position distribution
+      DISTRIBUTION_NORMAL, // size distribution
+      DISTRIBUTION_NORMAL, // mass distribution
 
       {{-100.0, 100.0}, {100.0, -100.0}}, // position range
-      {1.0, 2.0},                       // size range
+      {1.0, 2.0},                         // size range
       {1.0, 2.0},                         // mass range
   });
   assert(sim != NULL);
