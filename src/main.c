@@ -7,14 +7,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-typedef enum {
-    VELOCITY_ZERO,
-    VELOCITY_PERPENDICULAR,
-    VELOCITY_TOWARDS_ORIGIN,
-    VELOCITY_AWAY_FROM_ORIGIN,
-    VELOCITY_RANDOM_DIRECTION
-} VelocityInitMode;
-
 #define SPACE_GREY                                                             \
   CLITERAL(Color) { 43, 52, 60, 255 }
 

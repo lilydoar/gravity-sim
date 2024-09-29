@@ -23,6 +23,14 @@ typedef enum {
   DISTRIBUTION_UNIFORM,
   DISTRIBUTION_NORMAL
 } ParticleDistribution;
+
+typedef enum {
+  VELOCITY_ZERO,
+  VELOCITY_PERPENDICULAR,
+  VELOCITY_TOWARDS_ORIGIN,
+  VELOCITY_AWAY_FROM_ORIGIN,
+  VELOCITY_RANDOM_DIRECTION
+} VelocityInitMode;
 typedef struct {
   double time_step;              // The fixed time delta of the simulation
   uint64_t substeps;             // The number of substeps within each step
@@ -38,6 +46,9 @@ typedef struct {
   Vector2D position_range[2]; // Two vectors defining the area for position
   float size_range[2];        // Two floats defining the range for size
   float mass_range[2];        // Two floats defining the range for mass
+  VelocityInitMode velocity_init_mode; // Mode for initializing velocities
+  ParticleDistribution velocity_magnitude_distribution; // Distribution type for velocity magnitude
+  Vector2D velocity_range; // Two floats defining the range for velocity magnitude
 } SimulationOptions;
 
 // Opaque type for the simulation
