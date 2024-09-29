@@ -19,6 +19,7 @@ typedef struct {
   double time_step;           // Time step for the simulation
   uint64_t substeps;          // Number of substeps
   Vector2D position_range[2]; // Position range
+  Vector2D *forces;          // Array to store forces for each particle
 } SimulationStruct;
 
 double random_uniform_double(double min, double max) {
@@ -127,6 +128,14 @@ Simulation init_simulation(SimulationOptions options) {
     sim->particles[i].velocity.y = 0.0; // Initial y velocity
   }
 
+  // Allocate memory for forces
+  sim->forces = (Vector2D *)malloc(sizeof(Vector2D) * sim->particle_count);
+  if (!sim->forces) {
+    free(sim->particles);
+    free(sim);
+    return NULL; // Allocation failed
+  }
+
   return (Simulation)sim;
 }
 
@@ -135,7 +144,8 @@ void deinit_simulation(Simulation sim) {
   if (sim_struct) {
     // Free the particles array
     free(sim_struct->particles);
-    // Free the simulation struct
+    // Free the forces array
+    free(sim_struct->forces);
     free(sim_struct);
   }
 }
@@ -146,12 +156,9 @@ void step_simulation(Simulation sim) {
   // Loop over each substep
   for (uint64_t substep = 0; substep < sim_struct->substeps; ++substep) {
 
-    // Array to store total forces for each particle
-    Vector2D *forces = (Vector2D *)malloc(sizeof(Vector2D) * sim_struct->particle_count);
-
-    // Initialize force accumulators
+    // Reset force accumulators
     for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
-      forces[i] = (Vector2D){0.0, 0.0};
+      sim_struct->forces[i] = (Vector2D){0.0, 0.0};
     }
 
     // Calculate forces
@@ -162,8 +169,8 @@ void step_simulation(Simulation sim) {
 
         Particle *other = &sim_struct->particles[j];
         Vector2D force = calculate_force(p, other);
-        forces[i].x += force.x;
-        forces[i].y += force.y;
+        sim_struct->forces[i].x += force.x;
+        sim_struct->forces[i].y += force.y;
       }
     }
 
@@ -171,11 +178,8 @@ void step_simulation(Simulation sim) {
     double substep_time = sim_struct->time_step / sim_struct->substeps;
     for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
       Particle *p = &sim_struct->particles[i];
-      verlet_integration(p, forces[i], substep_time);
+      verlet_integration(p, sim_struct->forces[i], substep_time);
     }
-
-    // Free the forces array
-    free(forces);
 
     // Handle collisions if enabled
     if (sim_struct->enable_collisions) {
