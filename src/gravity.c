@@ -189,8 +189,9 @@ void resolve_collision(Particle *p1, Particle *p2) {
     // If the particles are moving apart, no need to resolve
     if (vn > 0) return;
 
-    // Calculate the impulse scalar
-    double impulse = (2 * vn) / (p1->mass + p2->mass);
+    // Introduce a damping factor to the impulse
+    double damping_factor = 0.9; // Adjust this value as needed
+    double impulse = damping_factor * (2 * vn) / (p1->mass + p2->mass);
 
     // Update velocities based on the impulse
     p1->velocity.x -= impulse * p2->mass * nx;
