@@ -74,10 +74,11 @@ void toggle_collisions(bool enable);
 /**
  * Retrieves the current state of a specific particle.
  *
+ * @param sim The Simulation handle.
  * @param particle_id The unique identifier of the particle.
  * @return A Particle struct containing the current state of the particle.
  */
-Particle get_particle_state(int particle_id);
+Particle get_particle_state(Simulation sim, int particle_id);
 
 // Structure to hold particle information
 typedef struct {

@@ -63,7 +63,7 @@ int main(void) {
 void draw_simulation(Simulation *sim) {
   uint64_t particle_count = get_particle_count(sim);
   for (uint64_t i = 0; i < particle_count; ++i) {
-    Particle p = get_particle_state(i);
+    Particle p = get_particle_state(sim, i);
     // Calculate screen position
     /*float screen_x = (float)(SCREEN_WIDTH) / 2 + p.position.x;*/
     /*float screen_y = (float)(SCREEN_HEIGHT) / 2 + p.position.y;*/

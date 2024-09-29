@@ -138,10 +138,14 @@ void toggle_collisions(bool enable) {
   // Enable or disable collision handling
 }
 
-Particle get_particle_state(int particle_id) {
-  // Return the current state of the particle
-  Particle particle; // Placeholder return
-  return particle;
+Particle get_particle_state(Simulation sim, int particle_id) {
+  SimulationStruct *sim_struct = (SimulationStruct *)sim;
+  if (particle_id < 0 || particle_id >= sim_struct->particle_count) {
+    // Handle invalid particle_id
+    Particle empty_particle = {0};
+    return empty_particle;
+  }
+  return sim_struct->particles[particle_id];
 }
 
 int get_particles_by_area(Vector2D top_left, Vector2D bottom_right,
