@@ -160,12 +160,13 @@ void step_simulation(Simulation sim) {
 
         Particle *other = &sim_struct->particles[j];
 
-        // Calculate force between p and other
-        // Add force to total_force
+        Vector2D force = calculate_force(p, other);
+        total_force.x += force.x;
+        total_force.y += force.y;
       }
 
-      // Update particle velocity based on total_force
-      // Update particle position based on velocity
+      // Integrate using Verlet method
+      verlet_integration(p, total_force, sim_struct->time_step);
     }
 
     // Handle collisions if enabled
