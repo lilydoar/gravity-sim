@@ -2,10 +2,10 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <assert.h>
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 #define SPACE_GREY                                                             \
   CLITERAL(Color) { 43, 52, 60, 255 }
@@ -15,8 +15,8 @@
 #define PARTICLE_COLOR_MAX                                                     \
   CLITERAL(Color) { 232, 204, 222, 255 }
 
-#define MASS_RANGE_MIN 100.0f
-#define MASS_RANGE_MAX 2000.0f
+#define MASS_RANGE_MIN 1000.0f
+#define MASS_RANGE_MAX 20000.0f
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -43,18 +43,17 @@ int main(void) {
       DISTRIBUTION_UNIFORM, // size distribution
       DISTRIBUTION_NORMAL,  // mass distribution
 
-      {{-600.0, 600.0}, {600.0, -600.0}}, // position range
-      {4.0, 8.0},                         // size range
-      {MASS_RANGE_MIN, MASS_RANGE_MAX},   // mass range
-      VELOCITY_RANDOM_DIRECTION,          // velocity init mode
-      DISTRIBUTION_UNIFORM,               // velocity magnitude distribution
-      {0.0, 10.0},                        // velocity range
+      VELOCITY_RANDOM_DIRECTION, // velocity init mode
+      DISTRIBUTION_UNIFORM,      // velocity magnitude distribution
+
+      {{-2000.0, 2000.0}, {2000.0, -2000.0}}, // position range
+      {10.0, 80.0},                           // size range
+      {MASS_RANGE_MIN, MASS_RANGE_MAX},       // mass range
+      {100.0, 1000.0},                           // velocity range
   });
   assert(sim != NULL);
 
-  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT,
-             "raylib [core] example - basic window");
-  SetGesturesEnabled(GESTURE_PINCH_IN | GESTURE_PINCH_OUT | GESTURE_DRAG);
+  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
 
   Vector2D pos_min, pos_max;
   get_position_range(sim, &pos_min, &pos_max);

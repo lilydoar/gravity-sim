@@ -18,11 +18,7 @@ typedef struct {
   Vector2D velocity;
 } Particle;
 
-typedef enum {
-  DISTRIBUTION_UNDEFINED,
-  DISTRIBUTION_UNIFORM,
-  DISTRIBUTION_NORMAL
-} ParticleDistribution;
+typedef enum { DISTRIBUTION_UNIFORM, DISTRIBUTION_NORMAL } Distribution;
 
 typedef enum {
   VELOCITY_ZERO,
@@ -31,24 +27,29 @@ typedef enum {
   VELOCITY_AWAY_FROM_ORIGIN,
   VELOCITY_RANDOM_DIRECTION
 } VelocityInitMode;
+
 typedef struct {
-  double time_step;              // The fixed time delta of the simulation
-  uint64_t substeps;             // The number of substeps within each step
-  bool enable_collisions;        // Flag to enable or disable collision handling
-  uint64_t collision_iterations; // Number of iterations for collision resolution
+  double time_step;       // The fixed time delta of the simulation
+  uint64_t substeps;      // The number of substeps within each step
+  bool enable_collisions; // Flag to enable or disable collision handling
+  uint64_t
+      collision_iterations; // Number of iterations for collision resolution
   double gravitational_constant; // Gravitational constant for the simulation
 
-  uint64_t particle_count; // The number of starting particles
-  ParticleDistribution position_distribution; // Distribution type for position
-  ParticleDistribution size_distribution;     // Distribution type for size
-  ParticleDistribution mass_distribution;     // Distribution type for mass
+  uint64_t particle_count;            // The number of starting particles
+  Distribution position_distribution; // Distribution type for position
+  Distribution size_distribution;     // Distribution type for size
+  Distribution mass_distribution;     // Distribution type for mass
+
+  VelocityInitMode velocity_init_mode; // Mode for initializing velocities
+  Distribution velocity_magnitude_distribution; // Distribution type for
+                                                // velocity magnitude
 
   Vector2D position_range[2]; // Two vectors defining the area for position
   float size_range[2];        // Two floats defining the range for size
   float mass_range[2];        // Two floats defining the range for mass
-  VelocityInitMode velocity_init_mode; // Mode for initializing velocities
-  ParticleDistribution velocity_magnitude_distribution; // Distribution type for velocity magnitude
-  Vector2D velocity_range; // Two floats defining the range for velocity magnitude
+  Vector2D
+      velocity_range; // Two doubles defining the range for velocity magnitude
 } SimulationOptions;
 
 // Opaque type for the simulation

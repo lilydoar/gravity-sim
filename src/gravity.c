@@ -81,7 +81,6 @@ Simulation init_simulation(SimulationOptions options) {
   for (uint64_t i = 0; i < sim->particle_count; ++i) {
     // Initialize position
     switch (options.position_distribution) {
-    case DISTRIBUTION_UNDEFINED:
     case DISTRIBUTION_UNIFORM:
       sim->particles[i].position.x = random_uniform_double(
           options.position_range[0].x, options.position_range[1].x);
@@ -102,7 +101,6 @@ Simulation init_simulation(SimulationOptions options) {
 
     // Initialize size
     switch (options.size_distribution) {
-    case DISTRIBUTION_UNDEFINED:
     case DISTRIBUTION_UNIFORM:
       sim->particles[i].size =
           random_uniform_float(options.size_range[0], options.size_range[1]);
@@ -118,7 +116,6 @@ Simulation init_simulation(SimulationOptions options) {
 
     // Initialize mass
     switch (options.mass_distribution) {
-    case DISTRIBUTION_UNDEFINED:
     case DISTRIBUTION_UNIFORM:
       sim->particles[i].mass =
           random_uniform_float(options.mass_range[0], options.mass_range[1]);
