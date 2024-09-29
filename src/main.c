@@ -40,8 +40,8 @@ int main(void) {
 
   Vector2D pos_min, pos_max;
   get_position_range(sim, &pos_min, &pos_max);
-  float range_x = pos_max.x - pos_min.x;
-  float range_y = pos_max.y - pos_min.y;
+  float range_x = 1.5 * (pos_max.x - pos_min.x);
+  float range_y = 1.5 * (pos_max.y - pos_min.y);
   camera.zoom = (SCREEN_WIDTH / range_x < SCREEN_HEIGHT / range_y)
                     ? (SCREEN_WIDTH / range_x)
                     : (SCREEN_HEIGHT / range_y);
