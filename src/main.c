@@ -43,13 +43,13 @@ int main(void) {
       DISTRIBUTION_UNIFORM, // size distribution
       DISTRIBUTION_NORMAL,  // mass distribution
 
-      VELOCITY_PERPENDICULAR, // velocity init mode
+      VELOCITY_TOWARDS_ORIGIN, // velocity init mode
       DISTRIBUTION_UNIFORM,   // velocity magnitude distribution
 
       {{-2000.0, 2000.0}, {2000.0, -2000.0}}, // position range
       {10.0, 80.0},                           // size range
       {MASS_RANGE_MIN, MASS_RANGE_MAX},       // mass range
-      {10.0, 100.0},                          // velocity range
+      {10.0, 20.0},                          // velocity range
   });
   assert(sim != NULL);
 
