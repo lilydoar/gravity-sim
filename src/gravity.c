@@ -34,7 +34,6 @@ Simulation init_simulation(SimulationOptions options) {
     return NULL; // Allocation failed
   }
 
-  // Initialize particles based on the specified distribution
   // Initialize particles based on the specified distributions
   for (uint64_t i = 0; i < sim->particle_count; ++i) {
     // Initialize position
