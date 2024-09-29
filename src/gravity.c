@@ -131,16 +131,18 @@ void deinit_simulation(Simulation sim) {
 }
 
 void step_simulation(Simulation sim) {
+  (void)sim;
   // Update the simulation by the given time step
 }
 
 void toggle_collisions(bool enable) {
+  (void)enable;
   // Enable or disable collision handling
 }
 
 Particle get_particle_state(Simulation sim, int particle_id) {
   SimulationStruct *sim_struct = (SimulationStruct *)sim;
-  if (particle_id < 0 || particle_id >= sim_struct->particle_count) {
+  if (particle_id < 0 || (uint64_t)particle_id >= sim_struct->particle_count) {
     // Handle invalid particle_id
     Particle empty_particle = {0};
     return empty_particle;
@@ -150,6 +152,10 @@ Particle get_particle_state(Simulation sim, int particle_id) {
 
 int get_particles_by_area(Vector2D top_left, Vector2D bottom_right,
                           ParticleInfo *buffer, int max_count) {
+  (void)top_left;
+  (void)bottom_right;
+  (void)buffer;
+  (void)max_count;
   // Retrieve particles within the specified area
   return 0; // Placeholder return
 }
@@ -157,16 +163,23 @@ int get_particles_by_area(Vector2D top_left, Vector2D bottom_right,
 // Adds a new particle to the simulation.
 void add_particle(double mass, double size, Vector2D position,
                   Vector2D velocity) {
+  (void)mass;
+  (void)size;
+  (void)position;
+  (void)velocity;
   // Add a new particle with specified properties
 }
 
 // Removes a particle from the simulation.
 void remove_particle(int particle_id) {
+  (void)particle_id;
   // Remove the particle with the given ID
 }
 
 // Applies an external force to a specific particle.
 void apply_force(int particle_id, Vector2D force) {
+  (void)particle_id;
+  (void)force;
   // Apply the specified force to the particle
 }
 void get_position_range(Simulation sim, Vector2D *min, Vector2D *max) {
@@ -186,6 +199,11 @@ void get_position_range(Simulation sim, Vector2D *min, Vector2D *max) {
     if (p.position.y < min->y) min->y = p.position.y;
     if (p.position.y > max->y) max->y = p.position.y;
   }
+}
+
+uint64_t get_particle_count(Simulation sim) {
+  SimulationStruct *sim_struct = (SimulationStruct *)sim;
+  return sim_struct->particle_count;
 }
 
 #endif // GRAVITY_C
