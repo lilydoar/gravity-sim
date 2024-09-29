@@ -36,36 +36,29 @@ void reset_camera(Camera2D *camera);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
-    .time_step = 0.5,
-    .substeps = 5,
-    .enable_collisions = true,
-    .collision_iterations = 2,
-    .gravitational_constant = 6.67430e-3,
-    .particle_count = 400,
-    .position_x_distribution = {
-        .type = DISTRIBUTION_UNIFORM,
-        .params.uniform = {.min = -2000.0, .max = 2000.0}
-    },
-    .position_y_distribution = {
-        .type = DISTRIBUTION_UNIFORM,
-        .params.uniform = {.min = -2000.0, .max = 2000.0}
-    },
-    .mass_distribution = {
-        .type = DISTRIBUTION_NORMAL,
-        .params.normal = {.mean = (MASS_RANGE_MIN + MASS_RANGE_MAX) / 2, .stddev = (MASS_RANGE_MAX - MASS_RANGE_MIN) / 6}
-    },
-    .size_distribution = {
-        .type = DISTRIBUTION_UNIFORM,
-        .params.uniform = {.min = 10.0, .max = 60.0}
-    },
-    .velocity_init_mode = VELOCITY_INIT_PERPENDICULAR_TO_ORIGIN,
-    .velocity_distribution = {
-        .velocity_magnitude_distribution = {
-            .type = DISTRIBUTION_UNIFORM,
-            .params.uniform = {.min = 0.0, .max = 8.0}
-        }
-    }
-  });
+      .time_step = 0.5,
+      .substeps = 5,
+      .enable_collisions = true,
+      .collision_iterations = 2,
+      .gravitational_constant = 6.67430e-3,
+      .particle_count = 400,
+      .position_x_distribution = {.type = DISTRIBUTION_UNIFORM,
+                                  .params.uniform = {.min = -2000.0,
+                                                     .max = 2000.0}},
+      .position_y_distribution = {.type = DISTRIBUTION_UNIFORM,
+                                  .params.uniform = {.min = -2000.0,
+                                                     .max = 2000.0}},
+      .mass_distribution =
+          {.type = DISTRIBUTION_NORMAL,
+           .params.normal = {.mean = (MASS_RANGE_MIN + MASS_RANGE_MAX) / 2,
+                             .stddev = (MASS_RANGE_MAX - MASS_RANGE_MIN) / 6}},
+      .size_distribution = {.type = DISTRIBUTION_UNIFORM,
+                            .params.uniform = {.min = 10.0, .max = 60.0}},
+      .velocity_init_mode = VELOCITY_INIT_PERPENDICULAR_TO_ORIGIN,
+      .velocity_distribution = {
+          .velocity_magnitude_distribution = {
+              .type = DISTRIBUTION_UNIFORM,
+              .params.uniform = {.min = 0.0, .max = 8.0}}}});
   assert(sim != NULL);
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
