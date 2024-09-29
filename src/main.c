@@ -60,6 +60,9 @@ int main(void) {
     EndDrawing();
   }
 
+  // Draw FPS
+  DrawFPS(10, 10);
+
   deinit_simulation(sim);
   CloseWindow();
 
