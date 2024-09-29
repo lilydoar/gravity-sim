@@ -12,8 +12,8 @@ typedef struct {
 
 // Define a structure for a particle
 typedef struct {
-  double mass;
-  double size;
+  float mass;
+  float size;
   Vector2D position;
   Vector2D velocity;
 } Particle;
@@ -26,10 +26,16 @@ typedef enum {
 typedef struct {
   bool enable_collisions;  // Flag to enable or disable collision handling
   uint64_t particle_count; // The number of starting particles
-  ParticleDistribution distribution; // Distribution type for spawning particles
+  ParticleDistribution position_distribution; // Distribution type for position
+  ParticleDistribution size_distribution;     // Distribution type for size
+  ParticleDistribution mass_distribution;     // Distribution type for mass
 
-  double time_step;                  // The fixed time delta of the simulation
-  uint64_t substeps;                 // The number of substeps within each step
+  Vector2D position_range[2]; // Two vectors defining the area for position
+  float size_range[2];        // Two floats defining the range for size
+  float mass_range[2];        // Two floats defining the range for mass
+
+  double time_step;           // The fixed time delta of the simulation
+  uint64_t substeps;          // The number of substeps within each step
 } SimulationOptions;
 
 // Opaque type for the simulation

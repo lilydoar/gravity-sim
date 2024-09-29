@@ -10,11 +10,16 @@ void draw_simulation(Simulation *sim);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
-      false,                  // collision enabled
-      100,                    // particle count
-      DISTRIBUTION_UNDEFINED, // spawn distribution
-      0.1,                    // time step
-      1,                      // substeps
+      false,                   // collision enabled
+      100,                     // particle count
+      DISTRIBUTION_UNDEFINED,  // position distribution
+      DISTRIBUTION_UNDEFINED,  // size distribution
+      DISTRIBUTION_UNDEFINED,  // mass distribution
+      {{0.0, 0.0}, {100.0, 100.0}}, // position range
+      {1.0, 2.0},              // size range
+      {1.0, 2.0},              // mass range
+      0.1,                     // time step
+      1,                       // substeps
   });
   assert(sim != NULL);
 
