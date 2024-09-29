@@ -61,13 +61,7 @@ typedef struct {
     Distribution mass_distribution;
     Distribution size_distribution;
     VelocityInitMode velocity_init_mode;
-    union {
-        struct {
-            Distribution velocity_x_distribution;
-            Distribution velocity_y_distribution;
-        } component;
-        Distribution velocity_magnitude_distribution;
-    } velocity_distribution;
+    Distribution velocity_magnitude_distribution;
 } SimulationOptions;
 
 // Opaque type for the simulation

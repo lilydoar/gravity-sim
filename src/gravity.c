@@ -84,7 +84,7 @@ Simulation init_simulation(SimulationOptions options) {
     sim->particles[i].mass = sample_distribution(&options.mass_distribution);
     sim->particles[i].size = sample_distribution(&options.size_distribution);
 
-    double velocity_magnitude = sample_distribution(&options.velocity_distribution.velocity_magnitude_distribution);
+    double velocity_magnitude = sample_distribution(&options.velocity_magnitude_distribution);
     
     switch (options.velocity_init_mode) {
       case VELOCITY_INIT_ZERO:
