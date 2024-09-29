@@ -15,8 +15,8 @@
 #define PARTICLE_COLOR_MAX                                                     \
   CLITERAL(Color) { 232, 204, 222, 255 }
 
-#define MASS_RANGE_MIN 1000.0f
-#define MASS_RANGE_MAX 20000.0f
+#define MASS_RANGE_MIN 10000.0f
+#define MASS_RANGE_MAX 50000.0f
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -36,8 +36,8 @@ void reset_camera(Camera2D *camera);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
-      0.1,        // time step
-      2,          // substeps
+      0.5,        // time step
+      5,          // substeps
       true,       // collision enabled
       2,          // collision iterations
       6.67430e-3, // gravitational constant
@@ -53,7 +53,7 @@ int main(void) {
       {{-2000.0, 2000.0}, {2000.0, -2000.0}}, // position range
       {10.0, 60.0},                           // size range
       {MASS_RANGE_MIN, MASS_RANGE_MAX},       // mass range
-      {1.0, 12.0},                            // velocity range
+      {1.0, 8.0},                             // velocity range
   });
   assert(sim != NULL);
 
