@@ -1,5 +1,6 @@
 #include "gravity.h"
 #include "raylib.h"
+#include "raymath.h"
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -22,6 +23,7 @@
 Color interpolate_color(float mass, float mass_min, float mass_max);
 void draw_simulation(Simulation sim);
 Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
+void update_camera(Camera2D *camera);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
@@ -44,6 +46,8 @@ int main(void) {
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT,
              "raylib [core] example - basic window");
+
+  SetGesturesEnabled(GESTURE_PINCH_IN | GESTURE_PINCH_OUT | GESTURE_DRAG);
 
   Vector2D pos_min, pos_max;
   get_position_range(sim, &pos_min, &pos_max);
@@ -114,5 +118,22 @@ void draw_simulation(Simulation sim) {
                 p.position.y,
             },
             p.size, color);
+    }
+}
+
+void update_camera(Camera2D *camera) {
+    // Handle zooming with pinch gesture
+    if (IsGestureDetected(GESTURE_PINCH_IN) || IsGestureDetected(GESTURE_PINCH_OUT)) {
+        Vector2 pinchVector = GetGesturePinchVector();
+        float pinchRatio = 1.0f + (pinchVector.x + pinchVector.y) / 1000.0f; // Adjust sensitivity as needed
+        camera->zoom *= pinchRatio;
+        camera->zoom = Clamp(camera->zoom, 0.1f, 10.0f); // Limit zoom range
+    }
+    
+    // Handle panning with two-finger drag
+    if (IsGestureDetected(GESTURE_DRAG)) {
+        Vector2 dragVector = GetGestureDragVector();
+        camera->target.x -= dragVector.x / camera->zoom;
+        camera->target.y -= dragVector.y / camera->zoom;
     }
 }
