@@ -4,7 +4,7 @@
 #include "gravity.h"
 #include <math.h>
 
-#define GRAVITATIONAL_CONSTANT 6.67430e-11
+#define GRAVITATIONAL_CONSTANT 6.67430e-7
 
 Vector2D calculate_force(Particle *p1, Particle *p2);
 void verlet_integration(Particle *p, Vector2D total_force, double time_step);
@@ -186,36 +186,35 @@ void step_simulation(Simulation sim) {
 }
 
 Vector2D calculate_force(Particle *p1, Particle *p2) {
-    Vector2D force = {0.0, 0.0};
-    Vector2D distance_vector = {
-        p2->position.x - p1->position.x,
-        p2->position.y - p1->position.y
-    };
-    double distance_squared = distance_vector.x * distance_vector.x + distance_vector.y * distance_vector.y;
-    double distance = sqrt(distance_squared);
+  Vector2D force = {0.0, 0.0};
+  Vector2D distance_vector = {p2->position.x - p1->position.x,
+                              p2->position.y - p1->position.y};
+  double distance_squared = distance_vector.x * distance_vector.x +
+                            distance_vector.y * distance_vector.y;
+  double distance = sqrt(distance_squared);
 
-    if (distance > 0) {
-        double force_magnitude = GRAVITATIONAL_CONSTANT * (p1->mass * p2->mass) / distance_squared;
-        force.x = force_magnitude * (distance_vector.x / distance);
-        force.y = force_magnitude * (distance_vector.y / distance);
-    }
+  if (distance > 0) {
+    double force_magnitude =
+        GRAVITATIONAL_CONSTANT * (p1->mass * p2->mass) / distance_squared;
+    force.x = force_magnitude * (distance_vector.x / distance);
+    force.y = force_magnitude * (distance_vector.y / distance);
+  }
 
-    return force;
+  return force;
 }
 
 void verlet_integration(Particle *p, Vector2D total_force, double time_step) {
-    Vector2D acceleration = {
-        total_force.x / p->mass,
-        total_force.y / p->mass
-    };
+  Vector2D acceleration = {total_force.x / p->mass, total_force.y / p->mass};
 
-    // Update position
-    p->position.x += p->velocity.x * time_step + 0.5 * acceleration.x * time_step * time_step;
-    p->position.y += p->velocity.y * time_step + 0.5 * acceleration.y * time_step * time_step;
+  // Update position
+  p->position.x +=
+      p->velocity.x * time_step + 0.5 * acceleration.x * time_step * time_step;
+  p->position.y +=
+      p->velocity.y * time_step + 0.5 * acceleration.y * time_step * time_step;
 
-    // Update velocity
-    p->velocity.x += acceleration.x * time_step;
-    p->velocity.y += acceleration.y * time_step;
+  // Update velocity
+  p->velocity.x += acceleration.x * time_step;
+  p->velocity.y += acceleration.y * time_step;
 }
 
 void toggle_collisions(bool enable) {
