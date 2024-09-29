@@ -169,7 +169,24 @@ void remove_particle(int particle_id) {
 void apply_force(int particle_id, Vector2D force) {
   // Apply the specified force to the particle
 }
-uint64_t get_particle_count(Simulation sim) {
+void get_position_range(Simulation sim, Vector2D *min, Vector2D *max) {
+  SimulationStruct *sim_struct = (SimulationStruct *)sim;
+  if (sim_struct->particle_count == 0) {
+    min->x = min->y = max->x = max->y = 0.0;
+    return;
+  }
+
+  min->x = max->x = sim_struct->particles[0].position.x;
+  min->y = max->y = sim_struct->particles[0].position.y;
+
+  for (uint64_t i = 1; i < sim_struct->particle_count; ++i) {
+    Particle p = sim_struct->particles[i];
+    if (p.position.x < min->x) min->x = p.position.x;
+    if (p.position.x > max->x) max->x = p.position.x;
+    if (p.position.y < min->y) min->y = p.position.y;
+    if (p.position.y > max->y) max->y = p.position.y;
+  }
+}
   SimulationStruct *sim_struct = (SimulationStruct *)sim;
   return sim_struct->particle_count;
 }
