@@ -51,17 +51,16 @@ int main(void) {
 
   while (!WindowShouldClose()) {
     step_simulation(sim);
+    update_camera(&camera);
 
     BeginDrawing();
-    BeginMode2D(camera);
-
     ClearBackground(SPACE_GREY);
+    
+    BeginMode2D(camera);
     draw_simulation(sim);
-
     EndMode2D();
 
     DrawFPS(10, 10);
-
     EndDrawing();
   }
 
@@ -101,19 +100,19 @@ Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max) {
   return camera;
 }
 
-void draw_simulation(Simulation *sim) {
-  uint64_t particle_count = get_particle_count(sim);
-  for (uint64_t i = 0; i < particle_count; ++i) {
-    Particle p = get_particle_state(sim, i);
-    // Interpolate color based on mass
-    Color color = interpolate_color(p.mass, MASS_RANGE_MIN, MASS_RANGE_MAX);
+void draw_simulation(Simulation sim) {
+    uint64_t particle_count = get_particle_count(sim);
+    for (uint64_t i = 0; i < particle_count; ++i) {
+        Particle p = get_particle_state(sim, i);
+        // Interpolate color based on mass
+        Color color = interpolate_color(p.mass, MASS_RANGE_MIN, MASS_RANGE_MAX);
 
-    // Draw particles
-    DrawCircleV(
-        (Vector2){
-            p.position.x,
-            p.position.y,
-        },
-        p.size, color);
-  }
+        // Draw particles
+        DrawCircleV(
+            (Vector2){
+                p.position.x,
+                p.position.y,
+            },
+            p.size, color);
+    }
 }
