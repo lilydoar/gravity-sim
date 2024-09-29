@@ -1,4 +1,5 @@
 #include "gravity.h"
+#include <stdint.h>
 #include "raylib.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -43,9 +44,9 @@ int main(void) {
 }
 
 void draw_simulation(Simulation *sim) {
-  SimulationStruct *sim_struct = (SimulationStruct *)*sim;
-  for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
-    Particle *p = &sim_struct->particles[i];
+  uint64_t particle_count = get_particle_count(sim);
+  for (uint64_t i = 0; i < particle_count; ++i) {
+    Particle p = get_particle_state(i);
     // Calculate screen position
     float screen_x = (float)(GetScreenWidth() / 2 + p->position.x);
     float screen_y = (float)(GetScreenHeight() / 2 + p->position.y);

@@ -165,4 +165,9 @@ void remove_particle(int particle_id) {
 void apply_force(int particle_id, Vector2D force) {
   // Apply the specified force to the particle
 }
+uint64_t get_particle_count(Simulation sim) {
+  SimulationStruct *sim_struct = (SimulationStruct *)sim;
+  return sim_struct->particle_count;
+}
+
 #endif // GRAVITY_C

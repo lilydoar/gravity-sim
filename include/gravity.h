@@ -104,4 +104,12 @@ typedef struct {
 int get_particles_by_area(Vector2D top_left, Vector2D bottom_right,
                           ParticleInfo *buffer, int max_count);
 
+/**
+ * Retrieves the total number of particles in the simulation.
+ *
+ * @param sim The Simulation handle.
+ * @return The total number of particles.
+ */
+uint64_t get_particle_count(Simulation sim);
+
 #endif // GRAVITY_H
