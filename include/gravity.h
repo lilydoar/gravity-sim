@@ -45,6 +45,53 @@ typedef void *Simulation;
 Simulation init_simulation(SimulationOptions options);
 
 /**
+ * Advances the simulation by a single step.
+ *
+ * @param sim The Simulation handle.
+ */
+void step_simulation(Simulation sim);
+
+/**
+ * Toggles collision handling in the simulation.
+ *
+ * @param enable A boolean flag to enable or disable collision handling.
+ */
+void toggle_collisions(bool enable);
+
+/**
+ * Retrieves the current state of a specific particle.
+ *
+ * @param particle_id The unique identifier of the particle.
+ * @return A Particle struct containing the current state of the particle.
+ */
+Particle get_particle_state(int particle_id);
+
+// Structure to hold particle information
+typedef struct {
+  int particle_id;   // Unique identifier for the particle
+  Particle particle; // The particle's data
+} ParticleInfo;
+
+/**
+ * Retrieves particles within a specified rectangular area.
+ *
+ * @param top_left The top-left corner of the rectangle.
+ * @param bottom_right The bottom-right corner of the rectangle.
+ * @param buffer A pointer to an array of ParticleInfo to store the results.
+ * @param max_count The maximum number of ParticleInfo entries that the buffer
+ * can hold.
+ * @return The number of particles found and stored in the buffer, or -1 if the
+ * buffer is insufficient.
+ *
+ * Note: If the function returns -1, the buffer may not be in a valid state, and
+ * not all particles in the specified area could be retrieved. Ensure the buffer
+ * is large enough to hold all potential particles in the area for accurate
+ * results.
+ */
+int get_particles_by_area(Vector2D top_left, Vector2D bottom_right,
+                          ParticleInfo *buffer, int max_count);
+
+/**
  * Deinitializes the simulation, freeing any allocated resources.
  *
  * @param sim The Simulation handle to be deinitialized.
