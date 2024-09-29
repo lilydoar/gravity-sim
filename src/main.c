@@ -2,7 +2,7 @@
 #include "raylib.h"
 
 int main(void) {
-  init_simulation((SimulationOptions){
+  Simulation sim = init_simulation((SimulationOptions){
       false,                  // collision enabled
       100,                    // particle count
       DISTRIBUTION_UNDEFINED, // spawn distribution
@@ -18,6 +18,7 @@ int main(void) {
     EndDrawing();
   }
 
+  deinit_simulation(sim);
   CloseWindow();
 
   return 0;

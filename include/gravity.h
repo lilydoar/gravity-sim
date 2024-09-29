@@ -29,6 +29,33 @@ typedef struct {
   ParticleDistribution distribution; // Distribution type for spawning particles
 } SimulationOptions;
 
+// Opaque type for the simulation
+typedef void* Simulation;
+
+/**
+ * Initializes the simulation with the specified options.
+ *
+ * @param options A SimulationOptions struct containing configuration settings
+ * for the simulation.
+ * @return A Simulation handle to be used with other simulation functions.
+ */
+Simulation init_simulation(SimulationOptions options);
+
+/**
+ * Deinitializes the simulation, freeing any allocated resources.
+ *
+ * @param sim The Simulation handle to be deinitialized.
+ */
+void deinit_simulation(Simulation sim);
+
+/**
+ * Advances the simulation by a specified time step.
+ *
+ * @param sim The Simulation handle.
+ * @param time_step The time step by which to update the simulation.
+ */
+void step_simulation(Simulation sim, double time_step);
+
 /**
  * Initializes the simulation with the specified options.
  *
