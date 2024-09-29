@@ -145,6 +145,8 @@ uint64_t get_particle_count(Simulation sim);
  * @param sim The Simulation handle.
  * @param min A pointer to store the minimum position vector.
  * @param max A pointer to store the maximum position vector.
+ *
+ * TODO: Acknowledge that this is a hack
  */
 void get_position_range(Simulation sim, Vector2D *min, Vector2D *max);
 
