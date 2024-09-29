@@ -24,14 +24,6 @@
 #define CAMERA_MOVE_SPEED 5.0f
 #define CAMERA_ZOOM_SPEED 0.1f
 
-typedef enum {
-    VELOCITY_ZERO,
-    VELOCITY_PERPENDICULAR,
-    VELOCITY_TOWARDS_ORIGIN,
-    VELOCITY_AWAY_FROM_ORIGIN,
-    VELOCITY_RANDOM_DIRECTION
-} VelocityInitMode;
-
 Color interpolate_color(float mass, float mass_min, float mass_max);
 void draw_simulation(Simulation sim);
 Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
@@ -51,13 +43,13 @@ int main(void) {
       DISTRIBUTION_UNIFORM, // size distribution
       DISTRIBUTION_NORMAL,  // mass distribution
 
-      VELOCITY_PERPENDICULAR,  // velocity init mode
-      DISTRIBUTION_UNIFORM,    // velocity magnitude distribution
+      VELOCITY_PERPENDICULAR, // velocity init mode
+      DISTRIBUTION_UNIFORM,   // velocity magnitude distribution
 
       {{-2000.0, 2000.0}, {2000.0, -2000.0}}, // position range
       {10.0, 80.0},                           // size range
       {MASS_RANGE_MIN, MASS_RANGE_MAX},       // mass range
-      {100.0, 1000.0},                        // velocity range
+      {10.0, 100.0},                          // velocity range
   });
   assert(sim != NULL);
 

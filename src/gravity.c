@@ -133,7 +133,8 @@ Simulation init_simulation(SimulationOptions options) {
     double velocity_magnitude;
     switch (options.velocity_magnitude_distribution) {
     case DISTRIBUTION_UNIFORM:
-      velocity_magnitude = random_uniform_double(options.velocity_range.x, options.velocity_range.y);
+      velocity_magnitude = random_uniform_double(options.velocity_range.x,
+                                                 options.velocity_range.y);
       break;
     case DISTRIBUTION_NORMAL:
       velocity_magnitude = random_normal_double(
@@ -150,36 +151,35 @@ Simulation init_simulation(SimulationOptions options) {
       sim->particles[i].velocity.x = 0.0;
       sim->particles[i].velocity.y = 0.0;
       break;
-    case VELOCITY_PERPENDICULAR:
-      {
-        double angle = atan2(sim->particles[i].position.y, sim->particles[i].position.x);
-        sim->particles[i].velocity.x = velocity_magnitude * sin(angle);
-        sim->particles[i].velocity.y = -velocity_magnitude * cos(angle);
-      }
-      break;
-    case VELOCITY_TOWARDS_ORIGIN:
-      {
-        double distance = sqrt(sim->particles[i].position.x * sim->particles[i].position.x +
-                               sim->particles[i].position.y * sim->particles[i].position.y);
-        sim->particles[i].velocity.x = -velocity_magnitude * sim->particles[i].position.x / distance;
-        sim->particles[i].velocity.y = -velocity_magnitude * sim->particles[i].position.y / distance;
-      }
-      break;
-    case VELOCITY_AWAY_FROM_ORIGIN:
-      {
-        double distance = sqrt(sim->particles[i].position.x * sim->particles[i].position.x +
-                               sim->particles[i].position.y * sim->particles[i].position.y);
-        sim->particles[i].velocity.x = velocity_magnitude * sim->particles[i].position.x / distance;
-        sim->particles[i].velocity.y = velocity_magnitude * sim->particles[i].position.y / distance;
-      }
-      break;
-    case VELOCITY_RANDOM_DIRECTION:
-      {
-        double angle = random_uniform_double(0, 2 * M_PI);
-        sim->particles[i].velocity.x = velocity_magnitude * cos(angle);
-        sim->particles[i].velocity.y = velocity_magnitude * sin(angle);
-      }
-      break;
+    case VELOCITY_PERPENDICULAR: {
+      double angle =
+          atan2(sim->particles[i].position.y, sim->particles[i].position.x);
+      sim->particles[i].velocity.x = velocity_magnitude * sin(angle);
+      sim->particles[i].velocity.y = -velocity_magnitude * cos(angle);
+    } break;
+    case VELOCITY_TOWARDS_ORIGIN: {
+      double distance =
+          sqrt(sim->particles[i].position.x * sim->particles[i].position.x +
+               sim->particles[i].position.y * sim->particles[i].position.y);
+      sim->particles[i].velocity.x =
+          -velocity_magnitude * sim->particles[i].position.x / distance;
+      sim->particles[i].velocity.y =
+          -velocity_magnitude * sim->particles[i].position.y / distance;
+    } break;
+    case VELOCITY_AWAY_FROM_ORIGIN: {
+      double distance =
+          sqrt(sim->particles[i].position.x * sim->particles[i].position.x +
+               sim->particles[i].position.y * sim->particles[i].position.y);
+      sim->particles[i].velocity.x =
+          velocity_magnitude * sim->particles[i].position.x / distance;
+      sim->particles[i].velocity.y =
+          velocity_magnitude * sim->particles[i].position.y / distance;
+    } break;
+    case VELOCITY_RANDOM_DIRECTION: {
+      double angle = random_uniform_double(0, 2 * M_PI);
+      sim->particles[i].velocity.x = velocity_magnitude * cos(angle);
+      sim->particles[i].velocity.y = velocity_magnitude * sin(angle);
+    } break;
     default:
       sim->particles[i].velocity.x = 0.0;
       sim->particles[i].velocity.y = 0.0;
