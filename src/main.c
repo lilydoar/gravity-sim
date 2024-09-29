@@ -43,17 +43,23 @@ int main(void) {
   get_position_range(sim, &pos_min, &pos_max);
   Camera2D camera = setup_camera(pos_min, pos_max);
 
-
   while (!WindowShouldClose()) {
     /*step_simulation(sim);*/
 
     BeginDrawing();
     BeginMode2D(camera);
+
     ClearBackground(SPACE_GREY);
     draw_simulation(sim);
+
     EndMode2D();
     EndDrawing();
   }
+
+  deinit_simulation(sim);
+  CloseWindow();
+
+  return 0;
 }
 
 Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max) {
@@ -68,11 +74,6 @@ Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max) {
                     : (SCREEN_HEIGHT / range_y);
 
   return camera;
-
-  deinit_simulation(sim);
-  CloseWindow();
-
-  return 0;
 }
 
 void draw_simulation(Simulation *sim) {
