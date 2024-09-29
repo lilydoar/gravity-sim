@@ -2,7 +2,11 @@
 #include "raylib.h"
 
 int main(void) {
-  init_simulation((SimulationOptions){false});
+  init_simulation((SimulationOptions){
+      false,                  // collision enabled
+      100,                    // particle count
+      DISTRIBUTION_UNDEFINED, // spawn distribution
+  });
 
   InitWindow(800, 450, "raylib [core] example - basic window");
 
