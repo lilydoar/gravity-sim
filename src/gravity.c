@@ -187,8 +187,5 @@ void get_position_range(Simulation sim, Vector2D *min, Vector2D *max) {
     if (p.position.y > max->y) max->y = p.position.y;
   }
 }
-  SimulationStruct *sim_struct = (SimulationStruct *)sim;
-  return sim_struct->particle_count;
-}
 
 #endif // GRAVITY_C
