@@ -13,6 +13,9 @@
 #define PARTICLE_COLOR_MAX                                                     \
   CLITERAL(Color) { 192, 197, 206, 255 }
 
+#define MASS_RANGE_MIN 1.0f
+#define MASS_RANGE_MAX 2.0f
+
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
 
@@ -80,12 +83,23 @@ void draw_simulation(Simulation *sim) {
   uint64_t particle_count = get_particle_count(sim);
   for (uint64_t i = 0; i < particle_count; ++i) {
     Particle p = get_particle_state(sim, i);
-    // Draw particle as a red circle
+    // Calculate the interpolation factor
+    float factor = (p.mass - MASS_RANGE_MIN) / (MASS_RANGE_MAX - MASS_RANGE_MIN);
+
+    // Interpolate color
+    Color color = {
+        (unsigned char)(PARTICLE_COLOR_MIN.r + factor * (PARTICLE_COLOR_MAX.r - PARTICLE_COLOR_MIN.r)),
+        (unsigned char)(PARTICLE_COLOR_MIN.g + factor * (PARTICLE_COLOR_MAX.g - PARTICLE_COLOR_MIN.g)),
+        (unsigned char)(PARTICLE_COLOR_MIN.b + factor * (PARTICLE_COLOR_MAX.b - PARTICLE_COLOR_MIN.b)),
+        255 // Assuming full opacity
+    };
+
+    // Draw particle with interpolated color
     DrawCircleV(
         (Vector2){
             p.position.x,
             p.position.y,
         },
-        p.size, RED);
+        p.size, color);
   }
 }
