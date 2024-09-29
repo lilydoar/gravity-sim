@@ -21,6 +21,7 @@ typedef struct {
   double time_step;              // Time step for the simulation
   uint64_t substeps;             // Number of substeps
   Vector2D position_range[2];    // Position range
+  uint64_t collision_iterations; // Number of iterations for collision resolution
   Vector2D *forces;              // Array to store forces for each particle
   double gravitational_constant; // Gravitational constant for the simulation
 } SimulationStruct;
@@ -64,6 +65,9 @@ Simulation init_simulation(SimulationOptions options) {
   sim->gravitational_constant = options.gravitational_constant;
   sim->position_range[0] = options.position_range[0];
   sim->position_range[1] = options.position_range[1];
+
+  // Store collision iterations
+  sim->collision_iterations = options.collision_iterations;
 
   // Allocate memory for particles
   sim->particles = (Particle *)malloc(sizeof(Particle) * sim->particle_count);

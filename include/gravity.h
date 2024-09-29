@@ -37,6 +37,7 @@ typedef struct {
   Vector2D position_range[2]; // Two vectors defining the area for position
   float size_range[2];        // Two floats defining the range for size
   float mass_range[2];        // Two floats defining the range for mass
+  uint64_t collision_iterations; // Number of iterations for collision resolution
 } SimulationOptions;
 
 // Opaque type for the simulation
