@@ -17,6 +17,7 @@ typedef struct {
 
 double random_uniform_double(double min, double max) {
   return min + (double)rand() / RAND_MAX * (max - min);
+}
 
 float random_uniform_float(float min, float max) {
   return min + (float)rand() / RAND_MAX * (max - min);
@@ -35,6 +36,7 @@ float random_normal_float(float mean, float stddev) {
   float z0 = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * M_PI * u2);
   return z0 * stddev + mean;
 }
+
 Simulation init_simulation(SimulationOptions options) {
   // Allocate memory for the simulation
   SimulationStruct *sim = (SimulationStruct *)malloc(sizeof(SimulationStruct));
@@ -116,7 +118,6 @@ Simulation init_simulation(SimulationOptions options) {
   }
 
   return (Simulation)sim;
-}
 }
 
 void deinit_simulation(Simulation sim) {
