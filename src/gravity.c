@@ -1,4 +1,9 @@
+#ifndef GRAVITY_C
+#define GRAVITY_C
+
 #include "gravity.h"
+
+#endif // GRAVITY_C
 
 // Initializes the simulation with the specified options.
 void init_simulation(SimulationOptions options) {

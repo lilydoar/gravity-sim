@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#include <stdbool.h>
+
 // Define a structure for a 2D vector
 typedef struct {
     double x;
