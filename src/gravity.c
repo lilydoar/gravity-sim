@@ -8,11 +8,11 @@
 
 // Define the concrete Simulation struct
 typedef struct {
-  Particle *particles;     // Array of particles
-  uint64_t particle_count; // Number of particles
-  bool enable_collisions;  // Collision handling flag
-  double time_step;        // Time step for the simulation
-  uint64_t substeps;       // Number of substeps
+  Particle *particles;        // Array of particles
+  uint64_t particle_count;    // Number of particles
+  bool enable_collisions;     // Collision handling flag
+  double time_step;           // Time step for the simulation
+  uint64_t substeps;          // Number of substeps
   Vector2D position_range[2]; // Position range
 } SimulationStruct;
 
@@ -55,7 +55,7 @@ Simulation init_simulation(SimulationOptions options) {
   sim->position_range[0] = options.position_range[0];
   sim->position_range[1] = options.position_range[1];
 
-  // Allocate memory for particles  
+  // Allocate memory for particles
   sim->particles = (Particle *)malloc(sizeof(Particle) * sim->particle_count);
   if (!sim->particles) {
     free(sim);
@@ -140,7 +140,7 @@ void step_simulation(Simulation sim) {
 
   // Loop over each substep
   for (uint64_t substep = 0; substep < sim_struct->substeps; ++substep) {
-    
+
     // Loop over each particle
     for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
       Particle *p = &sim_struct->particles[i];
@@ -150,7 +150,8 @@ void step_simulation(Simulation sim) {
 
       // Loop over each other particle to calculate forces
       for (uint64_t j = 0; j < sim_struct->particle_count; ++j) {
-        if (i == j) continue; // Skip self-interaction
+        if (i == j)
+          continue; // Skip self-interaction
 
         Particle *other = &sim_struct->particles[j];
 
