@@ -4,6 +4,9 @@
 #include "gravity.h"
 #include <stddef.h>
 
+void deinit_simulation(Simulation sim) {
+    // Deinitialize the simulation and free resources
+}
 #endif // GRAVITY_C
 
 Simulation init_simulation(SimulationOptions options) {
