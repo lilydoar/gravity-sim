@@ -20,6 +20,7 @@ typedef struct {
   uint64_t substeps;          // Number of substeps
   Vector2D position_range[2]; // Position range
   Vector2D *forces;           // Array to store forces for each particle
+  double gravitational_constant; // Gravitational constant for the simulation
 } SimulationStruct;
 
 double random_uniform_double(double min, double max) {
