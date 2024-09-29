@@ -192,14 +192,16 @@ void step_simulation(Simulation sim) {
 
     // Handle collisions if enabled
     if (sim_struct->enable_collisions) {
-      // Loop over each particle pair to check for collisions
-      for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
-        for (uint64_t j = i + 1; j < sim_struct->particle_count; ++j) {
-          Particle *p1 = &sim_struct->particles[i];
-          Particle *p2 = &sim_struct->particles[j];
+      for (uint64_t iter = 0; iter < sim_struct->collision_iterations; ++iter) {
+        // Loop over each particle pair to check for collisions
+        for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
+          for (uint64_t j = i + 1; j < sim_struct->particle_count; ++j) {
+            Particle *p1 = &sim_struct->particles[i];
+            Particle *p2 = &sim_struct->particles[j];
 
-          // Check for collision between p1 and p2
-          // Resolve collision if detected
+            // Check for collision between p1 and p2
+            // Resolve collision if detected
+          }
         }
       }
     }
