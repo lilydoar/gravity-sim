@@ -25,7 +25,7 @@ int main(void) {
       DISTRIBUTION_UNDEFINED, // mass distribution
 
       {{-100.0, 100.0}, {100.0, -100.0}}, // position range
-      {10.0, 20.0},                       // size range
+      {1.0, 2.0},                       // size range
       {1.0, 2.0},                         // mass range
   });
   assert(sim != NULL);
@@ -38,20 +38,23 @@ int main(void) {
   camera.target = (Vector2){0.0f, 0.0f};
   camera.offset = (Vector2){SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
 
-  // Retrieve position range and calculate zoom to fit the entire simulation on screen
-  Vector2D min, max;
-  get_position_range(sim, &min, &max);
-  float range_x = max.x - min.x;
-  float range_y = max.y - min.y;
-  camera.zoom = (SCREEN_WIDTH / range_x < SCREEN_HEIGHT / range_y) ? (SCREEN_WIDTH / range_x) : (SCREEN_HEIGHT / range_y);
+  Vector2D pos_min, pos_max;
+  get_position_range(sim, &pos_min, &pos_max);
+  float range_x = pos_max.x - pos_min.x;
+  float range_y = pos_max.y - pos_min.y;
+  camera.zoom = (SCREEN_WIDTH / range_x < SCREEN_HEIGHT / range_y)
+                    ? (SCREEN_WIDTH / range_x)
+                    : (SCREEN_HEIGHT / range_y);
 
   while (!WindowShouldClose()) {
-    step_simulation(sim);
+    /*step_simulation(sim);*/
 
+    BeginDrawing();
     BeginMode2D(camera);
     ClearBackground(SPACE_GREY);
     draw_simulation(sim);
     EndMode2D();
+    EndDrawing();
   }
 
   deinit_simulation(sim);
@@ -64,12 +67,12 @@ void draw_simulation(Simulation *sim) {
   uint64_t particle_count = get_particle_count(sim);
   for (uint64_t i = 0; i < particle_count; ++i) {
     Particle p = get_particle_state(sim, i);
-    // Calculate screen position
-    /*float screen_x = (float)(SCREEN_WIDTH) / 2 + p.position.x;*/
-    /*float screen_y = (float)(SCREEN_HEIGHT) / 2 + p.position.y;*/
-    float screen_x = 0.0;
-    float screen_y = 0.0;
     // Draw particle as a red circle
-    DrawCircleV((Vector2){screen_x, screen_y}, p.size, RED);
+    DrawCircleV(
+        (Vector2){
+            p.position.x,
+            p.position.y,
+        },
+        p.size, RED);
   }
 }
