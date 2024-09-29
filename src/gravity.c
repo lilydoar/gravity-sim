@@ -41,14 +41,14 @@ Simulation init_simulation(SimulationOptions options) {
     switch (options.position_distribution) {
     case DISTRIBUTION_UNDEFINED:
     case DISTRIBUTION_UNIFORM:
-      sim->particles[i].position.x = options.position_range[0].x +
-                                     (double)rand() / RAND_MAX *
-                                         (options.position_range[1].x -
-                                          options.position_range[0].x);
-      sim->particles[i].position.y = options.position_range[0].y +
-                                     (double)rand() / RAND_MAX *
-                                         (options.position_range[1].y -
-                                          options.position_range[0].y);
+      sim->particles[i].position.x =
+          options.position_range[0].x +
+          (double)rand() / RAND_MAX *
+              (options.position_range[1].x - options.position_range[0].x);
+      sim->particles[i].position.y =
+          options.position_range[0].y +
+          (double)rand() / RAND_MAX *
+              (options.position_range[1].y - options.position_range[0].y);
       break;
     case DISTRIBUTION_NORMAL:
       // TODO: Implement normal distribution for position
@@ -61,10 +61,10 @@ Simulation init_simulation(SimulationOptions options) {
     switch (options.size_distribution) {
     case DISTRIBUTION_UNDEFINED:
     case DISTRIBUTION_UNIFORM:
-      sim->particles[i].size = options.size_range[0] +
-                               (float)rand() / RAND_MAX *
-                                   (options.size_range[1] -
-                                    options.size_range[0]);
+      sim->particles[i].size =
+          options.size_range[0] +
+          (float)rand() / RAND_MAX *
+              (options.size_range[1] - options.size_range[0]);
       break;
     case DISTRIBUTION_NORMAL:
       // TODO: Implement normal distribution for size
@@ -77,10 +77,10 @@ Simulation init_simulation(SimulationOptions options) {
     switch (options.mass_distribution) {
     case DISTRIBUTION_UNDEFINED:
     case DISTRIBUTION_UNIFORM:
-      sim->particles[i].mass = options.mass_range[0] +
-                               (float)rand() / RAND_MAX *
-                                   (options.mass_range[1] -
-                                    options.mass_range[0]);
+      sim->particles[i].mass =
+          options.mass_range[0] +
+          (float)rand() / RAND_MAX *
+              (options.mass_range[1] - options.mass_range[0]);
       break;
     case DISTRIBUTION_NORMAL:
       // TODO: Implement normal distribution for mass
