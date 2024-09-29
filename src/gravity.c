@@ -5,9 +5,9 @@
 
 #endif // GRAVITY_C
 
-// Initializes the simulation with the specified options.
-void init_simulation(SimulationOptions options) {
+Simulation init_simulation(SimulationOptions options) {
     // Initialize simulation with given options
+    return NULL; // Placeholder return
 }
 
 // Adds a new particle to the simulation.
@@ -25,8 +25,7 @@ void apply_force(int particle_id, Vector2D force) {
     // Apply the specified force to the particle
 }
 
-// Advances the simulation by a specified time step.
-void update_simulation(double time_step) {
+void step_simulation(Simulation sim, double time_step) {
     // Update the simulation by the given time step
 }
 
