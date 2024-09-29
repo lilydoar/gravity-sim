@@ -1,0 +1,28 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-std=c17",
+      "-framework",
+      "CoreVideo",
+      "-framework",
+      "IOKit",
+      "-framework",
+      "Cocoa",
+      "-framework",
+      "GLUT",
+      "-framework",
+      "OpenGL",
+      "-Iinclude/",
+      "-o",
+      "gravity-sim",
+      "src/main.c"
+    ],
+    "directory": "/Users/lily/Documents/code/gravity-sim",
+    "file": "/Users/lily/Documents/code/gravity-sim/src/main.c",
+    "output": "/Users/lily/Documents/code/gravity-sim/gravity-sim"
+  }
+]
