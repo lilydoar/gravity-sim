@@ -17,7 +17,6 @@ typedef struct {
 
 double random_uniform_double(double min, double max) {
   return min + (double)rand() / RAND_MAX * (max - min);
-}
 
 float random_uniform_float(float min, float max) {
   return min + (float)rand() / RAND_MAX * (max - min);
