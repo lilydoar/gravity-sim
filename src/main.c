@@ -26,12 +26,13 @@
 
 #define MIN_ZOOM 0.01f
 #define MAX_ZOOM 10.0f
+#define DEFAULT_ZOOM 0.05f
 
 Color interpolate_color(float mass, float mass_min, float mass_max);
 void draw_simulation(Simulation sim);
 Camera2D setup_camera();
-void update_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max);
-void reset_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max);
+void update_camera(Camera2D *camera);
+void reset_camera(Camera2D *camera);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
@@ -58,12 +59,11 @@ int main(void) {
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
 
-  Vector2D pos_min, pos_max;
   Camera2D camera = setup_camera();
 
   while (!WindowShouldClose()) {
     step_simulation(sim);
-    update_camera(&camera, pos_min, pos_max);
+    update_camera(&camera);
 
     BeginDrawing();
     ClearBackground(SPACE_GREY);
@@ -102,11 +102,11 @@ Camera2D setup_camera() {
   Camera2D camera = {0};
   camera.target = (Vector2){0.0f, 0.0f};
   camera.offset = (Vector2){SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-  camera.zoom = 0.05;
+  camera.zoom = DEFAULT_ZOOM;
   return camera;
 }
 
-void update_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max) {
+void update_camera(Camera2D *camera) {
   // Handle zooming with mouse wheel
   float wheel = GetMouseWheelMove();
   if (wheel != 0) {
@@ -128,22 +128,17 @@ void update_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max) {
 
   // Reset camera
   if (IsKeyPressed(KEY_R)) {
-    reset_camera(camera, pos_min, pos_max);
+    reset_camera(camera);
   }
 
   // Clamp zoom
   camera->zoom = Clamp(camera->zoom, MIN_ZOOM, MAX_ZOOM);
 }
 
-void reset_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max) {
+void reset_camera(Camera2D *camera) {
   camera->target = (Vector2){0.0f, 0.0f};
   camera->offset = (Vector2){SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-
-  float range_x = 1.5 * (pos_max.x - pos_min.x);
-  float range_y = 1.5 * (pos_max.y - pos_min.y);
-  camera->zoom = (SCREEN_WIDTH / range_x < SCREEN_HEIGHT / range_y)
-                     ? (SCREEN_WIDTH / range_x)
-                     : (SCREEN_HEIGHT / range_y);
+  camera->zoom = DEFAULT_ZOOM;
 }
 
 void draw_simulation(Simulation sim) {
