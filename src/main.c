@@ -40,20 +40,20 @@ int main(void) {
       2,          // substeps
       true,       // collision enabled
       2,          // collision iterations
-      6.67430e-4, // gravitational constant
+      6.67430e-3, // gravitational constant
 
       400,                  // particle count
       DISTRIBUTION_UNIFORM, // position distribution
       DISTRIBUTION_UNIFORM, // size distribution
       DISTRIBUTION_NORMAL,  // mass distribution
 
-      VELOCITY_TOWARDS_ORIGIN, // velocity init mode
-      DISTRIBUTION_UNIFORM,    // velocity magnitude distribution
+      VELOCITY_PERPENDICULAR, // velocity init mode
+      DISTRIBUTION_UNIFORM,   // velocity magnitude distribution
 
       {{-2000.0, 2000.0}, {2000.0, -2000.0}}, // position range
-      {10.0, 80.0},                           // size range
+      {10.0, 60.0},                           // size range
       {MASS_RANGE_MIN, MASS_RANGE_MAX},       // mass range
-      {10.0, 20.0},                           // velocity range
+      {1.0, 12.0},                            // velocity range
   });
   assert(sim != NULL);
 
