@@ -24,6 +24,9 @@
 #define CAMERA_MOVE_SPEED 5.0f
 #define CAMERA_ZOOM_SPEED 0.1f
 
+#define MIN_ZOOM 0.1f
+#define MAX_ZOOM 100.0f
+
 Color interpolate_color(float mass, float mass_min, float mass_max);
 void draw_simulation(Simulation sim);
 Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
@@ -136,7 +139,7 @@ void update_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max) {
   }
 
   // Clamp zoom
-  camera->zoom = Clamp(camera->zoom, 0.1f, 10.0f);
+  camera->zoom = Clamp(camera->zoom, MIN_ZOOM, MAX_ZOOM);
 }
 
 void reset_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max) {
