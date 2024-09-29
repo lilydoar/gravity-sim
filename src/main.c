@@ -36,24 +36,36 @@ void reset_camera(Camera2D *camera);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
-      0.5,        // time step
-      5,          // substeps
-      true,       // collision enabled
-      2,          // collision iterations
-      6.67430e-3, // gravitational constant
-
-      400,                  // particle count
-      DISTRIBUTION_UNIFORM, // position distribution
-      DISTRIBUTION_UNIFORM, // size distribution
-      DISTRIBUTION_NORMAL,  // mass distribution
-
-      VELOCITY_PERPENDICULAR, // velocity init mode
-      DISTRIBUTION_UNIFORM,   // velocity magnitude distribution
-
-      {{-2000.0, 2000.0}, {2000.0, -2000.0}}, // position range
-      {10.0, 60.0},                           // size range
-      {MASS_RANGE_MIN, MASS_RANGE_MAX},       // mass range
-      {1.0, 8.0},                             // velocity range
+    .time_step = 0.5,
+    .substeps = 5,
+    .enable_collisions = true,
+    .collision_iterations = 2,
+    .gravitational_constant = 6.67430e-3,
+    .particle_count = 400,
+    .position_x_distribution = {
+        .type = DISTRIBUTION_UNIFORM,
+        .params.uniform = {.min = -2000.0, .max = 2000.0}
+    },
+    .position_y_distribution = {
+        .type = DISTRIBUTION_UNIFORM,
+        .params.uniform = {.min = -2000.0, .max = 2000.0}
+    },
+    .mass_distribution = {
+        .type = DISTRIBUTION_NORMAL,
+        .params.normal = {.mean = (MASS_RANGE_MIN + MASS_RANGE_MAX) / 2, .stddev = (MASS_RANGE_MAX - MASS_RANGE_MIN) / 6}
+    },
+    .size_distribution = {
+        .type = DISTRIBUTION_UNIFORM,
+        .params.uniform = {.min = 10.0, .max = 60.0}
+    },
+    .velocity_x_distribution = {
+        .type = DISTRIBUTION_UNIFORM,
+        .params.uniform = {.min = -8.0, .max = 8.0}
+    },
+    .velocity_y_distribution = {
+        .type = DISTRIBUTION_UNIFORM,
+        .params.uniform = {.min = -8.0, .max = 8.0}
+    }
   });
   assert(sim != NULL);
 

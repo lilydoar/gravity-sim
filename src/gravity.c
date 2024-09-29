@@ -31,10 +31,6 @@ double random_uniform_double(double min, double max) {
   return min + (double)rand() / RAND_MAX * (max - min);
 }
 
-float random_uniform_float(float min, float max) {
-  return min + (float)rand() / RAND_MAX * (max - min);
-}
-
 double random_normal_double(double mean, double stddev) {
   double u1 = (double)rand() / RAND_MAX;
   double u2 = (double)rand() / RAND_MAX;
@@ -42,11 +38,17 @@ double random_normal_double(double mean, double stddev) {
   return z0 * stddev + mean;
 }
 
-float random_normal_float(float mean, float stddev) {
-  float u1 = (float)rand() / RAND_MAX;
-  float u2 = (float)rand() / RAND_MAX;
-  float z0 = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * M_PI * u2);
-  return z0 * stddev + mean;
+double sample_distribution(const Distribution* dist) {
+    switch (dist->type) {
+        case DISTRIBUTION_UNIFORM:
+            return random_uniform_double(dist->params.uniform.min, dist->params.uniform.max);
+        case DISTRIBUTION_NORMAL:
+            return random_normal_double(dist->params.normal.mean, dist->params.normal.stddev);
+        // Add cases for other distribution types as needed
+        default:
+            fprintf(stderr, "Unknown distribution type\n");
+            return 0.0;
+    }
 }
 
 Simulation init_simulation(SimulationOptions options) {
@@ -77,114 +79,14 @@ Simulation init_simulation(SimulationOptions options) {
     return NULL; // Allocation failed
   }
 
-  // Initialize particles based on the specified distributions
-  for (uint64_t i = 0; i < sim->particle_count; ++i) {
-    // Initialize position
-    switch (options.position_distribution) {
-    case DISTRIBUTION_UNIFORM:
-      sim->particles[i].position.x = random_uniform_double(
-          options.position_range[0].x, options.position_range[1].x);
-      sim->particles[i].position.y = random_uniform_double(
-          options.position_range[0].y, options.position_range[1].y);
-      break;
-    case DISTRIBUTION_NORMAL:
-      sim->particles[i].position.x = random_normal_double(
-          (options.position_range[0].x + options.position_range[1].x) / 2,
-          (options.position_range[1].x - options.position_range[0].x) / 6);
-      sim->particles[i].position.y = random_normal_double(
-          (options.position_range[0].y + options.position_range[1].y) / 2,
-          (options.position_range[1].y - options.position_range[0].y) / 6);
-      break;
-    default:
-      break;
-    }
-
-    // Initialize size
-    switch (options.size_distribution) {
-    case DISTRIBUTION_UNIFORM:
-      sim->particles[i].size =
-          random_uniform_float(options.size_range[0], options.size_range[1]);
-      break;
-    case DISTRIBUTION_NORMAL:
-      sim->particles[i].size = random_normal_float(
-          (options.size_range[0] + options.size_range[1]) / 2,
-          (options.size_range[1] - options.size_range[0]) / 6);
-      break;
-    default:
-      break;
-    }
-
-    // Initialize mass
-    switch (options.mass_distribution) {
-    case DISTRIBUTION_UNIFORM:
-      sim->particles[i].mass =
-          random_uniform_float(options.mass_range[0], options.mass_range[1]);
-      break;
-    case DISTRIBUTION_NORMAL:
-      sim->particles[i].mass = random_normal_float(
-          (options.mass_range[0] + options.mass_range[1]) / 2,
-          (options.mass_range[1] - options.mass_range[0]) / 6);
-      break;
-    default:
-      break;
-    }
-
-    // Initialize velocity
-    double velocity_magnitude;
-    switch (options.velocity_magnitude_distribution) {
-    case DISTRIBUTION_UNIFORM:
-      velocity_magnitude = random_uniform_double(options.velocity_range.x,
-                                                 options.velocity_range.y);
-      break;
-    case DISTRIBUTION_NORMAL:
-      velocity_magnitude = random_normal_double(
-          (options.velocity_range.x + options.velocity_range.y) / 2,
-          (options.velocity_range.y - options.velocity_range.x) / 6);
-      break;
-    default:
-      velocity_magnitude = 0.0;
-      break;
-    }
-
-    switch (options.velocity_init_mode) {
-    case VELOCITY_ZERO:
-      sim->particles[i].velocity.x = 0.0;
-      sim->particles[i].velocity.y = 0.0;
-      break;
-    case VELOCITY_PERPENDICULAR: {
-      double angle =
-          atan2(sim->particles[i].position.y, sim->particles[i].position.x);
-      sim->particles[i].velocity.x = velocity_magnitude * sin(angle);
-      sim->particles[i].velocity.y = -velocity_magnitude * cos(angle);
-    } break;
-    case VELOCITY_TOWARDS_ORIGIN: {
-      double distance =
-          sqrt(sim->particles[i].position.x * sim->particles[i].position.x +
-               sim->particles[i].position.y * sim->particles[i].position.y);
-      sim->particles[i].velocity.x =
-          -velocity_magnitude * sim->particles[i].position.x / distance;
-      sim->particles[i].velocity.y =
-          -velocity_magnitude * sim->particles[i].position.y / distance;
-    } break;
-    case VELOCITY_AWAY_FROM_ORIGIN: {
-      double distance =
-          sqrt(sim->particles[i].position.x * sim->particles[i].position.x +
-               sim->particles[i].position.y * sim->particles[i].position.y);
-      sim->particles[i].velocity.x =
-          velocity_magnitude * sim->particles[i].position.x / distance;
-      sim->particles[i].velocity.y =
-          velocity_magnitude * sim->particles[i].position.y / distance;
-    } break;
-    case VELOCITY_RANDOM_DIRECTION: {
-      double angle = random_uniform_double(0, 2 * M_PI);
-      sim->particles[i].velocity.x = velocity_magnitude * cos(angle);
-      sim->particles[i].velocity.y = velocity_magnitude * sin(angle);
-    } break;
-    default:
-      sim->particles[i].velocity.x = 0.0;
-      sim->particles[i].velocity.y = 0.0;
-      break;
-    }
+  // Initialize particles
+  for (uint64_t i = 0; i < sim->particle_count; i++) {
+    sim->particles[i].position.x = sample_distribution(&options.position_x_distribution);
+    sim->particles[i].position.y = sample_distribution(&options.position_y_distribution);
+    sim->particles[i].mass = sample_distribution(&options.mass_distribution);
+    sim->particles[i].size = sample_distribution(&options.size_distribution);
+    sim->particles[i].velocity.x = sample_distribution(&options.velocity_x_distribution);
+    sim->particles[i].velocity.y = sample_distribution(&options.velocity_y_distribution);
   }
 
   // Allocate memory for forces
