@@ -19,7 +19,7 @@ typedef struct {
   double time_step;           // Time step for the simulation
   uint64_t substeps;          // Number of substeps
   Vector2D position_range[2]; // Position range
-  Vector2D *forces;          // Array to store forces for each particle
+  Vector2D *forces;           // Array to store forces for each particle
 } SimulationStruct;
 
 double random_uniform_double(double min, double max) {
@@ -165,7 +165,8 @@ void step_simulation(Simulation sim) {
     for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
       Particle *p = &sim_struct->particles[i];
       for (uint64_t j = 0; j < sim_struct->particle_count; ++j) {
-        if (i == j) continue; // Skip self-interaction
+        if (i == j)
+          continue; // Skip self-interaction
 
         Particle *other = &sim_struct->particles[j];
         Vector2D force = calculate_force(p, other);

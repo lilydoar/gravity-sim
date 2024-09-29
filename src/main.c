@@ -13,8 +13,8 @@
 #define PARTICLE_COLOR_MAX                                                     \
   CLITERAL(Color) { 192, 197, 206, 255 }
 
-#define MASS_RANGE_MIN 10.0f
-#define MASS_RANGE_MAX 200.0f
+#define MASS_RANGE_MIN 100.0f
+#define MASS_RANGE_MAX 2000.0f
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
@@ -25,8 +25,8 @@ Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
-      0.1,   // time step
-      1,     // substeps
+      0.01,  // time step
+      2,     // substeps
       false, // collision enabled
 
       100,                 // particle count
@@ -57,11 +57,11 @@ int main(void) {
     draw_simulation(sim);
 
     EndMode2D();
+
+    DrawFPS(10, 10);
+
     EndDrawing();
   }
-
-  // Draw FPS
-  DrawFPS(10, 10);
 
   deinit_simulation(sim);
   CloseWindow();
