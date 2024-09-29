@@ -1,5 +1,7 @@
 #include "gravity.h"
 #include "raylib.h"
+#include <assert.h>
+#include <stdlib.h>
 
 #define SPACE_GREY                                                             \
   CLITERAL(Color) { 52, 61, 70, 255 }
@@ -14,6 +16,7 @@ int main(void) {
       0.1,                    // time step
       1,                      // substeps
   });
+  assert(sim != NULL);
 
   InitWindow(800, 450, "raylib [core] example - basic window");
 

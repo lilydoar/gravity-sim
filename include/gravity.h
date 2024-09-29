@@ -29,7 +29,7 @@ typedef struct {
   ParticleDistribution distribution; // Distribution type for spawning particles
 
   double time_step;                  // The fixed time delta of the simulation
-  uint32_t substeps;                 // The number of substeps within each step
+  uint64_t substeps;                 // The number of substeps within each step
 } SimulationOptions;
 
 // Opaque type for the simulation
