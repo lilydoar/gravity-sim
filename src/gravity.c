@@ -220,6 +220,9 @@ void step_simulation(Simulation sim) {
       // Loop over each particle pair to check for collisions
       for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
         for (uint64_t j = i + 1; j < sim_struct->particle_count; ++j) {
+          if (i == j)
+            continue; // Skip self-interaction
+
           Particle *p1 = &sim_struct->particles[i];
           Particle *p2 = &sim_struct->particles[j];
 
