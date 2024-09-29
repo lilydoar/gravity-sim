@@ -2,33 +2,34 @@
 #define GRAVITY_H
 
 #include <stdbool.h>
-
-#include <stdbool.h>
+#include <stdint.h>
 
 // Define a structure for a 2D vector
 typedef struct {
-    double x;
-    double y;
+  double x;
+  double y;
 } Vector2D;
 
 // Define a structure for a particle
 typedef struct {
-    double mass;
-    double size;
-    Vector2D position;
-    Vector2D velocity;
+  double mass;
+  double size;
+  Vector2D position;
+  Vector2D velocity;
 } Particle;
 
 // Define a structure for simulation options
 typedef struct {
-    bool enable_collisions;  // Flag to enable or disable collision handling
-    // Add other simulation options here if needed
+  bool enable_collisions; // Flag to enable or disable collision handling
+  
+  int64_t particle_count; // The number of starting particles
 } SimulationOptions;
 
 /**
  * Initializes the simulation with the specified options.
  *
- * @param options A SimulationOptions struct containing configuration settings for the simulation.
+ * @param options A SimulationOptions struct containing configuration settings
+ * for the simulation.
  */
 void init_simulation(SimulationOptions options);
 
@@ -40,7 +41,8 @@ void init_simulation(SimulationOptions options);
  * @param position The initial position of the particle as a Vector2D.
  * @param velocity The initial velocity of the particle as a Vector2D.
  */
-void add_particle(double mass, double size, Vector2D position, Vector2D velocity);
+void add_particle(double mass, double size, Vector2D position,
+                  Vector2D velocity);
 
 /**
  * Removes a particle from the simulation.
@@ -81,8 +83,8 @@ Particle get_particle_state(int particle_id);
 
 // Structure to hold particle information
 typedef struct {
-    int particle_id;  // Unique identifier for the particle
-    Particle particle;  // The particle's data
+  int particle_id;   // Unique identifier for the particle
+  Particle particle; // The particle's data
 } ParticleInfo;
 
 /**
@@ -91,13 +93,17 @@ typedef struct {
  * @param top_left The top-left corner of the rectangle.
  * @param bottom_right The bottom-right corner of the rectangle.
  * @param buffer A pointer to an array of ParticleInfo to store the results.
- * @param max_count The maximum number of ParticleInfo entries that the buffer can hold.
- * @return The number of particles found and stored in the buffer, or -1 if the buffer is insufficient.
+ * @param max_count The maximum number of ParticleInfo entries that the buffer
+ * can hold.
+ * @return The number of particles found and stored in the buffer, or -1 if the
+ * buffer is insufficient.
  *
- * Note: If the function returns -1, the buffer may not be in a valid state, and not all particles
- * in the specified area could be retrieved. Ensure the buffer is large enough to hold all potential
- * particles in the area for accurate results.
+ * Note: If the function returns -1, the buffer may not be in a valid state, and
+ * not all particles in the specified area could be retrieved. Ensure the buffer
+ * is large enough to hold all potential particles in the area for accurate
+ * results.
  */
-int get_particles_by_area(Vector2D top_left, Vector2D bottom_right, ParticleInfo* buffer, int max_count);
+int get_particles_by_area(Vector2D top_left, Vector2D bottom_right,
+                          ParticleInfo *buffer, int max_count);
 
 #endif // GRAVITY_H
