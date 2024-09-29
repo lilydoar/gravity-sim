@@ -55,10 +55,9 @@ int main(void) {
       .size_distribution = {.type = DISTRIBUTION_UNIFORM,
                             .params.uniform = {.min = 10.0, .max = 60.0}},
       .velocity_init_mode = VELOCITY_INIT_PERPENDICULAR_TO_ORIGIN,
-      .velocity_distribution = {
-          .velocity_magnitude_distribution = {
-              .type = DISTRIBUTION_UNIFORM,
-              .params.uniform = {.min = 0.0, .max = 8.0}}}});
+      .velocity_magnitude_distribution = {
+          .type = DISTRIBUTION_UNIFORM,
+          .params.uniform = {.min = 0.0, .max = 8.0}}});
   assert(sim != NULL);
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
