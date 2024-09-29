@@ -156,14 +156,13 @@ void step_simulation(Simulation sim) {
   // Loop over each substep
   for (uint64_t substep = 0; substep < sim_struct->substeps; ++substep) {
 
-    // Reset force accumulators
-    for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
-      sim_struct->forces[i] = (Vector2D){0.0, 0.0};
-    }
-
     // Calculate forces
     for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
       Particle *p = &sim_struct->particles[i];
+
+      // Reset force accumulator
+      sim_struct->forces[i] = (Vector2D){0.0, 0.0};
+
       for (uint64_t j = 0; j < sim_struct->particle_count; ++j) {
         if (i == j)
           continue; // Skip self-interaction
