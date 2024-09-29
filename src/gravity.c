@@ -207,7 +207,8 @@ Vector2D calculate_force(Particle *p1, Particle *p2, double gravitational_consta
                             distance_vector.y * distance_vector.y;
   double distance = sqrt(distance_squared);
 
-  if (distance > 0) {
+  double min_distance = p1->size + p2->size;
+  if (distance > min_distance) {
     double force_magnitude =
         gravitational_constant * (p1->mass * p2->mass) / distance_squared;
     force.x = force_magnitude * (distance_vector.x / distance);
