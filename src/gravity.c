@@ -136,8 +136,46 @@ void deinit_simulation(Simulation sim) {
 }
 
 void step_simulation(Simulation sim) {
-  (void)sim;
-  // Update the simulation by the given time step
+  SimulationStruct *sim_struct = (SimulationStruct *)sim;
+
+  // Loop over each substep
+  for (uint64_t substep = 0; substep < sim_struct->substeps; ++substep) {
+    
+    // Loop over each particle
+    for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
+      Particle *p = &sim_struct->particles[i];
+
+      // Initialize force accumulators
+      Vector2D total_force = {0.0, 0.0};
+
+      // Loop over each other particle to calculate forces
+      for (uint64_t j = 0; j < sim_struct->particle_count; ++j) {
+        if (i == j) continue; // Skip self-interaction
+
+        Particle *other = &sim_struct->particles[j];
+
+        // Calculate force between p and other
+        // Add force to total_force
+      }
+
+      // Update particle velocity based on total_force
+      // Update particle position based on velocity
+    }
+
+    // Handle collisions if enabled
+    if (sim_struct->enable_collisions) {
+      // Loop over each particle pair to check for collisions
+      for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
+        for (uint64_t j = i + 1; j < sim_struct->particle_count; ++j) {
+          Particle *p1 = &sim_struct->particles[i];
+          Particle *p2 = &sim_struct->particles[j];
+
+          // Check for collision between p1 and p2
+          // Resolve collision if detected
+        }
+      }
+    }
+  }
 }
 
 void toggle_collisions(bool enable) {
