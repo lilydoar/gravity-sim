@@ -22,14 +22,14 @@
 #define SCREEN_HEIGHT 600
 
 #define CAMERA_MOVE_SPEED 5.0f
-#define CAMERA_ZOOM_SPEED 0.1f
+#define CAMERA_ZOOM_SPEED 0.05f
 
-#define MIN_ZOOM 0.1f
-#define MAX_ZOOM 100.0f
+#define MIN_ZOOM 0.01f
+#define MAX_ZOOM 10.0f
 
 Color interpolate_color(float mass, float mass_min, float mass_max);
 void draw_simulation(Simulation sim);
-Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
+Camera2D setup_camera();
 void update_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max);
 void reset_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max);
 
@@ -47,20 +47,19 @@ int main(void) {
       DISTRIBUTION_NORMAL,  // mass distribution
 
       VELOCITY_TOWARDS_ORIGIN, // velocity init mode
-      DISTRIBUTION_UNIFORM,   // velocity magnitude distribution
+      DISTRIBUTION_UNIFORM,    // velocity magnitude distribution
 
       {{-2000.0, 2000.0}, {2000.0, -2000.0}}, // position range
       {10.0, 80.0},                           // size range
       {MASS_RANGE_MIN, MASS_RANGE_MAX},       // mass range
-      {10.0, 20.0},                          // velocity range
+      {10.0, 20.0},                           // velocity range
   });
   assert(sim != NULL);
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
 
   Vector2D pos_min, pos_max;
-  get_position_range(sim, &pos_min, &pos_max);
-  Camera2D camera = setup_camera(pos_min, pos_max);
+  Camera2D camera = setup_camera();
 
   while (!WindowShouldClose()) {
     step_simulation(sim);
@@ -99,17 +98,11 @@ Color interpolate_color(float mass, float mass_min, float mass_max) {
   };
 }
 
-Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max) {
+Camera2D setup_camera() {
   Camera2D camera = {0};
   camera.target = (Vector2){0.0f, 0.0f};
   camera.offset = (Vector2){SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-
-  float range_x = 1.5 * (pos_max.x - pos_min.x);
-  float range_y = 1.5 * (pos_max.y - pos_min.y);
-  camera.zoom = (SCREEN_WIDTH / range_x < SCREEN_HEIGHT / range_y)
-                    ? (SCREEN_WIDTH / range_x)
-                    : (SCREEN_HEIGHT / range_y);
-
+  camera.zoom = 0.05;
   return camera;
 }
 
