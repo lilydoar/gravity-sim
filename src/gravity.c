@@ -146,29 +146,36 @@ void step_simulation(Simulation sim) {
   // Loop over each substep
   for (uint64_t substep = 0; substep < sim_struct->substeps; ++substep) {
 
-    // Loop over each particle
+    // Array to store total forces for each particle
+    Vector2D *forces = (Vector2D *)malloc(sizeof(Vector2D) * sim_struct->particle_count);
+
+    // Initialize force accumulators
+    for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
+      forces[i] = (Vector2D){0.0, 0.0};
+    }
+
+    // Calculate forces
     for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
       Particle *p = &sim_struct->particles[i];
-
-      // Initialize force accumulators
-      Vector2D total_force = {0.0, 0.0};
-
-      // Loop over each other particle to calculate forces
       for (uint64_t j = 0; j < sim_struct->particle_count; ++j) {
-        if (i == j)
-          continue; // Skip self-interaction
+        if (i == j) continue; // Skip self-interaction
 
         Particle *other = &sim_struct->particles[j];
-
         Vector2D force = calculate_force(p, other);
-        total_force.x += force.x;
-        total_force.y += force.y;
+        forces[i].x += force.x;
+        forces[i].y += force.y;
       }
-
-      // Integrate using Verlet method
-      double substep_time = sim_struct->time_step / sim_struct->substeps;
-      verlet_integration(p, total_force, substep_time);
     }
+
+    // Integrate using Verlet method
+    double substep_time = sim_struct->time_step / sim_struct->substeps;
+    for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
+      Particle *p = &sim_struct->particles[i];
+      verlet_integration(p, forces[i], substep_time);
+    }
+
+    // Free the forces array
+    free(forces);
 
     // Handle collisions if enabled
     if (sim_struct->enable_collisions) {
