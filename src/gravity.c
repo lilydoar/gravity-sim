@@ -6,7 +6,7 @@
 
 #define GRAVITATIONAL_CONSTANT 6.67430e-7
 
-Vector2D calculate_force(Particle *p1, Particle *p2);
+Vector2D calculate_force(Particle *p1, Particle *p2, double gravitational_constant);
 void verlet_integration(Particle *p, Vector2D total_force, double time_step);
 #include <stddef.h>
 #include <stdlib.h>
@@ -57,7 +57,8 @@ Simulation init_simulation(SimulationOptions options) {
   sim->time_step = options.time_step;
   sim->substeps = options.substeps;
 
-  // Store position range
+  // Store gravitational constant
+  sim->gravitational_constant = options.gravitational_constant;
   sim->position_range[0] = options.position_range[0];
   sim->position_range[1] = options.position_range[1];
 
@@ -168,7 +169,7 @@ void step_simulation(Simulation sim) {
           continue; // Skip self-interaction
 
         Particle *other = &sim_struct->particles[j];
-        Vector2D force = calculate_force(p, other);
+        Vector2D force = calculate_force(p, other, sim_struct->gravitational_constant);
         sim_struct->forces[i].x += force.x;
         sim_struct->forces[i].y += force.y;
       }
@@ -197,7 +198,7 @@ void step_simulation(Simulation sim) {
   }
 }
 
-Vector2D calculate_force(Particle *p1, Particle *p2) {
+Vector2D calculate_force(Particle *p1, Particle *p2, double gravitational_constant) {
   Vector2D force = {0.0, 0.0};
   Vector2D distance_vector = {p2->position.x - p1->position.x,
                               p2->position.y - p1->position.y};
@@ -207,7 +208,7 @@ Vector2D calculate_force(Particle *p1, Particle *p2) {
 
   if (distance > 0) {
     double force_magnitude =
-        GRAVITATIONAL_CONSTANT * (p1->mass * p2->mass) / distance_squared;
+        gravitational_constant * (p1->mass * p2->mass) / distance_squared;
     force.x = force_magnitude * (distance_vector.x / distance);
     force.y = force_magnitude * (distance_vector.y / distance);
   }

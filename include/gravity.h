@@ -36,6 +36,7 @@ typedef struct {
   Vector2D position_range[2]; // Two vectors defining the area for position
   float size_range[2];        // Two floats defining the range for size
   float mass_range[2];        // Two floats defining the range for mass
+  double gravitational_constant; // Gravitational constant for the simulation
 } SimulationOptions;
 
 // Opaque type for the simulation
