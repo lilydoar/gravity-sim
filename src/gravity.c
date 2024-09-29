@@ -199,8 +199,26 @@ void step_simulation(Simulation sim) {
             Particle *p1 = &sim_struct->particles[i];
             Particle *p2 = &sim_struct->particles[j];
 
-            // Check for collision between p1 and p2
-            // Resolve collision if detected
+            double dx = p2->position.x - p1->position.x;
+            double dy = p2->position.y - p1->position.y;
+            double distance = sqrt(dx * dx + dy * dy);
+            double min_distance = p1->size + p2->size;
+
+            if (distance < min_distance) {
+              // Calculate overlap
+              double overlap = 0.5 * (distance - min_distance);
+
+              // Displace particles to resolve overlap
+              p1->position.x -= overlap * (dx / distance);
+              p1->position.y -= overlap * (dy / distance);
+              p2->position.x += overlap * (dx / distance);
+              p2->position.y += overlap * (dy / distance);
+
+              // Swap velocities for a basic elastic collision
+              Vector2D temp_velocity = p1->velocity;
+              p1->velocity = p2->velocity;
+              p2->velocity = temp_velocity;
+            }
           }
         }
       }
