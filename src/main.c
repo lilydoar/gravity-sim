@@ -1,20 +1,28 @@
 #include "gravity.h"
 #include "raylib.h"
 
+#define SPACE_GREY                                                             \
+  CLITERAL(Color) { 52, 61, 70, 255 }
+
+void draw_simulation(Simulation *sim);
+
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
       false,                  // collision enabled
       100,                    // particle count
       DISTRIBUTION_UNDEFINED, // spawn distribution
+      0.1,                    // time step
+      1,                      // substeps
   });
 
   InitWindow(800, 450, "raylib [core] example - basic window");
 
   while (!WindowShouldClose()) {
+    step_simulation(sim);
+
     BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawText("Congrats! You created your first window!", 190, 200, 20,
-             LIGHTGRAY);
+    ClearBackground(SPACE_GREY);
+    draw_simulation(sim);
     EndDrawing();
   }
 
@@ -23,3 +31,5 @@ int main(void) {
 
   return 0;
 }
+
+void draw_simulation(Simulation *sim) {}

@@ -24,13 +24,16 @@ typedef enum {
   DISTRIBUTION_NORMAL
 } ParticleDistribution;
 typedef struct {
-  bool enable_collisions; // Flag to enable or disable collision handling
-  int64_t particle_count; // The number of starting particles
+  bool enable_collisions;  // Flag to enable or disable collision handling
+  uint64_t particle_count; // The number of starting particles
   ParticleDistribution distribution; // Distribution type for spawning particles
+
+  double time_step;                  // The fixed time delta of the simulation
+  uint32_t substeps;                 // The number of substeps within each step
 } SimulationOptions;
 
 // Opaque type for the simulation
-typedef void* Simulation;
+typedef void *Simulation;
 
 /**
  * Initializes the simulation with the specified options.
@@ -49,13 +52,11 @@ Simulation init_simulation(SimulationOptions options);
 void deinit_simulation(Simulation sim);
 
 /**
- * Advances the simulation by a specified time step.
+ * Advances the simulation by a single step.
  *
  * @param sim The Simulation handle.
- * @param time_step The time step by which to update the simulation.
  */
-void step_simulation(Simulation sim, double time_step);
-
+void step_simulation(Simulation sim);
 
 /**
  * Toggles collision handling in the simulation.

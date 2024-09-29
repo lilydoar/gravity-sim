@@ -29,7 +29,7 @@ void apply_force(int particle_id, Vector2D force) {
     // Apply the specified force to the particle
 }
 
-void step_simulation(Simulation sim, double time_step) {
+void step_simulation(Simulation sim) {
     // Update the simulation by the given time step
 }
 
