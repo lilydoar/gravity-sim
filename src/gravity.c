@@ -15,14 +15,15 @@ void verlet_integration(Particle *p, Vector2D total_force, double time_step);
 
 // Define the concrete Simulation struct
 typedef struct {
-  Particle *particles;           // Array of particles
-  uint64_t particle_count;       // Number of particles
-  bool enable_collisions;        // Collision handling flag
-  double time_step;              // Time step for the simulation
-  uint64_t substeps;             // Number of substeps
-  Vector2D position_range[2];    // Position range
-  uint64_t collision_iterations; // Number of iterations for collision resolution
-  Vector2D *forces;              // Array to store forces for each particle
+  Particle *particles;        // Array of particles
+  uint64_t particle_count;    // Number of particles
+  bool enable_collisions;     // Collision handling flag
+  double time_step;           // Time step for the simulation
+  uint64_t substeps;          // Number of substeps
+  Vector2D position_range[2]; // Position range
+  uint64_t
+      collision_iterations; // Number of iterations for collision resolution
+  Vector2D *forces;         // Array to store forces for each particle
   double gravitational_constant; // Gravitational constant for the simulation
 } SimulationStruct;
 
@@ -158,6 +159,29 @@ void deinit_simulation(Simulation sim) {
   }
 }
 
+void resolve_collision(Particle *p1, Particle *p2) {
+  double dx = p2->position.x - p1->position.x;
+  double dy = p2->position.y - p1->position.y;
+  double distance = sqrt(dx * dx + dy * dy);
+  double min_distance = p1->size + p2->size;
+
+  if (distance < min_distance) {
+    // Calculate overlap
+    double overlap = 0.5 * (distance - min_distance);
+
+    // Displace particles to resolve overlap
+    p1->position.x -= overlap * (dx / distance);
+    p1->position.y -= overlap * (dy / distance);
+    p2->position.x += overlap * (dx / distance);
+    p2->position.y += overlap * (dy / distance);
+
+    // Swap velocities for a basic elastic collision
+    Vector2D temp_velocity = p1->velocity;
+    p1->velocity = p2->velocity;
+    p2->velocity = temp_velocity;
+  }
+}
+
 void step_simulation(Simulation sim) {
   SimulationStruct *sim_struct = (SimulationStruct *)sim;
 
@@ -189,39 +213,17 @@ void step_simulation(Simulation sim) {
       Particle *p = &sim_struct->particles[i];
       verlet_integration(p, sim_struct->forces[i], substep_time);
     }
-
-void resolve_collision(Particle *p1, Particle *p2) {
-  double dx = p2->position.x - p1->position.x;
-  double dy = p2->position.y - p1->position.y;
-  double distance = sqrt(dx * dx + dy * dy);
-  double min_distance = p1->size + p2->size;
-
-  if (distance < min_distance) {
-    // Calculate overlap
-    double overlap = 0.5 * (distance - min_distance);
-
-    // Displace particles to resolve overlap
-    p1->position.x -= overlap * (dx / distance);
-    p1->position.y -= overlap * (dy / distance);
-    p2->position.x += overlap * (dx / distance);
-    p2->position.y += overlap * (dy / distance);
-
-    // Swap velocities for a basic elastic collision
-    Vector2D temp_velocity = p1->velocity;
-    p1->velocity = p2->velocity;
-    p2->velocity = temp_velocity;
   }
-}
-    if (sim_struct->enable_collisions) {
-      for (uint64_t iter = 0; iter < sim_struct->collision_iterations; ++iter) {
-        // Loop over each particle pair to check for collisions
-        for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
-          for (uint64_t j = i + 1; j < sim_struct->particle_count; ++j) {
-            Particle *p1 = &sim_struct->particles[i];
-            Particle *p2 = &sim_struct->particles[j];
 
-            resolve_collision(p1, p2);
-          }
+  if (sim_struct->enable_collisions) {
+    for (uint64_t iter = 0; iter < sim_struct->collision_iterations; ++iter) {
+      // Loop over each particle pair to check for collisions
+      for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
+        for (uint64_t j = i + 1; j < sim_struct->particle_count; ++j) {
+          Particle *p1 = &sim_struct->particles[i];
+          Particle *p2 = &sim_struct->particles[j];
+
+          resolve_collision(p1, p2);
         }
       }
     }

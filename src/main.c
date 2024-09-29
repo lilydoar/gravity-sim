@@ -25,10 +25,12 @@ Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
-      0.01,                 // time step
-      4,                    // substeps
-      false,                // collision enabled
-      6.67430e-4,           // gravitational constant
+      0.01,       // time step
+      4,          // substeps
+      true,       // collision enabled
+      4,          // collision iterations
+      6.67430e-4, // gravitational constant
+
       250,                  // particle count
       DISTRIBUTION_UNIFORM, // position distribution
       DISTRIBUTION_NORMAL,  // size distribution
