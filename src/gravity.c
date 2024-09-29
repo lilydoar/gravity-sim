@@ -3,6 +3,7 @@
 
 #include "gravity.h"
 #include <math.h>
+#include <stdio.h>
 
 #define GRAVITATIONAL_CONSTANT 6.67430e-7
 
@@ -20,7 +21,6 @@ typedef struct {
   bool enable_collisions;     // Collision handling flag
   double time_step;           // Time step for the simulation
   uint64_t substeps;          // Number of substeps
-  Vector2D position_range[2]; // Position range
   uint64_t
       collision_iterations; // Number of iterations for collision resolution
   Vector2D *forces;         // Array to store forces for each particle
@@ -66,8 +66,6 @@ Simulation init_simulation(SimulationOptions options) {
 
   // Store gravitational constant
   sim->gravitational_constant = options.gravitational_constant;
-  sim->position_range[0] = options.position_range[0];
-  sim->position_range[1] = options.position_range[1];
 
   // Store collision iterations
   sim->collision_iterations = options.collision_iterations;
@@ -295,8 +293,20 @@ void apply_force(int particle_id, Vector2D force) {
 }
 void get_position_range(Simulation sim, Vector2D *min, Vector2D *max) {
   SimulationStruct *sim_struct = (SimulationStruct *)sim;
-  *min = sim_struct->position_range[0];
-  *max = sim_struct->position_range[1];
+  
+  // Initialize min and max with the first particle's position
+  *min = sim_struct->particles[0].position;
+  *max = sim_struct->particles[0].position;
+
+  // Iterate through all particles to find the actual min and max
+  for (uint64_t i = 1; i < sim_struct->particle_count; i++) {
+    Vector2D pos = sim_struct->particles[i].position;
+    
+    if (pos.x < min->x) min->x = pos.x;
+    if (pos.y < min->y) min->y = pos.y;
+    if (pos.x > max->x) max->x = pos.x;
+    if (pos.y > max->y) max->y = pos.y;
+  }
 }
 
 uint64_t get_particle_count(Simulation sim) {
