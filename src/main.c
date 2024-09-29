@@ -43,7 +43,7 @@ int main(void) {
   get_position_range(sim, &min, &max);
   float range_x = max.x - min.x;
   float range_y = max.y - min.y;
-  camera.zoom = fminf(SCREEN_WIDTH / range_x, SCREEN_HEIGHT / range_y);
+  camera.zoom = (SCREEN_WIDTH / range_x < SCREEN_HEIGHT / range_y) ? (SCREEN_WIDTH / range_x) : (SCREEN_HEIGHT / range_y);
 
   while (!WindowShouldClose()) {
     step_simulation(sim);
