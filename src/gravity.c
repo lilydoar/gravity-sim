@@ -175,10 +175,28 @@ void resolve_collision(Particle *p1, Particle *p2) {
     p2->position.x += overlap * (dx / distance);
     p2->position.y += overlap * (dy / distance);
 
-    // Swap velocities for a basic elastic collision
-    Vector2D temp_velocity = p1->velocity;
-    p1->velocity = p2->velocity;
-    p2->velocity = temp_velocity;
+    // Calculate the normal vector
+    double nx = dx / distance;
+    double ny = dy / distance;
+
+    // Calculate the relative velocity
+    double dvx = p2->velocity.x - p1->velocity.x;
+    double dvy = p2->velocity.y - p1->velocity.y;
+
+    // Calculate the velocity along the normal
+    double vn = dvx * nx + dvy * ny;
+
+    // If the particles are moving apart, no need to resolve
+    if (vn > 0) return;
+
+    // Calculate the impulse scalar
+    double impulse = (2 * vn) / (p1->mass + p2->mass);
+
+    // Update velocities based on the impulse
+    p1->velocity.x -= impulse * p2->mass * nx;
+    p1->velocity.y -= impulse * p2->mass * ny;
+    p2->velocity.x += impulse * p1->mass * nx;
+    p2->velocity.y += impulse * p1->mass * ny;
   }
 }
 
