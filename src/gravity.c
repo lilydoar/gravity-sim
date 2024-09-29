@@ -2,6 +2,7 @@
 #define GRAVITY_C
 
 #include "gravity.h"
+#include <stddef.h>
 
 #endif // GRAVITY_C
 
