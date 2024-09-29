@@ -34,10 +34,19 @@ Simulation init_simulation(SimulationOptions options) {
     return NULL; // Allocation failed
   }
 
-  // Initialize particles (this is a placeholder, actual initialization may
-  // vary)
-  for (uint64_t i = 0; i < sim->particle_count; ++i) {
-    sim->particles[i] = (Particle){0}; // Initialize each particle
+  // Initialize particles based on the specified distribution
+  if (options.distribution == DISTRIBUTION_UNDEFINED || options.distribution == DISTRIBUTION_UNIFORM) {
+    // Uniform distribution
+    for (uint64_t i = 0; i < sim->particle_count; ++i) {
+      sim->particles[i].mass = 1.0; // Example mass
+      sim->particles[i].size = 1.0; // Example size
+      sim->particles[i].position.x = (double)rand() / RAND_MAX * 100.0; // Random x position
+      sim->particles[i].position.y = (double)rand() / RAND_MAX * 100.0; // Random y position
+      sim->particles[i].velocity.x = 0.0; // Initial x velocity
+      sim->particles[i].velocity.y = 0.0; // Initial y velocity
+    }
+  } else if (options.distribution == DISTRIBUTION_NORMAL) {
+    // TODO: Implement normal distribution initialization
   }
 
   return (Simulation)sim;
