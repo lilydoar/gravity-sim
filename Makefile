@@ -7,8 +7,8 @@ TARGET = gravity-sim
 
 all: $(TARGET)
 
-$(TARGET): src/**.c
-	$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE) $(LIB) -o $(TARGET) src/main.c
+$(TARGET): src/main.c src/gravity.c
+	$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE) $(LIB) -o $(TARGET) src/main.c src/gravity.c
 
 clean:
 	rm $(TARGET)
