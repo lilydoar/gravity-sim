@@ -41,6 +41,11 @@ typedef struct {
     } params;
 } Distribution;
 
+typedef enum {
+    VELOCITY_INIT_COMPONENT,
+    VELOCITY_INIT_MAGNITUDE
+} VelocityInitMode;
+
 typedef struct {
     double time_step;
     uint64_t substeps;
@@ -52,8 +57,14 @@ typedef struct {
     Distribution position_y_distribution;
     Distribution mass_distribution;
     Distribution size_distribution;
-    Distribution velocity_x_distribution;
-    Distribution velocity_y_distribution;
+    VelocityInitMode velocity_init_mode;
+    union {
+        struct {
+            Distribution velocity_x_distribution;
+            Distribution velocity_y_distribution;
+        } component;
+        Distribution velocity_magnitude_distribution;
+    } velocity_distribution;
 } SimulationOptions;
 
 // Opaque type for the simulation

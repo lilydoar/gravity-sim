@@ -83,8 +83,16 @@ Simulation init_simulation(SimulationOptions options) {
     sim->particles[i].position.y = sample_distribution(&options.position_y_distribution);
     sim->particles[i].mass = sample_distribution(&options.mass_distribution);
     sim->particles[i].size = sample_distribution(&options.size_distribution);
-    sim->particles[i].velocity.x = sample_distribution(&options.velocity_x_distribution);
-    sim->particles[i].velocity.y = sample_distribution(&options.velocity_y_distribution);
+
+    if (options.velocity_init_mode == VELOCITY_INIT_COMPONENT) {
+      sim->particles[i].velocity.x = sample_distribution(&options.velocity_distribution.component.velocity_x_distribution);
+      sim->particles[i].velocity.y = sample_distribution(&options.velocity_distribution.component.velocity_y_distribution);
+    } else { // VELOCITY_INIT_MAGNITUDE
+      double velocity_magnitude = sample_distribution(&options.velocity_distribution.velocity_magnitude_distribution);
+      double angle = random_uniform_double(0, 2 * M_PI);
+      sim->particles[i].velocity.x = velocity_magnitude * cos(angle);
+      sim->particles[i].velocity.y = velocity_magnitude * sin(angle);
+    }
   }
 
   // Allocate memory for forces
