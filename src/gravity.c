@@ -6,20 +6,21 @@
 
 #define GRAVITATIONAL_CONSTANT 6.67430e-7
 
-Vector2D calculate_force(Particle *p1, Particle *p2, double gravitational_constant);
+Vector2D calculate_force(Particle *p1, Particle *p2,
+                         double gravitational_constant);
 void verlet_integration(Particle *p, Vector2D total_force, double time_step);
 #include <stddef.h>
 #include <stdlib.h>
 
 // Define the concrete Simulation struct
 typedef struct {
-  Particle *particles;        // Array of particles
-  uint64_t particle_count;    // Number of particles
-  bool enable_collisions;     // Collision handling flag
-  double time_step;           // Time step for the simulation
-  uint64_t substeps;          // Number of substeps
-  Vector2D position_range[2]; // Position range
-  Vector2D *forces;           // Array to store forces for each particle
+  Particle *particles;           // Array of particles
+  uint64_t particle_count;       // Number of particles
+  bool enable_collisions;        // Collision handling flag
+  double time_step;              // Time step for the simulation
+  uint64_t substeps;             // Number of substeps
+  Vector2D position_range[2];    // Position range
+  Vector2D *forces;              // Array to store forces for each particle
   double gravitational_constant; // Gravitational constant for the simulation
 } SimulationStruct;
 
@@ -170,7 +171,8 @@ void step_simulation(Simulation sim) {
           continue; // Skip self-interaction
 
         Particle *other = &sim_struct->particles[j];
-        Vector2D force = calculate_force(p, other, sim_struct->gravitational_constant);
+        Vector2D force =
+            calculate_force(p, other, sim_struct->gravitational_constant);
         sim_struct->forces[i].x += force.x;
         sim_struct->forces[i].y += force.y;
       }
@@ -199,7 +201,8 @@ void step_simulation(Simulation sim) {
   }
 }
 
-Vector2D calculate_force(Particle *p1, Particle *p2, double gravitational_constant) {
+Vector2D calculate_force(Particle *p1, Particle *p2,
+                         double gravitational_constant) {
   Vector2D force = {0.0, 0.0};
   Vector2D distance_vector = {p2->position.x - p1->position.x,
                               p2->position.y - p1->position.y};

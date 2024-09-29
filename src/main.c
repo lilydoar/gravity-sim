@@ -6,12 +6,12 @@
 #include <stdlib.h>
 
 #define SPACE_GREY                                                             \
-  CLITERAL(Color) { 52, 61, 70, 255 }
+  CLITERAL(Color) { 43, 52, 60, 255 }
 
 #define PARTICLE_COLOR_MIN                                                     \
   CLITERAL(Color) { 101, 115, 126, 255 }
 #define PARTICLE_COLOR_MAX                                                     \
-  CLITERAL(Color) { 192, 197, 206, 255 }
+  CLITERAL(Color) { 207, 204, 222, 255 }
 
 #define MASS_RANGE_MIN 100.0f
 #define MASS_RANGE_MAX 2000.0f
@@ -25,14 +25,14 @@ Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
-      0.01,  // time step
-      2,     // substeps
-      false, // collision enabled
-
-      100,                 // particle count
-      DISTRIBUTION_NORMAL, // position distribution
-      DISTRIBUTION_NORMAL, // size distribution
-      DISTRIBUTION_NORMAL, // mass distribution
+      0.01,                 // time step
+      4,                    // substeps
+      false,                // collision enabled
+      6.67430e-4,           // gravitational constant
+      250,                  // particle count
+      DISTRIBUTION_UNIFORM, // position distribution
+      DISTRIBUTION_NORMAL,  // size distribution
+      DISTRIBUTION_UNIFORM, // mass distribution
 
       {{-100.0, 100.0}, {100.0, -100.0}}, // position range
       {1.0, 2.0},                         // size range

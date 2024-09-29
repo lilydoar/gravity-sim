@@ -24,9 +24,10 @@ typedef enum {
   DISTRIBUTION_NORMAL
 } ParticleDistribution;
 typedef struct {
-  double time_step;       // The fixed time delta of the simulation
-  uint64_t substeps;      // The number of substeps within each step
-  bool enable_collisions; // Flag to enable or disable collision handling
+  double time_step;              // The fixed time delta of the simulation
+  uint64_t substeps;             // The number of substeps within each step
+  bool enable_collisions;        // Flag to enable or disable collision handling
+  double gravitational_constant; // Gravitational constant for the simulation
 
   uint64_t particle_count; // The number of starting particles
   ParticleDistribution position_distribution; // Distribution type for position
@@ -36,7 +37,6 @@ typedef struct {
   Vector2D position_range[2]; // Two vectors defining the area for position
   float size_range[2];        // Two floats defining the range for size
   float mass_range[2];        // Two floats defining the range for mass
-  double gravitational_constant; // Gravitational constant for the simulation
 } SimulationOptions;
 
 // Opaque type for the simulation
