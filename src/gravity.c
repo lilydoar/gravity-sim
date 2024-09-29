@@ -13,6 +13,7 @@ typedef struct {
   bool enable_collisions;  // Collision handling flag
   double time_step;        // Time step for the simulation
   uint64_t substeps;       // Number of substeps
+  Vector2D position_range[2]; // Position range
 } SimulationStruct;
 
 double random_uniform_double(double min, double max) {
@@ -50,7 +51,11 @@ Simulation init_simulation(SimulationOptions options) {
   sim->time_step = options.time_step;
   sim->substeps = options.substeps;
 
-  // Allocate memory for particles
+  // Store position range
+  sim->position_range[0] = options.position_range[0];
+  sim->position_range[1] = options.position_range[1];
+
+  // Allocate memory for particles  
   sim->particles = (Particle *)malloc(sizeof(Particle) * sim->particle_count);
   if (!sim->particles) {
     free(sim);
@@ -184,21 +189,8 @@ void apply_force(int particle_id, Vector2D force) {
 }
 void get_position_range(Simulation sim, Vector2D *min, Vector2D *max) {
   SimulationStruct *sim_struct = (SimulationStruct *)sim;
-  if (sim_struct->particle_count == 0) {
-    min->x = min->y = max->x = max->y = 0.0;
-    return;
-  }
-
-  min->x = max->x = sim_struct->particles[0].position.x;
-  min->y = max->y = sim_struct->particles[0].position.y;
-
-  for (uint64_t i = 1; i < sim_struct->particle_count; ++i) {
-    Particle p = sim_struct->particles[i];
-    if (p.position.x < min->x) min->x = p.position.x;
-    if (p.position.x > max->x) max->x = p.position.x;
-    if (p.position.y < min->y) min->y = p.position.y;
-    if (p.position.y > max->y) max->y = p.position.y;
-  }
+  *min = sim_struct->position_range[0];
+  *max = sim_struct->position_range[1];
 }
 
 uint64_t get_particle_count(Simulation sim) {
