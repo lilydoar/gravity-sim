@@ -166,7 +166,8 @@ void step_simulation(Simulation sim) {
       }
 
       // Integrate using Verlet method
-      verlet_integration(p, total_force, sim_struct->time_step);
+      double substep_time = sim_struct->time_step / sim_struct->substeps;
+      verlet_integration(p, total_force, substep_time);
     }
 
     // Handle collisions if enabled
