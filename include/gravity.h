@@ -56,46 +56,6 @@ void deinit_simulation(Simulation sim);
  */
 void step_simulation(Simulation sim, double time_step);
 
-/**
- * Initializes the simulation with the specified options.
- *
- * @param options A SimulationOptions struct containing configuration settings
- * for the simulation.
- */
-void init_simulation(SimulationOptions options);
-
-/**
- * Adds a new particle to the simulation.
- *
- * @param mass The mass of the particle.
- * @param size The size (radius) of the particle.
- * @param position The initial position of the particle as a Vector2D.
- * @param velocity The initial velocity of the particle as a Vector2D.
- */
-void add_particle(double mass, double size, Vector2D position,
-                  Vector2D velocity);
-
-/**
- * Removes a particle from the simulation.
- *
- * @param particle_id The unique identifier of the particle to be removed.
- */
-void remove_particle(int particle_id);
-
-/**
- * Applies an external force to a specific particle.
- *
- * @param particle_id The unique identifier of the particle.
- * @param force The force to be applied as a Vector2D.
- */
-void apply_force(int particle_id, Vector2D force);
-
-/**
- * Advances the simulation by a specified time step.
- *
- * @param time_step The time step by which to update the simulation.
- */
-void update_simulation(double time_step);
 
 /**
  * Toggles collision handling in the simulation.
