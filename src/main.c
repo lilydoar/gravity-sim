@@ -33,13 +33,23 @@ int main(void) {
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT,
              "raylib [core] example - basic window");
 
+  // Initialize camera
+  Camera2D camera = {0};
+  camera.target = (Vector2){0.0f, 0.0f};
+  camera.offset = (Vector2){SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+
+  // Calculate zoom to fit the entire simulation on screen
+  float range_x = sim->position_range[1].x - sim->position_range[0].x;
+  float range_y = sim->position_range[1].y - sim->position_range[0].y;
+  camera.zoom = fminf(SCREEN_WIDTH / range_x, SCREEN_HEIGHT / range_y);
+
   while (!WindowShouldClose()) {
     step_simulation(sim);
 
-    BeginDrawing();
+    BeginMode2D(camera);
     ClearBackground(SPACE_GREY);
     draw_simulation(sim);
-    EndDrawing();
+    EndMode2D();
   }
 
   deinit_simulation(sim);
