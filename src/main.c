@@ -100,7 +100,7 @@ void draw_simulation(Simulation *sim) {
     // Interpolate color based on mass
     Color color = interpolate_color(p.mass, MASS_RANGE_MIN, MASS_RANGE_MAX);
 
-    // Draw particle with interpolated color
+    // Draw particles
     DrawCircleV(
         (Vector2){
             p.position.x,
