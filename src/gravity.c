@@ -167,7 +167,7 @@ void resolve_collision(Particle *p1, Particle *p2) {
 
   if (distance < min_distance) {
     // Calculate overlap
-    double overlap = 0.5 * (distance - min_distance);
+    double overlap = 0.5 * (min_distance - distance);
 
     // Displace particles to resolve overlap
     p1->position.x -= overlap * (dx / distance);
@@ -190,7 +190,7 @@ void resolve_collision(Particle *p1, Particle *p2) {
     if (vn > 0) return;
 
     // Introduce a damping factor to the impulse
-    double damping_factor = 0.9; // Adjust this value as needed
+    double damping_factor = 0.8; // Adjust this value as needed
     double impulse = damping_factor * (2 * vn) / (p1->mass + p2->mass);
 
     // Update velocities based on the impulse
