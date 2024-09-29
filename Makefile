@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -std=c17
 LFLAGS = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
 INCLUDE = -Iinclude/
 LIB = -Llib/ -lraylib
-TARGET = gravity-sim
+TARGET = bin/gravity-sim
 
 all: $(TARGET)
 

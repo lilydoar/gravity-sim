@@ -1,6 +1,9 @@
+#include "gravity.h"
 #include "raylib.h"
 
 int main(void) {
+  init_simulation((SimulationOptions){false});
+
   InitWindow(800, 450, "raylib [core] example - basic window");
 
   while (!WindowShouldClose()) {
