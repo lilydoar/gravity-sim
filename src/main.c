@@ -8,6 +8,11 @@
 #define SPACE_GREY                                                             \
   CLITERAL(Color) { 52, 61, 70, 255 }
 
+#define PARTICLE_COLOR_MIN                                                     \
+  CLITERAL(Color) { 101, 115, 126, 255 }
+#define PARTICLE_COLOR_MAX                                                     \
+  CLITERAL(Color) { 192, 197, 206, 255 }
+
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
 
