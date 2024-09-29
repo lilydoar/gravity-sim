@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define CAMERA_MOVE_SPEED 5.0f
+#define CAMERA_ZOOM_SPEED 0.1f
+
 #define SPACE_GREY                                                             \
   CLITERAL(Color) { 43, 52, 60, 255 }
 
@@ -23,7 +26,8 @@
 Color interpolate_color(float mass, float mass_min, float mass_max);
 void draw_simulation(Simulation sim);
 Camera2D setup_camera(Vector2D pos_min, Vector2D pos_max);
-void update_camera(Camera2D *camera);
+void update_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max);
+void reset_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max);
 
 int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
@@ -55,7 +59,7 @@ int main(void) {
 
   while (!WindowShouldClose()) {
     step_simulation(sim);
-    update_camera(&camera);
+    update_camera(&camera, pos_min, pos_max);
 
     BeginDrawing();
     ClearBackground(SPACE_GREY);
@@ -121,13 +125,12 @@ void draw_simulation(Simulation sim) {
     }
 }
 
-void update_camera(Camera2D *camera) {
+void update_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max) {
     // Handle zooming with pinch gesture
     if (IsGestureDetected(GESTURE_PINCH_IN) || IsGestureDetected(GESTURE_PINCH_OUT)) {
         Vector2 pinchVector = GetGesturePinchVector();
         float pinchRatio = 1.0f + (pinchVector.x + pinchVector.y) / 1000.0f; // Adjust sensitivity as needed
         camera->zoom *= pinchRatio;
-        camera->zoom = Clamp(camera->zoom, 0.1f, 10.0f); // Limit zoom range
     }
     
     // Handle panning with two-finger drag
@@ -136,4 +139,40 @@ void update_camera(Camera2D *camera) {
         camera->target.x -= dragVector.x / camera->zoom;
         camera->target.y -= dragVector.y / camera->zoom;
     }
+
+    // Handle zooming with mouse wheel
+    float wheel = GetMouseWheelMove();
+    if (wheel != 0) {
+        Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), *camera);
+        camera->offset = GetMousePosition();
+        camera->target = mouseWorldPos;
+        camera->zoom += (wheel * CAMERA_ZOOM_SPEED);
+    }
+
+    // Handle keyboard controls
+    if (IsKeyDown(KEY_W)) camera->target.y -= CAMERA_MOVE_SPEED / camera->zoom;
+    if (IsKeyDown(KEY_S)) camera->target.y += CAMERA_MOVE_SPEED / camera->zoom;
+    if (IsKeyDown(KEY_A)) camera->target.x -= CAMERA_MOVE_SPEED / camera->zoom;
+    if (IsKeyDown(KEY_D)) camera->target.x += CAMERA_MOVE_SPEED / camera->zoom;
+    if (IsKeyDown(KEY_Q)) camera->zoom += CAMERA_ZOOM_SPEED;
+    if (IsKeyDown(KEY_E)) camera->zoom -= CAMERA_ZOOM_SPEED;
+
+    // Reset camera
+    if (IsKeyPressed(KEY_R)) {
+        reset_camera(camera, pos_min, pos_max);
+    }
+
+    // Clamp zoom
+    camera->zoom = Clamp(camera->zoom, 0.1f, 10.0f);
+}
+
+void reset_camera(Camera2D *camera, Vector2D pos_min, Vector2D pos_max) {
+    camera->target = (Vector2){0.0f, 0.0f};
+    camera->offset = (Vector2){SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+
+    float range_x = 1.5 * (pos_max.x - pos_min.x);
+    float range_y = 1.5 * (pos_max.y - pos_min.y);
+    camera->zoom = (SCREEN_WIDTH / range_x < SCREEN_HEIGHT / range_y)
+                    ? (SCREEN_WIDTH / range_x)
+                    : (SCREEN_HEIGHT / range_y);
 }
