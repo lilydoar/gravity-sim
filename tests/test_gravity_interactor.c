@@ -46,8 +46,8 @@ void test_apply_action() {
     apply_action(mock_sim, action);
 
     // Check if particles were set to static
-    assert(mock_particles[0].is_static == true);
-    assert(mock_particles[1].is_static == true);
+    assert(mock_particles[0].mode == PARTICLE_MODE_STATIC);
+    assert(mock_particles[1].mode == PARTICLE_MODE_STATIC);
 
     printf("test_apply_action passed\n");
 }
