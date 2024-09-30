@@ -1,14 +1,17 @@
 # Interactivity Implementation Plan
 
 ## Overview
+
 This plan outlines the steps to implement an interactive particle selection and modification system for the gravity simulation. The system will allow users to select particles using rectangular or circular areas and apply various actions to them.
 
 ## Components
 
 ### 1. Arena Allocator
+
 Implement a basic arena allocator for efficient memory management.
 
 File: `include/arena_allocator.h`
+
 ```c
 typedef struct ArenaAllocator ArenaAllocator;
 
@@ -19,9 +22,11 @@ void destroy_arena(ArenaAllocator* arena);
 ```
 
 ### 2. Action and Selection System
+
 Define structures and functions for particle selection and actions.
 
 File: `include/gravity_interactor.h`
+
 ```c
 typedef enum {
     SELECTION_RECTANGLE,
@@ -64,9 +69,11 @@ Action dequeue_action(ActionQueue* queue);
 ```
 
 ### 3. UI and Interaction
+
 Handle user input and draw the UI.
 
 File: `include/ui_handler.h`
+
 ```c
 typedef struct {
     bool is_selecting;
@@ -80,18 +87,22 @@ void draw_ui(UIState state);
 ```
 
 ### 4. Simulation Interface
+
 Add functions to query particles within geometric shapes.
 
 File: `include/gravity.h`
+
 ```c
 int get_particles_in_rectangle(Simulation sim, Vector2D top_left, Vector2D bottom_right, int* particle_ids, int max_count);
 int get_particles_in_circle(Simulation sim, Vector2D center, float radius, int* particle_ids, int max_count);
 ```
 
 ### 5. Main Loop Structure
+
 Update the main loop to incorporate the new systems.
 
 File: `src/main.c`
+
 ```c
 int main(void) {
     // ... (initialization code)
@@ -133,26 +144,32 @@ int main(void) {
 ## Implementation Steps
 
 1. Create the arena allocator:
+
    - Implement functions in `src/arena_allocator.c`
    - Test basic functionality
 
-2. Update the gravity interactor:
+1. Update the gravity interactor:
+
    - Implement action creation and application functions in `src/gravity_interactor.c`
    - Implement queue operations for actions
 
-3. Implement UI handling:
+1. Implement UI handling:
+
    - Create `src/ui_handler.c` and implement input handling and UI drawing functions
    - Integrate with raylib for drawing and input
 
-4. Update the gravity simulation:
+1. Update the gravity simulation:
+
    - Implement particle selection functions in `src/gravity.c`
    - Ensure these functions are efficient and can be optimized later
 
-5. Modify the main loop:
+1. Modify the main loop:
+
    - Update `src/main.c` to use the new structures and functions
    - Ensure proper integration of all components
 
-6. Testing and refinement:
+1. Testing and refinement:
+
    - Test the entire system for proper functionality
    - Refine and optimize as necessary
 
@@ -160,17 +177,17 @@ int main(void) {
 
 1. The arena allocator provides scoped memory management. The app_arena is used for long-lived objects, while the frame_arena is reset each frame for temporary allocations.
 
-2. The ParticleSelection struct allows for flexible selection shapes, easily extensible to other shapes in the future.
+1. The ParticleSelection struct allows for flexible selection shapes, easily extensible to other shapes in the future.
 
-3. The Action struct combines the action type with the selection, allowing for efficient processing.
+1. The Action struct combines the action type with the selection, allowing for efficient processing.
 
-4. The UI state is separate from the simulation actor, allowing for clear separation of concerns.
+1. The UI state is separate from the simulation actor, allowing for clear separation of concerns.
 
-5. The simulation interface (get_particles_in_rectangle, get_particles_in_circle) provides a clean abstraction that can be optimized with spatial partitioning in the future without changing the interface.
+1. The simulation interface (get_particles_in_rectangle, get_particles_in_circle) provides a clean abstraction that can be optimized with spatial partitioning in the future without changing the interface.
 
-6. The main loop structure ensures that actions are applied within a single frame, with a cap on the number of actions processed per frame.
+1. The main loop structure ensures that actions are applied within a single frame, with a cap on the number of actions processed per frame.
 
-7. The draw_ui function encapsulates all UI rendering, including selection areas.
+1. The draw_ui function encapsulates all UI rendering, including selection areas.
 
 ## Makefile Updates
 
