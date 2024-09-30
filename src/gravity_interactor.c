@@ -1,16 +1,14 @@
 #include "gravity_interactor.h"
 #include <stdlib.h>
 
-struct SimulationActor {
-    ActionQueue queue;
-    ArenaAllocator* arena;
-};
 
 Action create_action(ArenaAllocator* frame_arena, ActionType type, ParticleSelection selection) {
-    Action action;
-    action.type = type;
-    action.selection = selection;
-    return action;
+    Action* action = arena_alloc(frame_arena, sizeof(Action));
+    if (action) {
+        action->type = type;
+        action->selection = selection;
+    }
+    return *action;
 }
 
 void apply_action(Simulation sim, Action action) {
