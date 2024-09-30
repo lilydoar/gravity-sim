@@ -1,7 +1,6 @@
+#include "unity.h"
 #include "gravity_interactor.h"
 #include "gravity.h"
-#include <assert.h>
-#include <stdio.h>
 
 // Mock functions for Simulation
 Simulation mock_sim;
@@ -46,13 +45,20 @@ void test_apply_action() {
     apply_action(mock_sim, action);
 
     // Check if particles were set to static
-    assert(mock_particles[0].mode == PARTICLE_MODE_STATIC);
-    assert(mock_particles[1].mode == PARTICLE_MODE_STATIC);
-
-    printf("test_apply_action passed\n");
+    TEST_ASSERT_EQUAL(PARTICLE_MODE_STATIC, mock_particles[0].mode);
+    TEST_ASSERT_EQUAL(PARTICLE_MODE_STATIC, mock_particles[1].mode);
 }
 
-int main() {
-    test_apply_action();
-    return 0;
+void setUp(void) {
+    // Set up any necessary test environment here
+}
+
+void tearDown(void) {
+    // Clean up any necessary test environment here
+}
+
+int main(void) {
+    UNITY_BEGIN();
+    RUN_TEST(test_apply_action);
+    return UNITY_END();
 }
