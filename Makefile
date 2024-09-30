@@ -16,3 +16,14 @@ run: $(TARGET)
 
 clean:
 	rm $(TARGET)
+
+TEST_SOURCES = tests/test_gravity_interactor.c src/gravity_interactor.c src/arena_allocator.c
+TEST_TARGET = bin/test_gravity_interactor
+
+$(TEST_TARGET): $(TEST_SOURCES)
+	$(CC) $(CFLAGS) $(INCLUDE) -o $(TEST_TARGET) $(TEST_SOURCES)
+
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
+
+.PHONY: test

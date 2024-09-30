@@ -1,6 +1,9 @@
 #include "ui_handler.h"
 #include "raymath.h"
 #include <math.h>
+#include <stdio.h>
+
+#define DEBUG_LOG(fmt, ...) fprintf(stderr, "DEBUG: " fmt "\n", ##__VA_ARGS__)
 
 void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_arena) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -15,6 +18,9 @@ void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_a
 
     if (state->is_selecting) {
         state->current_pos = GetMousePosition();
+        DEBUG_LOG("Selection in progress: (%f, %f) to (%f, %f)", 
+            state->start_pos.x, state->start_pos.y, 
+            state->current_pos.x, state->current_pos.y);
 
         if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) || IsMouseButtonReleased(MOUSE_RIGHT_BUTTON)) {
             state->is_selecting = false;
@@ -27,6 +33,7 @@ void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_a
                 selection.shape.rectangle.bottom_right = (Vector2D){(double)fmax(state->start_pos.x, state->current_pos.x), (double)fmax(state->start_pos.y, state->current_pos.y)};
                 Action action = create_action(frame_arena, ACTION_MAKE_STATIC, selection);
                 enqueue_action(&actor->queue, action);
+                DEBUG_LOG("Selection completed, creating action of type %d", ACTION_MAKE_STATIC);
             } else {
                 selection.shape.circle.center = (Vector2D){(double)state->start_pos.x, (double)state->start_pos.y};
                 selection.shape.circle.radius = Vector2Distance(state->start_pos, state->current_pos);

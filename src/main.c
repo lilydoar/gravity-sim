@@ -62,7 +62,7 @@ void draw_simulation(Simulation sim) {
         Particle p = get_particle_state(sim, i);
         Color particle_color;
         if (p.is_static) {
-            particle_color = BLUE;
+            particle_color = RED;  // Change color for static particles
         } else {
             float normalized_mass = (p.mass - MASS_RANGE_MIN) / (MASS_RANGE_MAX - MASS_RANGE_MIN);
             particle_color = interpolate_color(normalized_mass, 0, 1);

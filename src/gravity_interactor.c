@@ -1,6 +1,9 @@
 #include "gravity_interactor.h"
 #include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
+
+#define DEBUG_LOG(fmt, ...) fprintf(stderr, "DEBUG: " fmt "\n", ##__VA_ARGS__)
 
 
 Action create_action(ArenaAllocator* frame_arena, ActionType type, ParticleSelection selection) {
@@ -13,6 +16,7 @@ Action create_action(ArenaAllocator* frame_arena, ActionType type, ParticleSelec
 }
 
 void apply_action(Simulation sim, Action action) {
+    DEBUG_LOG("Applying action of type %d", action.type);
     if (action.type == ACTION_MAKE_STATIC) {
         if (action.selection.type == SELECTION_RECTANGLE) {
             Vector2D top_left = action.selection.shape.rectangle.top_left;
@@ -28,10 +32,16 @@ void apply_action(Simulation sim, Action action) {
                 fmax(top_left.y, bottom_right.y)
             };
             
+            DEBUG_LOG("Rectangle selection: (%f, %f) to (%f, %f)", 
+                actual_top_left.x, actual_top_left.y, 
+                actual_bottom_right.x, actual_bottom_right.y);
+            
             int max_particles = 1000; // Adjust this value as needed
             int* particle_ids = malloc(max_particles * sizeof(int));
             
             int count = get_particles_in_rectangle(sim, actual_top_left, actual_bottom_right, particle_ids, max_particles);
+            
+            DEBUG_LOG("Found %d particles in selection", count);
             
             for (int i = 0; i < count; i++) {
                 Particle p = get_particle_state(sim, particle_ids[i]);
