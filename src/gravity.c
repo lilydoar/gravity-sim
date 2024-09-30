@@ -252,12 +252,21 @@ void integrate_particles(SimulationStruct *sim_struct, double substep_time) {
   for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
     Particle *p = &sim_struct->particles[i];
 
-    // Skip integration for static particles
-    if (p->mode == PARTICLE_MODE_STATIC) {
+    switch (p->mode) {
+    case PARTICLE_MODE_STATIC: {
       continue;
+    } break;
+    case PARTICLE_MODE_DYNAMIC: {
+      verlet_integration(p, sim_struct->forces[i], substep_time);
+    } break;
+    case PARTICLE_MODE_VERLET: {
+      VerletParticle vp =
+          init_verlet_particle(p->position, p->velocity, p->mass, substep_time);
+      verlet_step(vp, substep_time);
+      p->position = vp.position;
+      p->velocity = compute_velocity(vp, substep_time);
+    } break;
     }
-
-    verlet_integration(p, sim_struct->forces[i], substep_time);
   }
 }
 

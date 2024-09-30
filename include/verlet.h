@@ -12,8 +12,8 @@ typedef struct {
 } VerletParticle;
 
 // Function to initialize a particle
-VerletParticle init_particle(const vec2s position, const vec2s velocity, double mass,
-                       double dt);
+VerletParticle init_verlet_particle(const vec2s position, const vec2s velocity,
+                                    double mass, double dt);
 
 // Function to update the particle's position using Verlet integration
 void verlet_step(VerletParticle p, double dt);

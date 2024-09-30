@@ -150,7 +150,7 @@ int main(void) {
                              .stddev = (MASS_RANGE_MAX - MASS_RANGE_MIN) / 6}},
       .size_distribution = {.type = DISTRIBUTION_UNIFORM,
                             .params.uniform = {.min = 10.0, .max = 60.0}},
-      .initial_particle_mode = PARTICLE_MODE_DYNAMIC,
+      .initial_particle_mode = PARTICLE_MODE_VERLET,
       .velocity_init_mode = VELOCITY_INIT_PERPENDICULAR_TO_ORIGIN,
       .velocity_magnitude_distribution = {
           .type = DISTRIBUTION_UNIFORM,
