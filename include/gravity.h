@@ -14,6 +14,7 @@ typedef struct Particle {
     Vector2D velocity;
     double mass;
     double size;
+    bool is_static;
 } Particle;
 
 typedef struct Simulation* Simulation;
@@ -84,6 +85,7 @@ int get_particles_in_circle(Simulation sim, Vector2D center, float radius, int* 
 void get_position_range(Simulation sim, Vector2D *min, Vector2D *max);
 uint64_t get_particle_count(Simulation sim);
 Particle get_particle_state(Simulation sim, int particle_id);
+void set_particle_state(Simulation sim, int particle_id, Particle p);
 
 // ... (rest of the file remains unchanged)
 

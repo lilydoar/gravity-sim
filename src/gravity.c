@@ -119,6 +119,7 @@ Simulation init_simulation(SimulationOptions options) {
           double distance = sqrt(dx * dx + dy * dy);
           sim->particles[i].velocity.x = velocity_magnitude * (dx / distance);
           sim->particles[i].velocity.y = velocity_magnitude * (dy / distance);
+          sim->particles[i].is_static = false;
         }
         break;
       
@@ -309,6 +310,13 @@ Particle get_particle_state(Simulation sim, int particle_id) {
     return empty_particle;
   }
   return sim_struct->particles[particle_id];
+}
+
+void set_particle_state(Simulation sim, int particle_id, Particle p) {
+  SimulationStruct *sim_struct = (SimulationStruct *)sim;
+  if (particle_id >= 0 && (uint64_t)particle_id < sim_struct->particle_count) {
+    sim_struct->particles[particle_id] = p;
+  }
 }
 
 int get_particles_in_rectangle(Simulation sim, Vector2D top_left, Vector2D bottom_right, int* particle_ids, int max_count) {
