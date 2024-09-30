@@ -18,10 +18,6 @@ void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_a
 
     if (state->is_selecting) {
         state->current_pos = GetMousePosition();
-        DEBUG_LOG("Selection in progress: (%f, %f) to (%f, %f)", 
-            state->start_pos.x, state->start_pos.y, 
-            state->current_pos.x, state->current_pos.y);
-
         if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) || IsMouseButtonReleased(MOUSE_RIGHT_BUTTON)) {
             state->is_selecting = false;
 
@@ -30,22 +26,16 @@ void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_a
 
             if (selection.type == SELECTION_RECTANGLE) {
                 extern Camera2D camera;  // Ensure the camera is declared as external
-                DEBUG_LOG("Camera target: (%f, %f), offset: (%f, %f), zoom: %f", 
-                          camera.target.x, camera.target.y, 
-                          camera.offset.x, camera.offset.y, 
-                          camera.zoom);
                 Vector2 world_start_pos = GetScreenToWorld2D(state->start_pos, camera);
                 Vector2 world_current_pos = GetScreenToWorld2D(state->current_pos, camera);
-                DEBUG_LOG("World start position: (%f, %f)", world_start_pos.x, world_start_pos.y);
-                DEBUG_LOG("World current position: (%f, %f)", world_current_pos.x, world_current_pos.y);
                 selection.shape.rectangle.top_left = (Vector2D){(double)fmin(world_start_pos.x, world_current_pos.x), (double)fmin(world_start_pos.y, world_current_pos.y)};
                 selection.shape.rectangle.bottom_right = (Vector2D){(double)fmax(world_start_pos.x, world_current_pos.x), (double)fmax(world_start_pos.y, world_current_pos.y)};
-                DEBUG_LOG("Rectangle selection after conversion: top_left (%f, %f), bottom_right (%f, %f)",
+                DEBUG_LOG("Starting action: Creating rectangle selection from (%f, %f) to (%f, %f)",
                           selection.shape.rectangle.top_left.x, selection.shape.rectangle.top_left.y,
                           selection.shape.rectangle.bottom_right.x, selection.shape.rectangle.bottom_right.y);
                 Action action = create_action(frame_arena, ACTION_MAKE_STATIC, selection);
                 enqueue_action(&actor->queue, action);
-                DEBUG_LOG("Selection completed, creating action of type %d", ACTION_MAKE_STATIC);
+                DEBUG_LOG("Completed action: Created action of type %d", ACTION_MAKE_STATIC);
             } else {
                 selection.shape.circle.center = (Vector2D){(double)state->start_pos.x, (double)state->start_pos.y};
                 selection.shape.circle.radius = Vector2Distance(state->start_pos, state->current_pos);
