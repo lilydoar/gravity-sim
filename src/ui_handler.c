@@ -39,10 +39,10 @@ void draw_ui(UIState state) {
     if (state.is_selecting) {
         if (state.current_selection_type == SELECTION_RECTANGLE) {
             DrawRectangleLines(
-                state.start_pos.x,
-                state.start_pos.y,
-                state.current_pos.x - state.start_pos.x,
-                state.current_pos.y - state.start_pos.y,
+                fmin(state.start_pos.x, state.current_pos.x),
+                fmin(state.start_pos.y, state.current_pos.y),
+                fabs(state.current_pos.x - state.start_pos.x),
+                fabs(state.current_pos.y - state.start_pos.y),
                 RED
             );
         } else {
