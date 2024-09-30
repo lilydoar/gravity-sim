@@ -19,6 +19,8 @@ void step_simulation(Simulation sim);
 void deinit_simulation(Simulation sim);
 
 // New function declarations
+Camera2D camera;  // Define the camera globally
+
 void draw_simulation(Simulation sim);
 Camera2D setup_camera();
 void update_camera(Camera2D *camera);
