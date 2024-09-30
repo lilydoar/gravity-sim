@@ -57,6 +57,7 @@ typedef struct {
     Distribution position_y_distribution;
     Distribution mass_distribution;
     Distribution size_distribution;
+    ParticleMode initial_particle_mode;
     VelocityInitMode velocity_init_mode;
     Distribution velocity_magnitude_distribution;
 } SimulationOptions;
