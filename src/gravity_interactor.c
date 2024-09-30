@@ -52,8 +52,12 @@ void apply_action(Simulation sim, Action action) {
 
             if (modified_count > 5) {
                 printf("Modified %d particles to static mode: ", modified_count);
-                for (int i = 0; i < modified_count; i++) {
+                int max_display = 10; // Maximum number of particle IDs to display
+                for (int i = 0; i < modified_count && i < max_display; i++) {
                     printf("%d ", modified_ids[i]);
+                }
+                if (modified_count > max_display) {
+                    printf("..."); // Indicate that the list is truncated
                 }
                 printf("\n");
             } else {
