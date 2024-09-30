@@ -325,8 +325,8 @@ int get_particles_in_rectangle(Simulation sim, Vector2D top_left, Vector2D botto
 
     for (uint64_t i = 0; i < sim_struct->particle_count && count < max_count; i++) {
         Particle *p = &sim_struct->particles[i];
-        if (p->position.x >= top_left.x && p->position.x <= bottom_right.x &&
-            p->position.y >= top_left.y && p->position.y <= bottom_right.y) {
+        if (p->position.x >= fmin(top_left.x, bottom_right.x) && p->position.x <= fmax(top_left.x, bottom_right.x) &&
+            p->position.y >= fmin(top_left.y, bottom_right.y) && p->position.y <= fmax(top_left.y, bottom_right.y)) {
             particle_ids[count++] = i;
         }
     }
