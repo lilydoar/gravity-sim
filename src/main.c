@@ -145,7 +145,7 @@ int main(void) {
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
 
-  Camera2D camera = setup_camera();
+  camera = setup_camera();
   SimulationActor actor = init_simulation_interactor(app_arena);
   UIState ui_state = {0};
 

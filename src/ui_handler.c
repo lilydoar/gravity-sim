@@ -29,7 +29,11 @@ void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_a
             selection.type = state->current_selection_type;
 
             if (selection.type == SELECTION_RECTANGLE) {
-                extern Camera2D camera;  // Declare the camera as external
+                extern Camera2D camera;  // Ensure the camera is declared as external
+                DEBUG_LOG("Camera target: (%f, %f), offset: (%f, %f), zoom: %f", 
+                          camera.target.x, camera.target.y, 
+                          camera.offset.x, camera.offset.y, 
+                          camera.zoom);
                 Vector2 world_start_pos = GetScreenToWorld2D(state->start_pos, camera);
                 Vector2 world_current_pos = GetScreenToWorld2D(state->current_pos, camera);
                 DEBUG_LOG("World start position: (%f, %f)", world_start_pos.x, world_start_pos.y);
