@@ -85,7 +85,7 @@ int get_particles_in_rectangle(Simulation sim, Vector2D top_left, Vector2D botto
 void test_apply_action() {
     // Initialize mock particles
     for (int i = 0; i < 10; i++) {
-        mock_particles[i].is_static = false;
+        mock_particles[i].mode = PARTICLE_MODE_DYNAMIC;
     }
 
     // Create a test action
@@ -106,8 +106,8 @@ void test_apply_action() {
     apply_action(mock_sim, action);
 
     // Check if particles were set to static
-    assert(mock_particles[0].is_static == true);
-    assert(mock_particles[1].is_static == true);
+    assert(mock_particles[0].mode == PARTICLE_MODE_STATIC);
+    assert(mock_particles[1].mode == PARTICLE_MODE_STATIC);
 
     printf("test_apply_action passed\n");
 }
