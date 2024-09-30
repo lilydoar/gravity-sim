@@ -13,7 +13,7 @@ Action create_action(ArenaAllocator* frame_arena, ActionType type, ParticleSelec
         action->selection = selection;
     }
     return *action;
-    DEBUG_LOG("Completed action of type %d", action.type);
+    DEBUG_LOG("Completed action of type %d", action->type);
 }
 
 void apply_action(Simulation sim, Action action) {
