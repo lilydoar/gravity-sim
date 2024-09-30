@@ -22,10 +22,10 @@ void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_a
             selection.type = state->current_selection_type;
 
             if (selection.type == SELECTION_RECTANGLE) {
-                selection.shape.rectangle.top_left = (Vector2D){state->start_pos.x, state->start_pos.y};
-                selection.shape.rectangle.bottom_right = (Vector2D){state->current_pos.x, state->current_pos.y};
+                selection.shape.rectangle.top_left = (Vector2D){(double)state->start_pos.x, (double)state->start_pos.y};
+                selection.shape.rectangle.bottom_right = (Vector2D){(double)state->current_pos.x, (double)state->current_pos.y};
             } else {
-                selection.shape.circle.center = (Vector2D){state->start_pos.x, state->start_pos.y};
+                selection.shape.circle.center = (Vector2D){(double)state->start_pos.x, (double)state->start_pos.y};
                 selection.shape.circle.radius = Vector2Distance(state->start_pos, state->current_pos);
             }
 

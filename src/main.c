@@ -10,6 +10,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Forward declarations
+Simulation init_simulation(SimulationOptions options);
+void step_simulation(Simulation sim);
+void deinit_simulation(Simulation sim);
+
 #define SPACE_GREY                                                             \
   CLITERAL(Color) { 43, 52, 60, 255 }
 

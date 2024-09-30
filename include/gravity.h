@@ -4,6 +4,20 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+typedef struct Vector2D {
+    double x;
+    double y;
+} Vector2D;
+
+typedef struct Particle {
+    Vector2D position;
+    Vector2D velocity;
+    double mass;
+    double size;
+} Particle;
+
+typedef struct Simulation* Simulation;
+
 // ... (previous code remains unchanged)
 
 /**
