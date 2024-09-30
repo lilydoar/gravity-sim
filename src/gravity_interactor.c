@@ -38,12 +38,28 @@ void apply_action(Simulation sim, Action action) {
             
             int count = get_particles_in_rectangle(sim, actual_top_left, actual_bottom_right, particle_ids, max_particles);
             
+            int modified_count = 0;
+            int modified_ids[1000]; // Adjust size as needed
+
             for (int i = 0; i < count; i++) {
                 Particle p = get_particle_state(sim, particle_ids[i]);
-                printf("Particle %d mode before action: %d\n", particle_ids[i], p.mode);
-                p.mode = PARTICLE_MODE_STATIC;  // Set the mode to STATIC
-                printf("Particle %d mode after action: %d\n", particle_ids[i], p.mode);
-                set_particle_state(sim, particle_ids[i], p);
+                if (p.mode != PARTICLE_MODE_STATIC) {
+                    modified_ids[modified_count++] = particle_ids[i];
+                    p.mode = PARTICLE_MODE_STATIC;
+                    set_particle_state(sim, particle_ids[i], p);
+                }
+            }
+
+            if (modified_count > 5) {
+                printf("Modified %d particles to static mode: ", modified_count);
+                for (int i = 0; i < modified_count; i++) {
+                    printf("%d ", modified_ids[i]);
+                }
+                printf("\n");
+            } else {
+                for (int i = 0; i < modified_count; i++) {
+                    printf("Particle %d mode changed to static\n", modified_ids[i]);
+                }
             }
             
             free(particle_ids);
