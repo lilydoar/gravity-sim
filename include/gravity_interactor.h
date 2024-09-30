@@ -14,8 +14,8 @@ typedef enum {
 typedef struct {
     SelectionType type;
     union {
-        struct { Vector2D top_left; Vector2D bottom_right; } rectangle;
-        struct { Vector2D center; float radius; } circle;
+        struct { vec2s top_left; vec2s bottom_right; } rectangle;
+        struct { vec2s center; float radius; } circle;
     } shape;
 } ParticleSelection;
 

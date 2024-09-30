@@ -1,16 +1,17 @@
 #include "verlet.h"
+#include <cglm/struct.h>
 
 // Function to initialize a particle
-Particle init_particle(const Vector2D position, const Vector2D velocity,
-                       double mass, double dt) {
-  Particle p;
+VerletParticle init_particle(const vec2s position, const vec2s velocity,
+                             double mass, double dt) {
+  VerletParticle p;
   p.mass = mass;
 
   // Initialize current position
   p.position = position;
 
   // Initialize acceleration to zero (user can set it later)
-  p.acceleration = (Vector2D){0};
+  p.acceleration = (vec2s){0};
 
   // Estimate previous position using initial velocity
   p.previous_position.x = p.position.x - velocity.x * dt;
@@ -20,8 +21,8 @@ Particle init_particle(const Vector2D position, const Vector2D velocity,
 }
 
 // Function to update the particle's position using Verlet integration
-void verlet_step(Particle p, double dt) {
-  Vector2D new_position;
+void verlet_step(VerletParticle p, double dt) {
+  vec2s new_position;
 
   // Compute new position using Verlet integration
   new_position.x =
@@ -37,16 +38,16 @@ void verlet_step(Particle p, double dt) {
 }
 
 // Function to compute velocity based on position updates
-Vector2D compute_velocity(Particle p, double dt) {
-  Vector2D velocity;
+vec2s compute_velocity(VerletParticle p, double dt) {
+  vec2s velocity;
   velocity.x = (p.position.x - p.previous_position.x) / dt;
   velocity.y = (p.position.y - p.previous_position.y) / dt;
   return velocity;
 }
 
 // Function to compute kinetic energy of the particle
-double compute_kinetic_energy(const Particle p, double dt) {
-  Vector2D v = compute_velocity(p, dt);
+double compute_kinetic_energy(const VerletParticle p, double dt) {
+  vec2s v = compute_velocity(p, dt);
   double speed_squared = v.x * v.x + v.y * v.y;
   return 0.5 * p.mass * speed_squared;
 }

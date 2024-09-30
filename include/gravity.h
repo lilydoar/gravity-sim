@@ -4,10 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef struct Vector2D {
-    double x;
-    double y;
-} Vector2D;
+#include <cglm/struct.h>
 
 typedef enum {
     PARTICLE_MODE_STATIC,
@@ -16,8 +13,8 @@ typedef enum {
 } ParticleMode;
 
 typedef struct Particle {
-    Vector2D position;
-    Vector2D velocity;
+    vec2s position;
+    vec2s velocity;
     double mass;
     double size;
     ParticleMode mode;  // Use the enum for particle mode
@@ -74,7 +71,7 @@ typedef struct {
  * @param max_count The maximum number of particle IDs that can be stored.
  * @return The number of particles found within the rectangle.
  */
-int get_particles_in_rectangle(Simulation sim, Vector2D top_left, Vector2D bottom_right, int* particle_ids, int max_count);
+int get_particles_in_rectangle(Simulation sim, vec2s top_left, vec2s bottom_right, int* particle_ids, int max_count);
 
 /**
  * Retrieves particles within a specified circular area.
@@ -86,10 +83,10 @@ int get_particles_in_rectangle(Simulation sim, Vector2D top_left, Vector2D botto
  * @param max_count The maximum number of particle IDs that can be stored.
  * @return The number of particles found within the circle.
  */
-int get_particles_in_circle(Simulation sim, Vector2D center, float radius, int* particle_ids, int max_count);
+int get_particles_in_circle(Simulation sim, vec2s center, float radius, int* particle_ids, int max_count);
 
 // New function declarations
-void get_position_range(Simulation sim, Vector2D *min, Vector2D *max);
+void get_position_range(Simulation sim, vec2s *min, vec2s *max);
 uint64_t get_particle_count(Simulation sim);
 Particle get_particle_state(Simulation sim, int particle_id);
 void set_particle_state(Simulation sim, int particle_id, Particle p);

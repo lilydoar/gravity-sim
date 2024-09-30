@@ -1,32 +1,27 @@
 #ifndef VERLET_H
 #define VERLET_H
 
-#include <stddef.h>
-
-typedef struct Vector2D {
-  double x;
-  double y;
-} Vector2D;
+#include <cglm/struct.h>
 
 // Structure to represent a particle in 2D space
 typedef struct {
-  Vector2D position;          // Current position
-  Vector2D previous_position; // Previous position
-  Vector2D acceleration;      // Current acceleration
-  double mass;                // Mass of the particle
-} Particle;
+  vec2s position;          // Current position
+  vec2s previous_position; // Previous position
+  vec2s acceleration;      // Current acceleration
+  double mass;             // Mass of the particle
+} VerletParticle;
 
 // Function to initialize a particle
-Particle init_particle(const Vector2D position, const Vector2D velocity,
-                       double mass, double dt);
+VerletParticle init_particle(const vec2s position, const vec2s velocity, double mass,
+                       double dt);
 
 // Function to update the particle's position using Verlet integration
-void verlet_step(Particle p, double dt);
+void verlet_step(VerletParticle p, double dt);
 
 // Function to compute velocity based on position updates
-Vector2D compute_velocity(Particle p, double dt);
+vec2s compute_velocity(VerletParticle p, double dt);
 
 // Function to compute kinetic energy of the particle
-double compute_kinetic_energy(const Particle p, double dt);
+double compute_kinetic_energy(const VerletParticle p, double dt);
 
 #endif // VERLET_H

@@ -4,7 +4,7 @@ LFLAGS = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT 
 INCLUDE = -Iinclude/
 LIB = -Llib/ -lraylib
 TARGET = bin/gravity-sim
-SOURCES = src/main.c src/gravity.c src/gravity_interactor.c src/arena_allocator.c src/ui_handler.c
+SOURCES = src/main.c src/gravity.c src/gravity_interactor.c src/arena_allocator.c src/ui_handler.c src/verlet.c
 
 all: $(TARGET)
 
@@ -19,7 +19,7 @@ clean:
 
 UNITY_DIR = tests/unity/Unity-master/src
 UNITY_SRC = $(UNITY_DIR)/unity.c
-TEST_SOURCES = tests/test_gravity_interactor.c src/gravity_interactor.c src/arena_allocator.c
+TEST_SOURCES = tests/test_gravity_interactor.c src/gravity_interactor.c src/arena_allocator.c 
 TEST_TARGET = bin/test_gravity_interactor
 
 $(TEST_TARGET): $(TEST_SOURCES) $(UNITY_SRC)

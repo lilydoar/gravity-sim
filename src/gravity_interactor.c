@@ -1,110 +1,109 @@
 #include "gravity_interactor.h"
-#include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define DEBUG_LOG(fmt, ...) fprintf(stderr, "DEBUG: " fmt "\n", ##__VA_ARGS__)
 
-
-Action create_action(ArenaAllocator* frame_arena, ActionType type, ParticleSelection selection) {
-    Action* action = arena_alloc(frame_arena, sizeof(Action));
-    if (action) {
-        action->type = type;
-        action->selection = selection;
-    }
-    return *action;
-    DEBUG_LOG("Completed action of type %d", action->type);
+Action create_action(ArenaAllocator *frame_arena, ActionType type,
+                     ParticleSelection selection) {
+  Action *action = arena_alloc(frame_arena, sizeof(Action));
+  if (action) {
+    action->type = type;
+    action->selection = selection;
+  }
+  return *action;
+  DEBUG_LOG("Completed action of type %d", action->type);
 }
 
 void apply_action(Simulation sim, Action action) {
-    DEBUG_LOG("Starting action of type %d", action.type);
-    if (action.type == ACTION_MAKE_STATIC) {
-        if (action.selection.type == SELECTION_RECTANGLE) {
-            Vector2D top_left = action.selection.shape.rectangle.top_left;
-            Vector2D bottom_right = action.selection.shape.rectangle.bottom_right;
-            
-            // Ensure top_left is actually top-left and bottom_right is bottom-right
-            Vector2D actual_top_left = {
-                fmin(top_left.x, bottom_right.x),
-                fmin(top_left.y, bottom_right.y)
-            };
-            Vector2D actual_bottom_right = {
-                fmax(top_left.x, bottom_right.x),
-                fmax(top_left.y, bottom_right.y)
-            };
-            
-            int max_particles = 1000; // Adjust this value as needed
-            int* particle_ids = malloc(max_particles * sizeof(int));
-            
-            int count = get_particles_in_rectangle(sim, actual_top_left, actual_bottom_right, particle_ids, max_particles);
-            
-            int modified_count = 0;
-            int modified_ids[1000]; // Adjust size as needed
+  DEBUG_LOG("Starting action of type %d", action.type);
+  if (action.type == ACTION_MAKE_STATIC) {
+    if (action.selection.type == SELECTION_RECTANGLE) {
+      vec2s top_left = action.selection.shape.rectangle.top_left;
+      vec2s bottom_right = action.selection.shape.rectangle.bottom_right;
 
-            for (int i = 0; i < count; i++) {
-                Particle p = get_particle_state(sim, particle_ids[i]);
-                if (p.mode != PARTICLE_MODE_STATIC) {
-                    modified_ids[modified_count++] = particle_ids[i];
-                    p.mode = PARTICLE_MODE_STATIC;
-                    set_particle_state(sim, particle_ids[i], p);
-                }
-            }
+      // Ensure top_left is actually top-left and bottom_right is bottom-right
+      vec2s actual_top_left = {
+          {fmin(top_left.x, bottom_right.x), fmin(top_left.y, bottom_right.y)}};
+      vec2s actual_bottom_right = {
+          {fmax(top_left.x, bottom_right.x), fmax(top_left.y, bottom_right.y)}};
 
-            if (modified_count > 5) {
-                printf("Modified %d particles to static mode: ", modified_count);
-                int max_display = 10; // Maximum number of particle IDs to display
-                for (int i = 0; i < modified_count && i < max_display; i++) {
-                    printf("%d ", modified_ids[i]);
-                }
-                if (modified_count > max_display) {
-                    printf("..."); // Indicate that the list is truncated
-                }
-                printf("\n");
-            } else {
-                for (int i = 0; i < modified_count; i++) {
-                    printf("Particle %d mode changed to static\n", modified_ids[i]);
-                }
-            }
-            
-            free(particle_ids);
+      int max_particles = 1000; // Adjust this value as needed
+      int *particle_ids = malloc(max_particles * sizeof(int));
+
+      int count =
+          get_particles_in_rectangle(sim, actual_top_left, actual_bottom_right,
+                                     particle_ids, max_particles);
+
+      int modified_count = 0;
+      int modified_ids[1000]; // Adjust size as needed
+
+      for (int i = 0; i < count; i++) {
+        Particle p = get_particle_state(sim, particle_ids[i]);
+        if (p.mode != PARTICLE_MODE_STATIC) {
+          modified_ids[modified_count++] = particle_ids[i];
+          p.mode = PARTICLE_MODE_STATIC;
+          set_particle_state(sim, particle_ids[i], p);
         }
-        // Handle other selection types if needed
+      }
+
+      if (modified_count > 5) {
+        printf("Modified %d particles to static mode: ", modified_count);
+        int max_display = 10; // Maximum number of particle IDs to display
+        for (int i = 0; i < modified_count && i < max_display; i++) {
+          printf("%d ", modified_ids[i]);
+        }
+        if (modified_count > max_display) {
+          printf("..."); // Indicate that the list is truncated
+        }
+        printf("\n");
+      } else {
+        for (int i = 0; i < modified_count; i++) {
+          printf("Particle %d mode changed to static\n", modified_ids[i]);
+        }
+      }
+
+      free(particle_ids);
     }
-    // Handle other action types if needed
+    // Handle other selection types if needed
+  }
+  // Handle other action types if needed
 }
 
-void enqueue_action(ActionQueue* queue, Action action) {
-    if (queue->count < MAX_ACTIONS_PER_FRAME) {
-        queue->actions[queue->count++] = action;
-    }
+void enqueue_action(ActionQueue *queue, Action action) {
+  if (queue->count < MAX_ACTIONS_PER_FRAME) {
+    queue->actions[queue->count++] = action;
+  }
 }
 
-Action dequeue_action(ActionQueue* queue) {
-    if (queue->count > 0) {
-        return queue->actions[--queue->count];
-    }
-    return (Action){.type = ACTION_EMPTY};
+Action dequeue_action(ActionQueue *queue) {
+  if (queue->count > 0) {
+    return queue->actions[--queue->count];
+  }
+  return (Action){.type = ACTION_EMPTY};
 }
 
-SimulationActor init_simulation_interactor(ArenaAllocator* app_arena) {
-    SimulationActor actor = arena_alloc(app_arena, sizeof(struct SimulationActor));
-    if (actor) {
-        actor->arena = app_arena;
-        actor->queue.count = 0;
-    }
-    return actor;
+SimulationActor init_simulation_interactor(ArenaAllocator *app_arena) {
+  SimulationActor actor =
+      arena_alloc(app_arena, sizeof(struct SimulationActor));
+  if (actor) {
+    actor->arena = app_arena;
+    actor->queue.count = 0;
+  }
+  return actor;
 }
 
 void deinit_simulation_interactor(SimulationActor actor) {
-    // The memory is managed by the arena, so we don't need to free it here
-    (void)actor;
+  // The memory is managed by the arena, so we don't need to free it here
+  (void)actor;
 }
 
 Action query_actor(Simulation sim, SimulationActor actor) {
-    // This is a placeholder implementation
-    // In a real implementation, this would check for user input or other conditions
-    // to determine if an action should be created
-    (void)sim;
-    (void)actor;
-    return (Action){.type = ACTION_EMPTY};
+  // This is a placeholder implementation
+  // In a real implementation, this would check for user input or other
+  // conditions to determine if an action should be created
+  (void)sim;
+  (void)actor;
+  return (Action){.type = ACTION_EMPTY};
 }
