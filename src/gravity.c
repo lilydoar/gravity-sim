@@ -309,14 +309,36 @@ Particle get_particle_state(Simulation sim, int particle_id) {
   return sim_struct->particles[particle_id];
 }
 
-int get_particles_by_area(Vector2D top_left, Vector2D bottom_right,
-                          ParticleInfo *buffer, int max_count) {
-  (void)top_left;
-  (void)bottom_right;
-  (void)buffer;
-  (void)max_count;
-  // Retrieve particles within the specified area
-  return 0; // Placeholder return
+int get_particles_in_rectangle(Simulation sim, Vector2D top_left, Vector2D bottom_right, int* particle_ids, int max_count) {
+    SimulationStruct *sim_struct = (SimulationStruct *)sim;
+    int count = 0;
+
+    for (uint64_t i = 0; i < sim_struct->particle_count && count < max_count; i++) {
+        Particle *p = &sim_struct->particles[i];
+        if (p->position.x >= top_left.x && p->position.x <= bottom_right.x &&
+            p->position.y >= top_left.y && p->position.y <= bottom_right.y) {
+            particle_ids[count++] = i;
+        }
+    }
+
+    return count;
+}
+
+int get_particles_in_circle(Simulation sim, Vector2D center, float radius, int* particle_ids, int max_count) {
+    SimulationStruct *sim_struct = (SimulationStruct *)sim;
+    int count = 0;
+    float radius_squared = radius * radius;
+
+    for (uint64_t i = 0; i < sim_struct->particle_count && count < max_count; i++) {
+        Particle *p = &sim_struct->particles[i];
+        float dx = p->position.x - center.x;
+        float dy = p->position.y - center.y;
+        if (dx * dx + dy * dy <= radius_squared) {
+            particle_ids[count++] = i;
+        }
+    }
+
+    return count;
 }
 
 // Adds a new particle to the simulation.
