@@ -4,11 +4,12 @@ LFLAGS = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT 
 INCLUDE = -Iinclude/
 LIB = -Llib/ -lraylib
 TARGET = bin/gravity-sim
+SOURCES = src/main.c src/gravity.c src/gravity_interactor.c src/arena_allocator.c src/ui_handler.c
 
 all: $(TARGET)
 
-$(TARGET): src/main.c src/gravity.c
-	$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE) $(LIB) -o $(TARGET) src/main.c src/gravity.c
+$(TARGET): $(SOURCES)
+	$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE) $(LIB) -o $(TARGET) $(SOURCES)
 
 run: $(TARGET)
 	./$(TARGET)
