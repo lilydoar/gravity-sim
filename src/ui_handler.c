@@ -1,5 +1,6 @@
 #include "ui_handler.h"
 #include "raymath.h"
+#include <math.h>
 
 void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_arena) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
