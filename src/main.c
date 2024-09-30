@@ -15,6 +15,11 @@ Simulation init_simulation(SimulationOptions options);
 void step_simulation(Simulation sim);
 void deinit_simulation(Simulation sim);
 
+// New function declarations
+void draw_simulation(Simulation sim);
+Camera2D setup_camera();
+void update_camera(Camera2D *camera);
+
 #define SPACE_GREY                                                             \
   CLITERAL(Color) { 43, 52, 60, 255 }
 
@@ -44,6 +49,26 @@ void draw_simulation(Simulation sim);
 Camera2D setup_camera();
 void update_camera(Camera2D *camera);
 void reset_camera(Camera2D *camera);
+
+void draw_simulation(Simulation sim) {
+    // Implement drawing logic here
+    // For now, we'll just draw a placeholder circle
+    DrawCircle(400, 300, 50, RED);
+}
+
+Camera2D setup_camera() {
+    Camera2D camera = {0};
+    camera.target = (Vector2){0, 0};
+    camera.offset = (Vector2){SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
+    return camera;
+}
+
+void update_camera(Camera2D *camera) {
+    // Implement camera update logic here
+    // For now, we'll just keep the camera static
+}
 
 int main(void) {
   ArenaAllocator* app_arena = create_arena(APP_ARENA_SIZE);
