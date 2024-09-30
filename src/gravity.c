@@ -6,7 +6,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#define GRAVITATIONAL_CONSTANT 6.67430e-7
+#define GRAVITATIONAL_CONSTANT 6.67430e-11
 
 double calculate_distance(Vector2D *v1, Vector2D *v2);
 Vector2D calculate_force(Particle *p1, Particle *p2,
