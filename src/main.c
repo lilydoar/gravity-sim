@@ -63,7 +63,7 @@ void draw_simulation(Simulation sim) {
     for (uint64_t i = 0; i < particle_count; i++) {
         Particle p = get_particle_state(sim, i);
         Color particle_color;
-        if (p.is_static) {
+        if (p.mode == PARTICLE_MODE_STATIC) {
             particle_color = (Color){127, 255, 212, 255};  // Aquamarine blue for static particles
         } else {
             float normalized_mass = (p.mass - MASS_RANGE_MIN) / (MASS_RANGE_MAX - MASS_RANGE_MIN);

@@ -45,7 +45,7 @@ void apply_action(Simulation sim, Action action) {
             
             for (int i = 0; i < count; i++) {
                 Particle p = get_particle_state(sim, particle_ids[i]);
-                p.is_static = true;
+                p.mode = PARTICLE_MODE_STATIC;  // Set the mode to STATIC
                 set_particle_state(sim, particle_ids[i], p);
             }
             
