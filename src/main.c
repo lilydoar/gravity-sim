@@ -10,6 +10,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MASS_RANGE_MIN 10000.0f
+#define MASS_RANGE_MAX 50000.0f
+
 // Forward declarations
 Simulation init_simulation(SimulationOptions options);
 void step_simulation(Simulation sim);

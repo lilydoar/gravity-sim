@@ -80,6 +80,11 @@ int get_particles_in_rectangle(Simulation sim, Vector2D top_left, Vector2D botto
  */
 int get_particles_in_circle(Simulation sim, Vector2D center, float radius, int* particle_ids, int max_count);
 
+// New function declarations
+void get_position_range(Simulation sim, Vector2D *min, Vector2D *max);
+uint64_t get_particle_count(Simulation sim);
+Particle get_particle_state(Simulation sim, int particle_id);
+
 // ... (rest of the file remains unchanged)
 
 #endif // GRAVITY_H
