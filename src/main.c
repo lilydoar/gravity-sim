@@ -76,7 +76,7 @@ void draw_simulation(Simulation sim) {
 Camera2D setup_camera() {
     Camera2D camera = {0};
     camera.target = (Vector2){0, 0};
-    camera.offset = (Vector2){SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
+    camera.offset = (Vector2){(float)SCREEN_WIDTH/2, (float)SCREEN_HEIGHT/2};
     camera.rotation = 0.0f;
     camera.zoom = DEFAULT_ZOOM;
     return camera;
@@ -196,5 +196,3 @@ int main(void) {
 
   return 0;
 }
-
-// ... (rest of the functions remain unchanged)
