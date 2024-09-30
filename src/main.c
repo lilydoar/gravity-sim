@@ -51,9 +51,16 @@ void update_camera(Camera2D *camera);
 void reset_camera(Camera2D *camera);
 
 void draw_simulation(Simulation sim) {
-    // Implement drawing logic here
-    // For now, we'll just draw a placeholder circle
-    DrawCircle(400, 300, 50, RED);
+    Vector2D min_pos, max_pos;
+    get_position_range(sim, &min_pos, &max_pos);
+
+    uint64_t particle_count = get_particle_count(sim);
+    for (uint64_t i = 0; i < particle_count; i++) {
+        Particle p = get_particle_state(sim, i);
+        float normalized_mass = (p.mass - MASS_RANGE_MIN) / (MASS_RANGE_MAX - MASS_RANGE_MIN);
+        Color particle_color = interpolate_color(normalized_mass, 0, 1);
+        DrawCircle((int)p.position.x, (int)p.position.y, p.size, particle_color);
+    }
 }
 
 Camera2D setup_camera() {
@@ -61,13 +68,40 @@ Camera2D setup_camera() {
     camera.target = (Vector2){0, 0};
     camera.offset = (Vector2){SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
     camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
+    camera.zoom = DEFAULT_ZOOM;
     return camera;
 }
 
 void update_camera(Camera2D *camera) {
-    // Implement camera update logic here
-    // For now, we'll just keep the camera static
+    if (IsKeyDown(KEY_W)) camera->target.y -= CAMERA_MOVE_SPEED / camera->zoom;
+    if (IsKeyDown(KEY_S)) camera->target.y += CAMERA_MOVE_SPEED / camera->zoom;
+    if (IsKeyDown(KEY_A)) camera->target.x -= CAMERA_MOVE_SPEED / camera->zoom;
+    if (IsKeyDown(KEY_D)) camera->target.x += CAMERA_MOVE_SPEED / camera->zoom;
+
+    float wheel = GetMouseWheelMove();
+    if (wheel != 0) {
+        Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), *camera);
+        camera->offset = GetMousePosition();
+        camera->target = mouseWorldPos;
+        camera->zoom += wheel * CAMERA_ZOOM_SPEED * camera->zoom;
+        if (camera->zoom < MIN_ZOOM) camera->zoom = MIN_ZOOM;
+        if (camera->zoom > MAX_ZOOM) camera->zoom = MAX_ZOOM;
+    }
+}
+
+void reset_camera(Camera2D *camera) {
+    camera->target = (Vector2){0, 0};
+    camera->zoom = DEFAULT_ZOOM;
+}
+
+Color interpolate_color(float t, float t_min, float t_max) {
+    float normalized_t = (t - t_min) / (t_max - t_min);
+    return (Color){
+        PARTICLE_COLOR_MIN.r + (PARTICLE_COLOR_MAX.r - PARTICLE_COLOR_MIN.r) * normalized_t,
+        PARTICLE_COLOR_MIN.g + (PARTICLE_COLOR_MAX.g - PARTICLE_COLOR_MIN.g) * normalized_t,
+        PARTICLE_COLOR_MIN.b + (PARTICLE_COLOR_MAX.b - PARTICLE_COLOR_MIN.b) * normalized_t,
+        255
+    };
 }
 
 int main(void) {
@@ -105,6 +139,8 @@ int main(void) {
   SimulationActor actor = init_simulation_interactor(app_arena);
   UIState ui_state = {0};
 
+  SetTargetFPS(60);
+
   while (!WindowShouldClose()) {
     reset_arena(frame_arena);
     
@@ -129,6 +165,10 @@ int main(void) {
     draw_ui(ui_state);
     DrawFPS(10, 10);
     EndDrawing();
+
+    if (IsKeyPressed(KEY_R)) {
+      reset_camera(&camera);
+    }
   }
 
   deinit_simulation(sim);
