@@ -143,6 +143,13 @@ int main(void) {
           .params.uniform = {.min = 0.0, .max = 8.0}}});
   assert(sim != NULL);
 
+  // Log initial particle modes
+  uint64_t particle_count = get_particle_count(sim);
+  for (uint64_t i = 0; i < particle_count; i++) {
+      Particle p = get_particle_state(sim, i);
+      printf("Initial mode of particle %llu: %d\n", i, p.mode);
+  }
+
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
 
   camera = setup_camera();

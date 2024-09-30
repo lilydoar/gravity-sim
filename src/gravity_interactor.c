@@ -40,7 +40,9 @@ void apply_action(Simulation sim, Action action) {
             
             for (int i = 0; i < count; i++) {
                 Particle p = get_particle_state(sim, particle_ids[i]);
+                printf("Particle %d mode before action: %d\n", particle_ids[i], p.mode);
                 p.mode = PARTICLE_MODE_STATIC;  // Set the mode to STATIC
+                printf("Particle %d mode after action: %d\n", particle_ids[i], p.mode);
                 set_particle_state(sim, particle_ids[i], p);
             }
             
