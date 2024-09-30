@@ -1,5 +1,7 @@
 # TODO
 
+1. Make a README file with instructions for building, running, etc.
+1. Add an open source license.
 1. Debug action types instead of action numbers.
 1. Do not do selection on click. Only click and drag. Implement some minimum
    drag distance in screen space. Want to reuse click for other actions.
