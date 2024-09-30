@@ -1,5 +1,6 @@
 #include "gravity_interactor.h"
 #include <stdlib.h>
+#include <math.h>
 
 
 Action create_action(ArenaAllocator* frame_arena, ActionType type, ParticleSelection selection) {
