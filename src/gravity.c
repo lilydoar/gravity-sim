@@ -262,7 +262,8 @@ void integrate_particles(SimulationStruct *sim_struct, double substep_time) {
     case PARTICLE_MODE_VERLET: {
       VerletParticle vp =
           init_verlet_particle(p->position, p->velocity, substep_time);
-      verlet_step(vp, substep_time);
+      vp.acceleration = sim_struct->forces[i];
+      verlet_step(&vp, substep_time);
       p->position = vp.position;
       p->velocity = compute_velocity(vp, substep_time);
     } break;

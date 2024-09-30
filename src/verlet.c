@@ -20,20 +20,20 @@ VerletParticle init_verlet_particle(const vec2s position, const vec2s velocity,
 }
 
 // Function to update the particle's position using Verlet integration
-void verlet_step(VerletParticle p, double dt) {
+void verlet_step(VerletParticle *p, double dt) {
   vec2s new_position;
 
   // Compute new position using Verlet integration
-  new_position.x =
-      2.0 * p.position.x - p.previous_position.x + p.acceleration.x * dt * dt;
-  new_position.y =
-      2.0 * p.position.y - p.previous_position.y + p.acceleration.y * dt * dt;
+  new_position.x = 2.0 * p->position.x - p->previous_position.x +
+                   p->acceleration.x * dt * dt;
+  new_position.y = 2.0 * p->position.y - p->previous_position.y +
+                   p->acceleration.y * dt * dt;
 
   // Update previous position
-  p.previous_position = p.position;
+  p->previous_position = p->position;
 
   // Update current position
-  p.position = new_position;
+  p->position = new_position;
 }
 
 // Function to compute velocity based on position updates
