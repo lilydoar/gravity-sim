@@ -17,11 +17,13 @@ run: $(TARGET)
 clean:
 	rm $(TARGET)
 
+UNITY_DIR = tests/unity/Unity-master/src
+UNITY_SRC = $(UNITY_DIR)/unity.c
 TEST_SOURCES = tests/test_gravity_interactor.c src/gravity_interactor.c src/arena_allocator.c
 TEST_TARGET = bin/test_gravity_interactor
 
-$(TEST_TARGET): $(TEST_SOURCES)
-	$(CC) $(CFLAGS) $(INCLUDE) -o $(TEST_TARGET) $(TEST_SOURCES)
+$(TEST_TARGET): $(TEST_SOURCES) $(UNITY_SRC)
+	$(CC) $(CFLAGS) $(INCLUDE) -o $(TEST_TARGET) $(TEST_SOURCES) $(UNITY_SRC)
 
 test: $(TEST_TARGET)
 	./$(TEST_TARGET)
