@@ -164,97 +164,124 @@ void deinit_simulation(Simulation sim) {
 }
 
 void resolve_collision(Particle *p1, Particle *p2) {
-  double dx = p2->position.x - p1->position.x;
-  double dy = p2->position.y - p1->position.y;
-  double distance = sqrt(dx * dx + dy * dy);
-  double min_distance = p1->size + p2->size;
+    double dx = p2->position.x - p1->position.x;
+    double dy = p2->position.y - p1->position.y;
+    double distance = sqrt(dx * dx + dy * dy);
+    double min_distance = p1->size + p2->size;
 
-  if (distance < min_distance) {
-    // Calculate overlap
-    double overlap = 0.5 * (min_distance - distance);
+    if (distance < min_distance) {
+        // Calculate overlap
+        double overlap = min_distance - distance;
 
-    // Displace particles to resolve overlap
-    p1->position.x -= overlap * (dx / distance);
-    p1->position.y -= overlap * (dy / distance);
-    p2->position.x += overlap * (dx / distance);
-    p2->position.y += overlap * (dy / distance);
+        // Calculate the normal vector
+        double nx = dx / distance;
+        double ny = dy / distance;
 
-    // Calculate the normal vector
-    double nx = dx / distance;
-    double ny = dy / distance;
+        // Determine how to resolve the collision based on particle modes
+        if (p1->mode == PARTICLE_MODE_DYNAMIC && p2->mode == PARTICLE_MODE_DYNAMIC) {
+            // Both particles are dynamic, move each half the overlap
+            p1->position.x -= 0.5 * overlap * nx;
+            p1->position.y -= 0.5 * overlap * ny;
+            p2->position.x += 0.5 * overlap * nx;
+            p2->position.y += 0.5 * overlap * ny;
+        } else if (p1->mode == PARTICLE_MODE_DYNAMIC && p2->mode == PARTICLE_MODE_STATIC) {
+            // p1 is dynamic, p2 is static, move p1 full overlap
+            p1->position.x -= overlap * nx;
+            p1->position.y -= overlap * ny;
+        } else if (p1->mode == PARTICLE_MODE_STATIC && p2->mode == PARTICLE_MODE_DYNAMIC) {
+            // p1 is static, p2 is dynamic, move p2 full overlap
+            p2->position.x += overlap * nx;
+            p2->position.y += overlap * ny;
+        }
+        // If both are static, do nothing
 
-    // Calculate the relative velocity
-    double dvx = p2->velocity.x - p1->velocity.x;
-    double dvy = p2->velocity.y - p1->velocity.y;
+        // Calculate the relative velocity
+        double dvx = p2->velocity.x - p1->velocity.x;
+        double dvy = p2->velocity.y - p1->velocity.y;
 
-    // Calculate the velocity along the normal
-    double vn = dvx * nx + dvy * ny;
+        // Calculate the velocity along the normal
+        double vn = dvx * nx + dvy * ny;
 
-    // If the particles are moving apart, no need to resolve
-    if (vn > 0)
-      return;
+        // If the particles are moving apart, no need to resolve
+        if (vn > 0)
+            return;
 
-    // Introduce a damping factor to the impulse
-    double damping_factor = 0.999; // Adjust this value as needed
-    double impulse = damping_factor * (2 * vn) / (p1->mass + p2->mass);
+        // Introduce a damping factor to the impulse
+        double damping_factor = 0.999; // Adjust this value as needed
+        double impulse = damping_factor * (2 * vn) / (p1->mass + p2->mass);
 
-    // Update velocities based on the impulse
-    p1->velocity.x += impulse * p2->mass * nx;
-    p1->velocity.y += impulse * p2->mass * ny;
-    p2->velocity.x -= impulse * p1->mass * nx;
-    p2->velocity.y -= impulse * p1->mass * ny;
-  }
+        // Update velocities based on the impulse
+        p1->velocity.x += impulse * p2->mass * nx;
+        p1->velocity.y += impulse * p2->mass * ny;
+        p2->velocity.x -= impulse * p1->mass * nx;
+        p2->velocity.y -= impulse * p1->mass * ny;
+    }
+}
+
+void calculate_forces(SimulationStruct *sim_struct) {
+    for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
+        Particle *p = &sim_struct->particles[i];
+
+        // Skip force calculation for static particles
+        if (p->mode == PARTICLE_MODE_STATIC) {
+            sim_struct->forces[i] = (Vector2D){0.0, 0.0};
+            continue;
+        }
+
+        // Reset force accumulator
+        sim_struct->forces[i] = (Vector2D){0.0, 0.0};
+
+        for (uint64_t j = 0; j < sim_struct->particle_count; ++j) {
+            if (i == j)
+                continue; // Skip self-interaction
+
+            Particle *other = &sim_struct->particles[j];
+            Vector2D force = calculate_force(p, other, sim_struct->gravitational_constant);
+            sim_struct->forces[i].x += force.x;
+            sim_struct->forces[i].y += force.y;
+        }
+    }
+}
+
+void integrate_particles(SimulationStruct *sim_struct, double substep_time) {
+    for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
+        Particle *p = &sim_struct->particles[i];
+
+        // Skip integration for static particles
+        if (p->mode == PARTICLE_MODE_STATIC) {
+            continue;
+        }
+
+        verlet_integration(p, sim_struct->forces[i], substep_time);
+    }
 }
 
 void step_simulation(Simulation sim) {
-  SimulationStruct *sim_struct = (SimulationStruct *)sim;
+    SimulationStruct *sim_struct = (SimulationStruct *)sim;
 
-  // Loop over each substep
-  for (uint64_t substep = 0; substep < sim_struct->substeps; ++substep) {
-
-    // Calculate forces
-    for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
-      Particle *p = &sim_struct->particles[i];
-
-      // Reset force accumulator
-      sim_struct->forces[i] = (Vector2D){0.0, 0.0};
-
-      for (uint64_t j = 0; j < sim_struct->particle_count; ++j) {
-        if (i == j)
-          continue; // Skip self-interaction
-
-        Particle *other = &sim_struct->particles[j];
-        Vector2D force =
-            calculate_force(p, other, sim_struct->gravitational_constant);
-        sim_struct->forces[i].x += force.x;
-        sim_struct->forces[i].y += force.y;
-      }
+    // Loop over each substep
+    for (uint64_t substep = 0; substep < sim_struct->substeps; ++substep) {
+        calculate_forces(sim_struct);
+        double substep_time = sim_struct->time_step / sim_struct->substeps;
+        integrate_particles(sim_struct, substep_time);
     }
 
-    // Integrate using Verlet method
-    double substep_time = sim_struct->time_step / sim_struct->substeps;
-    for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
-      Particle *p = &sim_struct->particles[i];
-      verlet_integration(p, sim_struct->forces[i], substep_time);
-    }
-  }
+    if (sim_struct->enable_collisions) {
+        for (uint64_t iter = 0; iter < sim_struct->collision_iterations; ++iter) {
+            // Loop over each particle pair to check for collisions
+            for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
+                for (uint64_t j = i + 1; j < sim_struct->particle_count; ++j) {
+                    if (i == j)
+                        continue; // Skip self-interaction
 
-  if (sim_struct->enable_collisions) {
-    for (uint64_t iter = 0; iter < sim_struct->collision_iterations; ++iter) {
-      // Loop over each particle pair to check for collisions
-      for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {
-        for (uint64_t j = i + 1; j < sim_struct->particle_count; ++j) {
-          if (i == j)
-            continue; // Skip self-interaction
+                    Particle *p1 = &sim_struct->particles[i];
+                    Particle *p2 = &sim_struct->particles[j];
 
-          Particle *p1 = &sim_struct->particles[i];
-          Particle *p2 = &sim_struct->particles[j];
-
-          resolve_collision(p1, p2);
+                    resolve_collision(p1, p2);
+                }
+            }
         }
-      }
     }
-  }
 }
 
 double calculate_distance(Vector2D *v1, Vector2D *v2) {
