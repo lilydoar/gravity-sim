@@ -29,8 +29,10 @@ void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_a
             selection.type = state->current_selection_type;
 
             if (selection.type == SELECTION_RECTANGLE) {
-                selection.shape.rectangle.top_left = (Vector2D){(double)fmin(state->start_pos.x, state->current_pos.x), (double)fmin(state->start_pos.y, state->current_pos.y)};
-                selection.shape.rectangle.bottom_right = (Vector2D){(double)fmax(state->start_pos.x, state->current_pos.x), (double)fmax(state->start_pos.y, state->current_pos.y)};
+                Vector2 world_start_pos = GetScreenToWorld2D(state->start_pos, GetCamera());
+                Vector2 world_current_pos = GetScreenToWorld2D(state->current_pos, GetCamera());
+                selection.shape.rectangle.top_left = (Vector2D){(double)fmin(world_start_pos.x, world_current_pos.x), (double)fmin(world_start_pos.y, world_current_pos.y)};
+                selection.shape.rectangle.bottom_right = (Vector2D){(double)fmax(world_start_pos.x, world_current_pos.x), (double)fmax(world_start_pos.y, world_current_pos.y)};
                 Action action = create_action(frame_arena, ACTION_MAKE_STATIC, selection);
                 enqueue_action(&actor->queue, action);
                 DEBUG_LOG("Selection completed, creating action of type %d", ACTION_MAKE_STATIC);
