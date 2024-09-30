@@ -3,19 +3,6 @@
 
 #include "gravity.h"
 
-typedef enum {
-    PARTICLE_MODE_STATIC,
-    PARTICLE_MODE_DYNAMIC
-    // Add more modes here as needed
-} ParticleMode;
-
-typedef struct {
-    Vector2D position;
-    Vector2D velocity;
-    double mass;
-    double size;
-    ParticleMode mode;  // Use the enum for particle mode
-} Particle;
 #include <math.h>
 #include <stdio.h>
 
@@ -133,7 +120,7 @@ Simulation init_simulation(SimulationOptions options) {
           double distance = sqrt(dx * dx + dy * dy);
           sim->particles[i].velocity.x = velocity_magnitude * (dx / distance);
           sim->particles[i].velocity.y = velocity_magnitude * (dy / distance);
-          sim->particles[i].is_static = false;
+          sim->particles[i].mode = PARTICLE_MODE_DYNAMIC;
         }
         break;
       
