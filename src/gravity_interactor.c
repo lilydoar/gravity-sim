@@ -12,10 +12,28 @@ Action create_action(ArenaAllocator* frame_arena, ActionType type, ParticleSelec
 }
 
 void apply_action(Simulation sim, Action action) {
-    // Implementation depends on the specific actions and how they affect the simulation
-    // This is a placeholder implementation
-    (void)sim;
-    (void)action;
+    if (action.type == ACTION_MAKE_STATIC) {
+        if (action.selection.type == SELECTION_RECTANGLE) {
+            Vector2D top_left = action.selection.shape.rectangle.top_left;
+            Vector2D bottom_right = action.selection.shape.rectangle.bottom_right;
+            
+            int max_particles = 1000; // Adjust this value as needed
+            int* particle_ids = malloc(max_particles * sizeof(int));
+            
+            int count = get_particles_in_rectangle(sim, top_left, bottom_right, particle_ids, max_particles);
+            
+            for (int i = 0; i < count; i++) {
+                Particle p = get_particle_state(sim, particle_ids[i]);
+                p.is_static = true;
+                // Assuming there's a function to set particle state
+                set_particle_state(sim, particle_ids[i], p);
+            }
+            
+            free(particle_ids);
+        }
+        // Handle other selection types if needed
+    }
+    // Handle other action types if needed
 }
 
 void enqueue_action(ActionQueue* queue, Action action) {

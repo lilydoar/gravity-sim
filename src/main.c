@@ -60,8 +60,13 @@ void draw_simulation(Simulation sim) {
     uint64_t particle_count = get_particle_count(sim);
     for (uint64_t i = 0; i < particle_count; i++) {
         Particle p = get_particle_state(sim, i);
-        float normalized_mass = (p.mass - MASS_RANGE_MIN) / (MASS_RANGE_MAX - MASS_RANGE_MIN);
-        Color particle_color = interpolate_color(normalized_mass, 0, 1);
+        Color particle_color;
+        if (p.is_static) {
+            particle_color = BLUE;
+        } else {
+            float normalized_mass = (p.mass - MASS_RANGE_MIN) / (MASS_RANGE_MAX - MASS_RANGE_MIN);
+            particle_color = interpolate_color(normalized_mass, 0, 1);
+        }
         DrawCircle((int)p.position.x, (int)p.position.y, p.size, particle_color);
     }
 }

@@ -23,15 +23,15 @@ void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_a
             selection.type = state->current_selection_type;
 
             if (selection.type == SELECTION_RECTANGLE) {
-                selection.shape.rectangle.top_left = (Vector2D){(double)state->start_pos.x, (double)state->start_pos.y};
-                selection.shape.rectangle.bottom_right = (Vector2D){(double)state->current_pos.x, (double)state->current_pos.y};
+                selection.shape.rectangle.top_left = (Vector2D){(double)fmin(state->start_pos.x, state->current_pos.x), (double)fmin(state->start_pos.y, state->current_pos.y)};
+                selection.shape.rectangle.bottom_right = (Vector2D){(double)fmax(state->start_pos.x, state->current_pos.x), (double)fmax(state->start_pos.y, state->current_pos.y)};
+                Action action = create_action(frame_arena, ACTION_MAKE_STATIC, selection);
+                enqueue_action(&actor->queue, action);
             } else {
                 selection.shape.circle.center = (Vector2D){(double)state->start_pos.x, (double)state->start_pos.y};
                 selection.shape.circle.radius = Vector2Distance(state->start_pos, state->current_pos);
+                // For now, we're not creating an action for circular selections
             }
-
-            Action action = create_action(frame_arena, ACTION_MAKE_STATIC, selection);
-            enqueue_action(&actor->queue, action);
         }
     }
 }
