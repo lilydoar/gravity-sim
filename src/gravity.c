@@ -38,6 +38,8 @@ double random_normal_double(double mean, double stddev) {
   return z0 * stddev + mean;
 }
 
+#include "gravity.h"
+
 double sample_distribution(const Distribution* dist) {
     switch (dist->type) {
         case DISTRIBUTION_UNIFORM:

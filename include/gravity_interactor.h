@@ -47,10 +47,7 @@ void enqueue_action(ActionQueue* queue, Action action);
 Action dequeue_action(ActionQueue* queue);
 
 // Opaque type for the simulation_interactor
-typedef struct SimulationActor {
-    ActionQueue queue;
-    ArenaAllocator* arena;
-} *SimulationActor;
+typedef struct SimulationActor* SimulationActor;
 
 SimulationActor init_simulation_interactor(ArenaAllocator* app_arena);
 void deinit_simulation_interactor(SimulationActor actor);

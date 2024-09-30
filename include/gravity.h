@@ -18,6 +18,42 @@ typedef struct Particle {
 
 typedef struct Simulation* Simulation;
 
+typedef enum {
+    DISTRIBUTION_UNIFORM,
+    DISTRIBUTION_NORMAL
+} DistributionType;
+
+typedef struct {
+    DistributionType type;
+    union {
+        struct { double min; double max; } uniform;
+        struct { double mean; double stddev; } normal;
+    } params;
+} Distribution;
+
+typedef enum {
+    VELOCITY_INIT_ZERO,
+    VELOCITY_INIT_RANDOM,
+    VELOCITY_INIT_PERPENDICULAR_TO_ORIGIN,
+    VELOCITY_INIT_TOWARDS_ORIGIN,
+    VELOCITY_INIT_AWAY_FROM_ORIGIN
+} VelocityInitMode;
+
+typedef struct {
+    double time_step;
+    uint64_t substeps;
+    bool enable_collisions;
+    uint64_t collision_iterations;
+    double gravitational_constant;
+    uint64_t particle_count;
+    Distribution position_x_distribution;
+    Distribution position_y_distribution;
+    Distribution mass_distribution;
+    Distribution size_distribution;
+    VelocityInitMode velocity_init_mode;
+    Distribution velocity_magnitude_distribution;
+} SimulationOptions;
+
 // ... (previous code remains unchanged)
 
 /**
