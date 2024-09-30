@@ -11,6 +11,8 @@
 1. Window resizing. Set Size of window to screen size on startup. Do not enter
    fullscreen by default.
 1. Fullscreen support.
+1. Ability to click and drag individual(or groups) of particles to move them
+   around.
 1. Integration tests. Make use of Raylibs event automation capabilities to write
    integration tests that simulate a user performing a specific action or
    actions. Use these tests to check for regressions.
