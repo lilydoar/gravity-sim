@@ -32,8 +32,13 @@ void handle_input(UIState* state, SimulationActor actor, ArenaAllocator* frame_a
                 extern Camera2D camera;  // Declare the camera as external
                 Vector2 world_start_pos = GetScreenToWorld2D(state->start_pos, camera);
                 Vector2 world_current_pos = GetScreenToWorld2D(state->current_pos, camera);
+                DEBUG_LOG("World start position: (%f, %f)", world_start_pos.x, world_start_pos.y);
+                DEBUG_LOG("World current position: (%f, %f)", world_current_pos.x, world_current_pos.y);
                 selection.shape.rectangle.top_left = (Vector2D){(double)fmin(world_start_pos.x, world_current_pos.x), (double)fmin(world_start_pos.y, world_current_pos.y)};
                 selection.shape.rectangle.bottom_right = (Vector2D){(double)fmax(world_start_pos.x, world_current_pos.x), (double)fmax(world_start_pos.y, world_current_pos.y)};
+                DEBUG_LOG("Rectangle selection after conversion: top_left (%f, %f), bottom_right (%f, %f)",
+                          selection.shape.rectangle.top_left.x, selection.shape.rectangle.top_left.y,
+                          selection.shape.rectangle.bottom_right.x, selection.shape.rectangle.bottom_right.y);
                 Action action = create_action(frame_arena, ACTION_MAKE_STATIC, selection);
                 enqueue_action(&actor->queue, action);
                 DEBUG_LOG("Selection completed, creating action of type %d", ACTION_MAKE_STATIC);
