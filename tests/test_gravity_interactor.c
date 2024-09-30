@@ -25,7 +25,7 @@ int get_particles_in_rectangle(Simulation sim, Vector2D top_left, Vector2D botto
 void test_apply_action() {
     // Initialize mock particles
     for (int i = 0; i < 10; i++) {
-        mock_particles[i].is_static = false;
+        mock_particles[i].mode = PARTICLE_MODE_DYNAMIC;
     }
 
     // Create a test action
