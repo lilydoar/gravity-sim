@@ -2,10 +2,9 @@
 #include <cglm/struct.h>
 
 // Function to initialize a particle
-VerletParticle init_particle(const vec2s position, const vec2s velocity,
-                             double mass, double dt) {
+VerletParticle init_verlet_particle(const vec2s position, const vec2s velocity,
+                                    double dt) {
   VerletParticle p;
-  p.mass = mass;
 
   // Initialize current position
   p.position = position;
@@ -46,8 +45,8 @@ vec2s compute_velocity(VerletParticle p, double dt) {
 }
 
 // Function to compute kinetic energy of the particle
-double compute_kinetic_energy(const VerletParticle p, double dt) {
+double compute_kinetic_energy(const VerletParticle p, double mass, double dt) {
   vec2s v = compute_velocity(p, dt);
   double speed_squared = v.x * v.x + v.y * v.y;
-  return 0.5 * p.mass * speed_squared;
+  return 0.5 * mass * speed_squared;
 }
