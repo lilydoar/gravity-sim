@@ -17,15 +17,24 @@ void apply_action(Simulation sim, Action action) {
             Vector2D top_left = action.selection.shape.rectangle.top_left;
             Vector2D bottom_right = action.selection.shape.rectangle.bottom_right;
             
+            // Ensure top_left is actually top-left and bottom_right is bottom-right
+            Vector2D actual_top_left = {
+                fmin(top_left.x, bottom_right.x),
+                fmin(top_left.y, bottom_right.y)
+            };
+            Vector2D actual_bottom_right = {
+                fmax(top_left.x, bottom_right.x),
+                fmax(top_left.y, bottom_right.y)
+            };
+            
             int max_particles = 1000; // Adjust this value as needed
             int* particle_ids = malloc(max_particles * sizeof(int));
             
-            int count = get_particles_in_rectangle(sim, top_left, bottom_right, particle_ids, max_particles);
+            int count = get_particles_in_rectangle(sim, actual_top_left, actual_bottom_right, particle_ids, max_particles);
             
             for (int i = 0; i < count; i++) {
                 Particle p = get_particle_state(sim, particle_ids[i]);
                 p.is_static = true;
-                // Assuming there's a function to set particle state
                 set_particle_state(sim, particle_ids[i], p);
             }
             
