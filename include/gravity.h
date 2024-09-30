@@ -14,8 +14,14 @@ typedef struct Particle {
     Vector2D velocity;
     double mass;
     double size;
-    bool is_static;
+    ParticleMode mode;  // Use the enum for particle mode
 } Particle;
+
+typedef enum {
+    PARTICLE_MODE_STATIC,
+    PARTICLE_MODE_DYNAMIC
+    // Add more modes here as needed
+} ParticleMode;
 
 typedef struct Simulation* Simulation;
 
