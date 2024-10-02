@@ -42,7 +42,9 @@ void test_apply_action() {
                 .top_left = {{0, 0}},
                 .bottom_right = {{100, 100}}
             }
-        }
+        },
+        .particle_ids = (int[]){0, 1},
+        .count = 2
     };
     
     // Use NULL for the arena in this test

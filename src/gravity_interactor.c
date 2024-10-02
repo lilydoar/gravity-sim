@@ -50,25 +50,22 @@ void apply_action(Simulation sim, Action action) {
     for (int i = 0; i < action.selection.count; i++) {
       int particle_id = action.selection.particle_ids[i];
       Particle p = get_particle_state(sim, particle_id);
-      if (p.mode != PARTICLE_MODE_STATIC) {
-        modified_ids[modified_count++] = particle_id;
-        p.mode = PARTICLE_MODE_STATIC;
-        set_particle_state(sim, particle_id, p);
-      }
+      modified_ids[modified_count++] = particle_id;
+      p.mode = PARTICLE_MODE_STATIC;
+      set_particle_state(sim, particle_id, p);
     }
 
     if (modified_count > 0) {
-      printf("Modified %d particles to static mode: ", modified_count);
+      DEBUG_LOG("Modified %d particles to static mode: ", modified_count);
       int max_display = 10; // Maximum number of particle IDs to display
       for (int i = 0; i < modified_count && i < max_display; i++) {
-        printf("%d ", modified_ids[i]);
+        DEBUG_LOG("%d ", modified_ids[i]);
       }
       if (modified_count > max_display) {
-        printf("..."); // Indicate that the list is truncated
+        DEBUG_LOG("..."); // Indicate that the list is truncated
       }
-      printf("\n");
     } else {
-      printf("No particles were modified to static mode\n");
+      DEBUG_LOG("No particles were modified to static mode");
     }
   }
   // Handle other action types if needed
