@@ -380,13 +380,13 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left,
   double min_y = fmin(top_left.y, bottom_right.y);
   double max_y = fmax(top_left.y, bottom_right.y);
 
-  DEBUG_LOG("Searching for particles in rectangle (%.2f, %.2f) to (%.2f, %.2f)",
+  DEBUG_LOG("Starting particle search in rectangle (%.2f, %.2f) to (%.2f, %.2f)",
             min_x, min_y, max_x, max_y);
-  DEBUG_LOG("Total particle count: %llu", sim_struct->particle_count);
+  TRACE_LOG("Total particle count: %llu", sim_struct->particle_count);
 
   for (uint64_t i = 0; i < sim_struct->particle_count && count < max_count; i++) {
     Particle *p = &sim_struct->particles[i];
-    DEBUG_LOG("Checking particle %llu at (%.2f, %.2f)", i, p->position.x, p->position.y);
+    TRACE_LOG("Checking particle %llu at (%.2f, %.2f)", i, p->position.x, p->position.y);
     if (p->position.x >= min_x && p->position.x <= max_x &&
         p->position.y >= min_y && p->position.y <= max_y) {
       particle_ids[count++] = i;
@@ -394,7 +394,7 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left,
     }
   }
 
-  DEBUG_LOG("Found %d particles in rectangle (%.2f, %.2f) to (%.2f, %.2f)",
+  DEBUG_LOG("Finished particle search. Found %d particles in rectangle (%.2f, %.2f) to (%.2f, %.2f)",
             count, min_x, min_y, max_x, max_y);
 
   return count;

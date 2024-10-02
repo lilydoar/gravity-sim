@@ -53,7 +53,6 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
     TRACE_LOG("Camera position: (%f, %f), zoom: %f", camera.target.x, camera.target.y, camera.zoom);
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        DEBUG_LOG("Left mouse button pressed");
         if (CheckCollisionPointRec(mouse_pos, state->make_static_button)) {
             DEBUG_LOG("Make static button clicked");
             // Handle button click
@@ -69,21 +68,18 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
             state->is_selecting = true;
             state->start_pos = world_mouse_pos;
             state->current_selection_type = SELECTION_RECTANGLE;
-            DEBUG_LOG("Started rectangle selection");
+            DEBUG_LOG("Started rectangle selection at (%f, %f)", state->start_pos.x, state->start_pos.y);
         }
     } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
-        DEBUG_LOG("Right mouse button pressed");
         state->is_selecting = true;
         state->start_pos = world_mouse_pos;
         state->current_selection_type = SELECTION_CIRCLE;
-        DEBUG_LOG("Started circle selection");
+        DEBUG_LOG("Started circle selection at (%f, %f)", state->start_pos.x, state->start_pos.y);
     }
 
     if (state->is_selecting) {
         state->current_pos = world_mouse_pos;
-        DEBUG_LOG("Selecting: current position (%f, %f)", state->current_pos.x, state->current_pos.y);
         if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) || IsMouseButtonReleased(MOUSE_RIGHT_BUTTON)) {
-            DEBUG_LOG("Mouse button released, ending selection");
             state->is_selecting = false;
 
             ParticleSelection selection;
@@ -92,13 +88,13 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
             if (selection.type == SELECTION_RECTANGLE) {
                 selection.shape.rectangle.top_left = (vec2s){{fmin(state->start_pos.x, state->current_pos.x), fmin(state->start_pos.y, state->current_pos.y)}};
                 selection.shape.rectangle.bottom_right = (vec2s){{fmax(state->start_pos.x, state->current_pos.x), fmax(state->start_pos.y, state->current_pos.y)}};
-                DEBUG_LOG("Rectangle selection: (%f, %f) to (%f, %f)", 
+                DEBUG_LOG("Ended rectangle selection: (%f, %f) to (%f, %f)", 
                     selection.shape.rectangle.top_left.x, selection.shape.rectangle.top_left.y,
                     selection.shape.rectangle.bottom_right.x, selection.shape.rectangle.bottom_right.y);
             } else {
                 selection.shape.circle.center = (vec2s){{state->start_pos.x, state->start_pos.y}};
                 selection.shape.circle.radius = Vector2Distance(state->start_pos, state->current_pos);
-                DEBUG_LOG("Circle selection: center (%f, %f), radius %f", 
+                DEBUG_LOG("Ended circle selection: center (%f, %f), radius %f", 
                     selection.shape.circle.center.x, selection.shape.circle.center.y,
                     selection.shape.circle.radius);
             }
