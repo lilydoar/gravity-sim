@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c17
 LFLAGS = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
-INCLUDE = -Iinclude/
+INCLUDE = -Iinclude/ -Itests/unity/Unity-2.6.0/src
 LIB = -Llib/ -lraylib
 TARGET = bin/gravity-sim
 SOURCES = src/main.c src/gravity.c src/gravity_interactor.c src/arena_allocator.c src/ui_handler.c src/verlet.c
