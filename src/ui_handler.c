@@ -168,8 +168,8 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
                     for (int i = 0; i < count; i++) {
                         add_to_selection(state, particle_ids[i]);
                     }
-                } else if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_CAPS_LOCK)) {
-                    DEBUG_LOG("Toggling selection (CTRL or CAPS_LOCK pressed)");
+                } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
+                    DEBUG_LOG("Toggling selection (CTRL pressed)");
                     // Toggle selection
                     for (int i = 0; i < count; i++) {
                         if (is_particle_selected(state, particle_ids[i])) {
