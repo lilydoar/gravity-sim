@@ -57,13 +57,12 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
             DEBUG_LOG("Make static button clicked");
             // Handle button click
             ParticleSelection selection = {
-                .type = SELECTION_RECTANGLE,
                 .particle_ids = state->selected_particles,
                 .count = state->selected_count
             };
             Action action = create_action(frame_arena, ACTION_MAKE_STATIC, selection);
             enqueue_action(&actor->queue, action);
-            DEBUG_LOG("Created action to make %d particles static", state->selected_count);
+            DEBUG_LOG("Created action to make %d particles static", action.selection.count);
         } else {
             state->is_selecting = true;
             state->start_pos = world_mouse_pos;

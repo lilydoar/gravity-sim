@@ -21,72 +21,54 @@ Action create_action(ArenaAllocator *frame_arena, ActionType type,
                      ParticleSelection selection) {
   Action action;
   action.type = type;
-  action.selection = selection;
   
   if (frame_arena) {
-    Action *action_ptr = arena_alloc(frame_arena, sizeof(Action));
-    if (action_ptr) {
-      *action_ptr = action;
-      DEBUG_LOG("Created action of type %s", action_type_to_string(action_ptr->type));
-      return *action_ptr;
+    action.selection.particle_ids = arena_alloc(frame_arena, selection.count * sizeof(int));
+    if (action.selection.particle_ids) {
+      memcpy(action.selection.particle_ids, selection.particle_ids, selection.count * sizeof(int));
+      action.selection.count = selection.count;
+    } else {
+      action.selection.count = 0;
     }
+  } else {
+    action.selection.particle_ids = selection.particle_ids;
+    action.selection.count = selection.count;
   }
   
-  DEBUG_LOG("Created action of type %s", action_type_to_string(action.type));
+  DEBUG_LOG("Created action of type %s with %d particles", 
+            action_type_to_string(action.type), action.selection.count);
   return action;
 }
 
 void apply_action(Simulation sim, Action action) {
   DEBUG_LOG("Applying action of type %s", action_type_to_string(action.type));
   if (action.type == ACTION_MAKE_STATIC) {
-    if (action.selection.type == SELECTION_RECTANGLE) {
-      vec2s top_left = action.selection.shape.rectangle.top_left;
-      vec2s bottom_right = action.selection.shape.rectangle.bottom_right;
+    int modified_count = 0;
+    int modified_ids[1000]; // Adjust size as needed
 
-      // Ensure top_left is actually top-left and bottom_right is bottom-right
-      vec2s actual_top_left = {
-          {fmin(top_left.x, bottom_right.x), fmin(top_left.y, bottom_right.y)}};
-      vec2s actual_bottom_right = {
-          {fmax(top_left.x, bottom_right.x), fmax(top_left.y, bottom_right.y)}};
-
-      int max_particles = 1000; // Adjust this value as needed
-      int *particle_ids = malloc(max_particles * sizeof(int));
-
-      int count =
-          get_particles_in_rectangle(sim, actual_top_left, actual_bottom_right,
-                                     particle_ids, max_particles);
-
-      int modified_count = 0;
-      int modified_ids[1000]; // Adjust size as needed
-
-      for (int i = 0; i < count; i++) {
-        Particle p = get_particle_state(sim, particle_ids[i]);
-        if (p.mode != PARTICLE_MODE_STATIC) {
-          modified_ids[modified_count++] = particle_ids[i];
-          p.mode = PARTICLE_MODE_STATIC;
-          set_particle_state(sim, particle_ids[i], p);
-        }
+    for (int i = 0; i < action.selection.count; i++) {
+      int particle_id = action.selection.particle_ids[i];
+      Particle p = get_particle_state(sim, particle_id);
+      if (p.mode != PARTICLE_MODE_STATIC) {
+        modified_ids[modified_count++] = particle_id;
+        p.mode = PARTICLE_MODE_STATIC;
+        set_particle_state(sim, particle_id, p);
       }
-
-      if (modified_count > 5) {
-        printf("Modified %d particles to static mode: ", modified_count);
-        int max_display = 10; // Maximum number of particle IDs to display
-        for (int i = 0; i < modified_count && i < max_display; i++) {
-          printf("%d ", modified_ids[i]);
-        }
-        if (modified_count > max_display) {
-          printf("..."); // Indicate that the list is truncated
-        }
-        printf("\n");
-      } else {
-        for (int i = 0; i < modified_count; i++) {
-          printf("Particle %d mode changed to static\n", modified_ids[i]);
-        }
-      }
-
-      free(particle_ids);
     }
-    // Handle other selection types if needed
+
+    if (modified_count > 0) {
+      printf("Modified %d particles to static mode: ", modified_count);
+      int max_display = 10; // Maximum number of particle IDs to display
+      for (int i = 0; i < modified_count && i < max_display; i++) {
+        printf("%d ", modified_ids[i]);
+      }
+      if (modified_count > max_display) {
+        printf("..."); // Indicate that the list is truncated
+      }
+      printf("\n");
+    } else {
+      printf("No particles were modified to static mode\n");
+    }
   }
   // Handle other action types if needed
 }
