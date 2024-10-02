@@ -25,7 +25,7 @@ TEST_TARGET = bin/test_gravity_interactor
 $(TEST_TARGET): $(TEST_SOURCES) $(UNITY_SRC)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $(TEST_TARGET) $(TEST_SOURCES) $(UNITY_SRC)
 
-test: $(TEST_TARGET)
+check: $(TEST_TARGET)
 	./$(TEST_TARGET)
 
-.PHONY: test
+.PHONY: check
