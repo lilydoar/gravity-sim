@@ -168,7 +168,8 @@ int main(void) {
 
   camera = setup_camera();
   SimulationActor actor = init_simulation_interactor(app_arena);
-  UIState ui_state = {0};
+  UIState ui_state;
+  init_ui_state(&ui_state);
 
   SetTargetFPS(60);
 
@@ -205,6 +206,7 @@ int main(void) {
 
   deinit_simulation(sim);
   deinit_simulation_interactor(actor);
+  deinit_ui_state(&ui_state);
   destroy_arena(app_arena);
   destroy_arena(frame_arena);
   CloseWindow();
