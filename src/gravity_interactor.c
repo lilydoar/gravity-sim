@@ -104,12 +104,13 @@ Action dequeue_action(ActionQueue *queue) {
   return (Action){.type = ACTION_EMPTY};
 }
 
-SimulationActor init_simulation_interactor(ArenaAllocator *app_arena) {
+SimulationActor init_simulation_interactor(ArenaAllocator *app_arena, Simulation sim) {
   SimulationActor actor =
       arena_alloc(app_arena, sizeof(struct SimulationActor));
   if (actor) {
     actor->arena = app_arena;
     actor->queue.count = 0;
+    actor->sim = sim;
   }
   return actor;
 }
