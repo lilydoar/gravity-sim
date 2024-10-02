@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 const char* action_type_to_string(ActionType type) {
     switch (type) {
