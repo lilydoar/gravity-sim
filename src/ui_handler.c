@@ -46,8 +46,8 @@ void handle_input(UIState *state, SimulationActor actor,
         Action action =
             create_action(frame_arena, ACTION_MAKE_STATIC, selection);
         enqueue_action(&actor->queue, action);
-        DEBUG_LOG("Completed action: Created action of type %d",
-                  ACTION_MAKE_STATIC);
+        DEBUG_LOG("Completed action: Created action of type %s",
+                  action_type_to_string(ACTION_MAKE_STATIC));
       } else {
         selection.shape.circle.center =
             (vec2s){{(double)state->start_pos.x, (double)state->start_pos.y}};

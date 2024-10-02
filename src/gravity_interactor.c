@@ -3,6 +3,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+const char* action_type_to_string(ActionType type) {
+    switch (type) {
+        case ACTION_MAKE_STATIC: return "ACTION_MAKE_STATIC";
+        case ACTION_EMPTY: return "ACTION_EMPTY";
+        // Add other action types here as needed
+        default: return "UNKNOWN_ACTION";
+    }
+}
+
 #define DEBUG_LOG(fmt, ...) fprintf(stderr, "DEBUG: " fmt "\n", ##__VA_ARGS__)
 
 Action create_action(ArenaAllocator *frame_arena, ActionType type,
@@ -13,11 +22,11 @@ Action create_action(ArenaAllocator *frame_arena, ActionType type,
     action->selection = selection;
   }
   return *action;
-  DEBUG_LOG("Completed action of type %d", action->type);
+  DEBUG_LOG("Completed action of type %s", action_type_to_string(action->type));
 }
 
 void apply_action(Simulation sim, Action action) {
-  DEBUG_LOG("Starting action of type %d", action.type);
+  DEBUG_LOG("Starting action of type %s", action_type_to_string(action.type));
   if (action.type == ACTION_MAKE_STATIC) {
     if (action.selection.type == SELECTION_RECTANGLE) {
       vec2s top_left = action.selection.shape.rectangle.top_left;
