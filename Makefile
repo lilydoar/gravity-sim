@@ -15,7 +15,7 @@ run: $(TARGET)
 	./$(TARGET)
 
 clean:
-	rm $(TARGET)
+	rm -f $(TARGET)
 
 UNITY_DIR = tests/unity/Unity-2.6.0/src
 UNITY_SRC = $(UNITY_DIR)/unity.c
