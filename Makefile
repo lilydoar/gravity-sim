@@ -17,7 +17,7 @@ run: $(TARGET)
 clean:
 	rm $(TARGET)
 
-UNITY_DIR = tests/unity/Unity-master/src
+UNITY_DIR = tests/unity/Unity-2.6.0/src
 UNITY_SRC = $(UNITY_DIR)/unity.c
 TEST_SOURCES = tests/test_gravity_interactor.c src/gravity_interactor.c src/arena_allocator.c 
 TEST_TARGET = bin/test_gravity_interactor
