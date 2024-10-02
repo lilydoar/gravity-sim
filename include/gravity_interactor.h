@@ -20,7 +20,7 @@ typedef struct {
       float radius;
     } circle;
   } shape;
-  int* particle_ids;
+  int *particle_ids;
   int count;
 } ParticleSelection;
 
@@ -59,7 +59,8 @@ typedef struct SimulationActor {
   Simulation sim;
 } *SimulationActor;
 
-SimulationActor init_simulation_interactor(ArenaAllocator *app_arena, Simulation sim);
+SimulationActor init_simulation_interactor(ArenaAllocator *app_arena,
+                                           Simulation sim);
 void deinit_simulation_interactor(SimulationActor actor);
 Action query_actor(Simulation sim, SimulationActor actor);
 

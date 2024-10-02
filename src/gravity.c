@@ -2,8 +2,8 @@
 #define GRAVITY_C
 
 #include "gravity.h"
-#include "verlet.h"
 #include "logging.h"
+#include "verlet.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -370,8 +370,9 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left,
   int count = 0;
 
   if (!sim_struct || !particle_ids || max_count <= 0) {
-    ERROR_LOG("Invalid parameters in get_particles_in_rectangle: sim_struct=%p, particle_ids=%p, max_count=%d",
-              (void*)sim_struct, (void*)particle_ids, max_count);
+    ERROR_LOG("Invalid parameters in get_particles_in_rectangle: "
+              "sim_struct=%p, particle_ids=%p, max_count=%d",
+              (void *)sim_struct, (void *)particle_ids, max_count);
     return -1;
   }
 
@@ -380,21 +381,26 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left,
   double min_y = fmin(top_left.y, bottom_right.y);
   double max_y = fmax(top_left.y, bottom_right.y);
 
-  DEBUG_LOG("Starting particle search in rectangle (%.2f, %.2f) to (%.2f, %.2f)",
-            min_x, min_y, max_x, max_y);
+  DEBUG_LOG(
+      "Starting particle search in rectangle (%.2f, %.2f) to (%.2f, %.2f)",
+      min_x, min_y, max_x, max_y);
   TRACE_LOG("Total particle count: %llu", sim_struct->particle_count);
 
-  for (uint64_t i = 0; i < sim_struct->particle_count && count < max_count; i++) {
+  for (uint64_t i = 0; i < sim_struct->particle_count && count < max_count;
+       i++) {
     Particle *p = &sim_struct->particles[i];
-    TRACE_LOG("Checking particle %llu at (%.2f, %.2f)", i, p->position.x, p->position.y);
+    TRACE_LOG("Checking particle %llu at (%.2f, %.2f)", i, p->position.x,
+              p->position.y);
     if (p->position.x >= min_x && p->position.x <= max_x &&
         p->position.y >= min_y && p->position.y <= max_y) {
       particle_ids[count++] = i;
-      DEBUG_LOG("Particle %llu at (%.2f, %.2f) is inside the rectangle", i, p->position.x, p->position.y);
+      DEBUG_LOG("Particle %llu at (%.2f, %.2f) is inside the rectangle", i,
+                p->position.x, p->position.y);
     }
   }
 
-  DEBUG_LOG("Finished particle search. Found %d particles in rectangle (%.2f, %.2f) to (%.2f, %.2f)",
+  DEBUG_LOG("Finished particle search. Found %d particles in rectangle (%.2f, "
+            "%.2f) to (%.2f, %.2f)",
             count, min_x, min_y, max_x, max_y);
 
   return count;

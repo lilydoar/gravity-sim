@@ -4,21 +4,21 @@
 #include <stdio.h>
 
 typedef enum {
-    LOG_LEVEL_TRACE,
-    LOG_LEVEL_DEBUG,
-    LOG_LEVEL_INFO,
-    LOG_LEVEL_WARN,
-    LOG_LEVEL_ERROR
+  LOG_LEVEL_TRACE,
+  LOG_LEVEL_DEBUG,
+  LOG_LEVEL_INFO,
+  LOG_LEVEL_WARN,
+  LOG_LEVEL_ERROR
 } LogLevel;
 
 extern LogLevel current_log_level;
 
-#define LOG(level, fmt, ...) \
-    do { \
-        if (level >= current_log_level) { \
-            fprintf(stderr, "[%s] " fmt "\n", #level, ##__VA_ARGS__); \
-        } \
-    } while (0)
+#define LOG(level, fmt, ...)                                                   \
+  do {                                                                         \
+    if (level >= current_log_level) {                                          \
+      fprintf(stderr, "[%s] " fmt "\n", #level, ##__VA_ARGS__);                \
+    }                                                                          \
+  } while (0)
 
 #define TRACE_LOG(fmt, ...) LOG(LOG_LEVEL_TRACE, fmt, ##__VA_ARGS__)
 #define DEBUG_LOG(fmt, ...) LOG(LOG_LEVEL_DEBUG, fmt, ##__VA_ARGS__)

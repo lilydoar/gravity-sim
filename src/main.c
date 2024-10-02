@@ -1,10 +1,10 @@
 #include "arena_allocator.h"
 #include "gravity.h"
 #include "gravity_interactor.h"
+#include "logging.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "ui_handler.h"
-#include "logging.h"
 #include <assert.h>
 #include <math.h>
 #include <stdint.h>
