@@ -21,6 +21,6 @@ void deinit_ui_state(UIState* state);
 void toggle_particle_selection(UIState* state, int particle_id);
 void clear_selection(UIState* state);
 void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_arena);
-void draw_ui(UIState state);
+void draw_ui(UIState state, SimulationActor actor);
 
 #endif // UI_HANDLER_H
