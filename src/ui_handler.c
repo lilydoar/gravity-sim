@@ -116,6 +116,7 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
                           selection.shape.rectangle.top_left.x, selection.shape.rectangle.top_left.y,
                           selection.shape.rectangle.bottom_right.x, selection.shape.rectangle.bottom_right.y);
                 count = get_particles_in_rectangle(actor->sim, selection.shape.rectangle.top_left, selection.shape.rectangle.bottom_right, particle_ids, max_particles);
+                DEBUG_LOG("get_particles_in_rectangle returned %d", count);
             } else {
                 DEBUG_LOG("Calling get_particles_in_circle with center (%.2f, %.2f), radius %.2f",
                           selection.shape.circle.center.x, selection.shape.circle.center.y,

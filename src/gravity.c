@@ -370,8 +370,9 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left,
   int count = 0;
 
   if (!sim_struct || !particle_ids || max_count <= 0) {
-    ERROR_LOG("Invalid parameters in get_particles_in_rectangle");
-    return 0;
+    ERROR_LOG("Invalid parameters in get_particles_in_rectangle: sim_struct=%p, particle_ids=%p, max_count=%d",
+              (void*)sim_struct, (void*)particle_ids, max_count);
+    return -1;
   }
 
   double min_x = fmin(top_left.x, bottom_right.x);
@@ -381,9 +382,11 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left,
 
   DEBUG_LOG("Searching for particles in rectangle (%.2f, %.2f) to (%.2f, %.2f)",
             min_x, min_y, max_x, max_y);
+  DEBUG_LOG("Total particle count: %llu", sim_struct->particle_count);
 
   for (uint64_t i = 0; i < sim_struct->particle_count && count < max_count; i++) {
     Particle *p = &sim_struct->particles[i];
+    DEBUG_LOG("Checking particle %llu at (%.2f, %.2f)", i, p->position.x, p->position.y);
     if (p->position.x >= min_x && p->position.x <= max_x &&
         p->position.y >= min_y && p->position.y <= max_y) {
       particle_ids[count++] = i;
