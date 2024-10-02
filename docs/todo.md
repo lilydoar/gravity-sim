@@ -2,7 +2,6 @@
 
 1. Make a README file with instructions for building, running, etc.
 1. Add an open source license.
-1. Debug action types instead of action numbers.
 1. Do not do selection on click. Only click and drag. Implement some minimum
    drag distance in screen space. Want to reuse click for other actions.
 1. Improve color clarity. The color difference between low mass particles and
@@ -18,9 +17,6 @@
 1. Integration tests. Make use of Raylibs event automation capabilities to write
    integration tests that simulate a user performing a specific action or
    actions. Use these tests to check for regressions.
-1. Improve selection controls. Do not apply action to selected particles
-   immediately. Hold shift: Add to selected particles. Hold ctrl: Remove from
-   selected particles. press button to apply action(make static, delete, etc).
 1. Extend action system to be useful for startup initialization. Setup commands
    for example. Init empty simulation, configure initial conditions through a
    sequence of actions, then start the simulation.
