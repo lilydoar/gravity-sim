@@ -7,14 +7,20 @@ Simulation mock_sim;
 Particle mock_particles[10];
 
 Particle get_particle_state(Simulation sim, int particle_id) {
+    (void)sim; // Suppress unused parameter warning
     return mock_particles[particle_id];
 }
 
 void set_particle_state(Simulation sim, int particle_id, Particle p) {
+    (void)sim; // Suppress unused parameter warning
     mock_particles[particle_id] = p;
 }
 
 int get_particles_in_rectangle(Simulation sim, vec2s top_left, vec2s bottom_right, int* particle_ids, int max_count) {
+    (void)sim; // Suppress unused parameter warning
+    (void)top_left; // Suppress unused parameter warning
+    (void)bottom_right; // Suppress unused parameter warning
+    (void)max_count; // Suppress unused parameter warning
     // Simple mock: return 2 particles
     particle_ids[0] = 0;
     particle_ids[1] = 1;
@@ -23,6 +29,7 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left, vec2s bottom_righ
 
 // Mock function for arena allocation
 void* arena_alloc(ArenaAllocator* arena, size_t size) {
+    (void)arena; // Suppress unused parameter warning
     return malloc(size);
 }
 
@@ -43,8 +50,8 @@ void test_apply_action() {
         }
     };
     
-    ArenaAllocator mock_arena;
-    Action action = create_action(&mock_arena, ACTION_MAKE_STATIC, selection);
+    ArenaAllocator* mock_arena = malloc(sizeof(ArenaAllocator));
+    Action action = create_action(mock_arena, ACTION_MAKE_STATIC, selection);
 
     // Apply the action
     apply_action(mock_sim, action);
@@ -52,6 +59,8 @@ void test_apply_action() {
     // Check if particles were set to static
     TEST_ASSERT_EQUAL(PARTICLE_MODE_STATIC, mock_particles[0].mode);
     TEST_ASSERT_EQUAL(PARTICLE_MODE_STATIC, mock_particles[1].mode);
+
+    free(mock_arena);
 }
 
 void setUp(void) {
@@ -67,7 +76,3 @@ int main(void) {
     RUN_TEST(test_apply_action);
     return UNITY_END();
 }
-
-// Add these lines to satisfy Unity's requirements
-void setUp(void) {}
-void tearDown(void) {}
