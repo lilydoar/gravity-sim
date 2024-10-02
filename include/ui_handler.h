@@ -22,6 +22,7 @@ void add_to_selection(UIState* state, int particle_id);
 void remove_from_selection(UIState* state, int particle_id);
 void toggle_particle_selection(UIState* state, int particle_id);
 void clear_selection(UIState* state);
+bool is_particle_selected(UIState* state, int particle_id);
 void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_arena);
 void draw_ui(UIState state, SimulationActor actor);
 

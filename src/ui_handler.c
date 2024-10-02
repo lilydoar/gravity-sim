@@ -62,6 +62,15 @@ void clear_selection(UIState* state) {
     state->selected_count = 0;
 }
 
+bool is_particle_selected(UIState* state, int particle_id) {
+    for (int i = 0; i < state->selected_count; i++) {
+        if (state->selected_particles[i] == particle_id) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_arena) {
     extern Camera2D camera;
     Vector2 mouse_pos = GetMousePosition();
@@ -163,7 +172,9 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
                     DEBUG_LOG("Removing from selection");
                     // Remove from selection
                     for (int i = 0; i < count; i++) {
-                        remove_from_selection(state, particle_ids[i]);
+                        if (is_particle_selected(state, particle_ids[i])) {
+                            remove_from_selection(state, particle_ids[i]);
+                        }
                     }
                 } else {
                     DEBUG_LOG("New selection");
