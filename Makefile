@@ -4,7 +4,7 @@ LFLAGS = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT 
 INCLUDE = -Iinclude/ -Itests/unity/Unity-2.6.0/src
 LIB = -Llib/ -lraylib
 TARGET = bin/gravity-sim
-SOURCES = src/main.c src/gravity.c src/gravity_interactor.c src/arena_allocator.c src/ui_handler.c src/verlet.c
+SOURCES = src/main.c src/gravity.c src/gravity_interactor.c src/arena_allocator.c src/ui_handler.c src/verlet.c src/logging.c
 
 all: $(TARGET)
 
