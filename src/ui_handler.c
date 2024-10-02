@@ -52,11 +52,12 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (CheckCollisionPointRec(mouse_pos, state->make_static_button)) {
             // Handle button click
-            Action action = create_action(frame_arena, ACTION_MAKE_STATIC, (ParticleSelection){0});
-            for (int i = 0; i < state->selected_count; i++) {
-                action.selection.particle_ids[i] = state->selected_particles[i];
-            }
-            action.selection.count = state->selected_count;
+            ParticleSelection selection = {
+                .type = SELECTION_RECTANGLE,
+                .particle_ids = state->selected_particles,
+                .count = state->selected_count
+            };
+            Action action = create_action(frame_arena, ACTION_MAKE_STATIC, selection);
             enqueue_action(&actor->queue, action);
             DEBUG_LOG("Created action to make %d particles static", state->selected_count);
         } else {
@@ -120,7 +121,7 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
     }
 }
 
-void draw_ui(UIState state) {
+void draw_ui(UIState state, SimulationActor actor) {
     if (state.is_selecting) {
         if (state.current_selection_type == SELECTION_RECTANGLE) {
             DrawRectangleLines(

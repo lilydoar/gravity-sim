@@ -195,7 +195,7 @@ int main(void) {
     draw_simulation(sim);
     EndMode2D();
 
-    draw_ui(ui_state);
+    draw_ui(ui_state, actor);
     DrawFPS(10, 10);
     EndDrawing();
 

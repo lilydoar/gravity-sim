@@ -20,6 +20,8 @@ typedef struct {
       float radius;
     } circle;
   } shape;
+  int* particle_ids;
+  int count;
 } ParticleSelection;
 
 typedef enum {
@@ -54,6 +56,7 @@ Action dequeue_action(ActionQueue *queue);
 typedef struct SimulationActor {
   ActionQueue queue;
   ArenaAllocator *arena;
+  Simulation sim;
 } *SimulationActor;
 
 SimulationActor init_simulation_interactor(ArenaAllocator *app_arena);
