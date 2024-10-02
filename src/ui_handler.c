@@ -169,11 +169,15 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
                         add_to_selection(state, particle_ids[i]);
                     }
                 } else if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_CAPS_LOCK)) {
-                    DEBUG_LOG("Removing from selection (CTRL or CAPS_LOCK pressed)");
-                    // Remove from selection
+                    DEBUG_LOG("Toggling selection (CTRL or CAPS_LOCK pressed)");
+                    // Toggle selection
                     for (int i = 0; i < count; i++) {
                         if (is_particle_selected(state, particle_ids[i])) {
                             remove_from_selection(state, particle_ids[i]);
+                            DEBUG_LOG("Removed particle %d from selection", particle_ids[i]);
+                        } else {
+                            add_to_selection(state, particle_ids[i]);
+                            DEBUG_LOG("Added particle %d to selection", particle_ids[i]);
                         }
                     }
                 } else {
