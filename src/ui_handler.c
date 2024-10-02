@@ -133,25 +133,30 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
                 if (count > 10) {
                     DEBUG_LOG("... and %d more", count - 10);
                 }
-                if (IsKeyDown(KEY_LEFT_SHIFT)) {
-                    DEBUG_LOG("Adding to selection");
-                    // Add to selection
-                    for (int i = 0; i < count; i++) {
-                        toggle_particle_selection(state, particle_ids[i]);
-                    }
-                } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
-                    DEBUG_LOG("Removing from selection");
-                    // Remove from selection
-                    for (int i = 0; i < count; i++) {
-                        toggle_particle_selection(state, particle_ids[i]);
+                if (count > 0) {
+                    if (IsKeyDown(KEY_LEFT_SHIFT)) {
+                        DEBUG_LOG("Adding to selection");
+                        // Add to selection
+                        for (int i = 0; i < count; i++) {
+                            toggle_particle_selection(state, particle_ids[i]);
+                        }
+                    } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
+                        DEBUG_LOG("Removing from selection");
+                        // Remove from selection
+                        for (int i = 0; i < count; i++) {
+                            toggle_particle_selection(state, particle_ids[i]);
+                        }
+                    } else {
+                        DEBUG_LOG("New selection");
+                        // New selection
+                        clear_selection(state);
+                        for (int i = 0; i < count; i++) {
+                            toggle_particle_selection(state, particle_ids[i]);
+                        }
                     }
                 } else {
-                    DEBUG_LOG("New selection");
-                    // New selection
+                    DEBUG_LOG("Empty selection, clearing current selection");
                     clear_selection(state);
-                    for (int i = 0; i < count; i++) {
-                        toggle_particle_selection(state, particle_ids[i]);
-                    }
                 }
             }
 
