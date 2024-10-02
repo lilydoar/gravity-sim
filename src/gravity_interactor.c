@@ -6,8 +6,11 @@
 const char* action_type_to_string(ActionType type) {
     switch (type) {
         case ACTION_MAKE_STATIC: return "ACTION_MAKE_STATIC";
+        case ACTION_MAKE_NON_STATIC: return "ACTION_MAKE_NON_STATIC";
+        case ACTION_REMOVE_FROM_SIM: return "ACTION_REMOVE_FROM_SIM";
+        case ACTION_INCREASE_DENSITY: return "ACTION_INCREASE_DENSITY";
+        case ACTION_DECREASE_DENSITY: return "ACTION_DECREASE_DENSITY";
         case ACTION_EMPTY: return "ACTION_EMPTY";
-        // Add other action types here as needed
         default: return "UNKNOWN_ACTION";
     }
 }
@@ -21,12 +24,12 @@ Action create_action(ArenaAllocator *frame_arena, ActionType type,
     action->type = type;
     action->selection = selection;
   }
+  DEBUG_LOG("Created action of type %s", action_type_to_string(action->type));
   return *action;
-  DEBUG_LOG("Completed action of type %s", action_type_to_string(action->type));
 }
 
 void apply_action(Simulation sim, Action action) {
-  DEBUG_LOG("Starting action of type %s", action_type_to_string(action.type));
+  DEBUG_LOG("Applying action of type %s", action_type_to_string(action.type));
   if (action.type == ACTION_MAKE_STATIC) {
     if (action.selection.type == SELECTION_RECTANGLE) {
       vec2s top_left = action.selection.shape.rectangle.top_left;
