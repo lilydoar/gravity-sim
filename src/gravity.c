@@ -379,11 +379,15 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left,
   double min_y = fmin(top_left.y, bottom_right.y);
   double max_y = fmax(top_left.y, bottom_right.y);
 
+  DEBUG_LOG("Searching for particles in rectangle (%.2f, %.2f) to (%.2f, %.2f)",
+            min_x, min_y, max_x, max_y);
+
   for (uint64_t i = 0; i < sim_struct->particle_count && count < max_count; i++) {
     Particle *p = &sim_struct->particles[i];
     if (p->position.x >= min_x && p->position.x <= max_x &&
         p->position.y >= min_y && p->position.y <= max_y) {
       particle_ids[count++] = i;
+      DEBUG_LOG("Particle %llu at (%.2f, %.2f) is inside the rectangle", i, p->position.x, p->position.y);
     }
   }
 

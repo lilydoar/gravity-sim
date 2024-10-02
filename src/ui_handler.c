@@ -125,8 +125,18 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
             DEBUG_LOG("Found %d particles in selection", count);
 
             if (count < 0) {
-                DEBUG_LOG("Error in particle selection, count is negative");
-            } else if (count > 0) {
+                ERROR_LOG("Error in particle selection, count is negative");
+            } else if (count == 0) {
+                DEBUG_LOG("No particles found in the selection area");
+            } else {
+                DEBUG_LOG("Particles found in selection:");
+                for (int i = 0; i < count && i < 10; i++) {
+                    Particle p = get_particle_state(actor->sim, particle_ids[i]);
+                    DEBUG_LOG("Particle %d: position (%.2f, %.2f)", particle_ids[i], p.position.x, p.position.y);
+                }
+                if (count > 10) {
+                    DEBUG_LOG("... and %d more", count - 10);
+                }
                 if (IsKeyDown(KEY_LEFT_SHIFT)) {
                     DEBUG_LOG("Adding to selection");
                     // Add to selection
