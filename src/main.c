@@ -162,20 +162,19 @@ int main(void) {
   uint64_t particle_count = get_particle_count(sim);
   for (uint64_t i = 0; i < particle_count; i++) {
     Particle p = get_particle_state(sim, i);
-    DEBUG_LOG("Initial mode of particle %llu: %d", i, p.mode);
+    TRACE_LOG("Initial mode of particle %llu: %d", i, p.mode);
   }
 
   // Set the current log level to DEBUG
   set_log_level(LOG_LEVEL_DEBUG);
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
+  SetTargetFPS(60);
 
   camera = setup_camera();
   SimulationActor actor = init_simulation_interactor(app_arena, sim);
   UIState ui_state;
   init_ui_state(&ui_state);
-
-  SetTargetFPS(60);
 
   while (!WindowShouldClose()) {
     reset_arena(frame_arena);
