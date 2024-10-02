@@ -19,7 +19,23 @@ void deinit_ui_state(UIState* state) {
     free(state->selected_particles);
 }
 
-void toggle_particle_selection(UIState* state, int particle_id) {
+void add_to_selection(UIState* state, int particle_id) {
+    // Check if the particle is already selected
+    for (int i = 0; i < state->selected_count; i++) {
+        if (state->selected_particles[i] == particle_id) {
+            return; // Particle is already selected, do nothing
+        }
+    }
+    
+    // Add particle to selection
+    if (state->selected_count == state->selected_capacity) {
+        state->selected_capacity *= 2;
+        state->selected_particles = realloc(state->selected_particles, state->selected_capacity * sizeof(int));
+    }
+    state->selected_particles[state->selected_count++] = particle_id;
+}
+
+void remove_from_selection(UIState* state, int particle_id) {
     for (int i = 0; i < state->selected_count; i++) {
         if (state->selected_particles[i] == particle_id) {
             // Remove particle from selection
@@ -30,13 +46,16 @@ void toggle_particle_selection(UIState* state, int particle_id) {
             return;
         }
     }
-    
-    // Add particle to selection
-    if (state->selected_count == state->selected_capacity) {
-        state->selected_capacity *= 2;
-        state->selected_particles = realloc(state->selected_particles, state->selected_capacity * sizeof(int));
+}
+
+void toggle_particle_selection(UIState* state, int particle_id) {
+    for (int i = 0; i < state->selected_count; i++) {
+        if (state->selected_particles[i] == particle_id) {
+            remove_from_selection(state, particle_id);
+            return;
+        }
     }
-    state->selected_particles[state->selected_count++] = particle_id;
+    add_to_selection(state, particle_id);
 }
 
 void clear_selection(UIState* state) {
@@ -138,20 +157,20 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
                     DEBUG_LOG("Adding to selection");
                     // Add to selection
                     for (int i = 0; i < count; i++) {
-                        toggle_particle_selection(state, particle_ids[i]);
+                        add_to_selection(state, particle_ids[i]);
                     }
                 } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
                     DEBUG_LOG("Removing from selection");
                     // Remove from selection
                     for (int i = 0; i < count; i++) {
-                        toggle_particle_selection(state, particle_ids[i]);
+                        remove_from_selection(state, particle_ids[i]);
                     }
                 } else {
                     DEBUG_LOG("New selection");
                     // New selection
                     clear_selection(state);
                     for (int i = 0; i < count; i++) {
-                        toggle_particle_selection(state, particle_ids[i]);
+                        add_to_selection(state, particle_ids[i]);
                     }
                 }
             }

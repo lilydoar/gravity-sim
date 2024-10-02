@@ -18,6 +18,8 @@ typedef struct {
 
 void init_ui_state(UIState* state);
 void deinit_ui_state(UIState* state);
+void add_to_selection(UIState* state, int particle_id);
+void remove_from_selection(UIState* state, int particle_id);
 void toggle_particle_selection(UIState* state, int particle_id);
 void clear_selection(UIState* state);
 void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_arena);
