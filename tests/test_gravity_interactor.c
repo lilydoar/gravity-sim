@@ -1,6 +1,7 @@
 #include "unity.h"
 #include "gravity_interactor.h"
 #include "gravity.h"
+#include "arena_allocator.h"
 
 // Mock functions for Simulation
 Simulation mock_sim;
@@ -25,12 +26,6 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left, vec2s bottom_righ
     particle_ids[0] = 0;
     particle_ids[1] = 1;
     return 2;
-}
-
-// Mock function for arena allocation
-void* arena_alloc(ArenaAllocator* arena, size_t size) {
-    (void)arena; // Suppress unused parameter warning
-    return malloc(size);
 }
 
 void test_apply_action() {
