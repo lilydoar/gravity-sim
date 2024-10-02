@@ -4,6 +4,9 @@
 #include <math.h>
 #include <stdio.h>
 
+// Add the declaration for action_type_to_string
+const char* action_type_to_string(ActionType type);
+
 #define DEBUG_LOG(fmt, ...) fprintf(stderr, "DEBUG: " fmt "\n", ##__VA_ARGS__)
 
 void handle_input(UIState *state, SimulationActor actor,
@@ -48,7 +51,7 @@ void handle_input(UIState *state, SimulationActor actor,
             create_action(frame_arena, ACTION_MAKE_STATIC, selection);
         enqueue_action(&actor->queue, action);
         DEBUG_LOG("Completed action: Created action of type %s",
-                  action_type_to_string(ACTION_MAKE_STATIC));
+                  action_type_to_string(action.type));
       } else {
         selection.shape.circle.center =
             (vec2s){{(double)state->start_pos.x, (double)state->start_pos.y}};
