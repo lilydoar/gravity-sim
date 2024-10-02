@@ -188,7 +188,8 @@ void draw_ui(UIState state, SimulationActor actor) {
     TRACE_LOG("Drawing %d selected particles", state.selected_count);
     for (int i = 0; i < state.selected_count; i++) {
         Particle p = get_particle_state(actor->sim, state.selected_particles[i]);
-        DrawCircleLines((int)p.position.x, (int)p.position.y, p.size + 2, YELLOW);
+        Vector2 screen_pos = GetWorldToScreen2D((Vector2){p.position.x, p.position.y}, camera);
+        DrawCircleLines((int)screen_pos.x, (int)screen_pos.y, (p.size + 2) * camera.zoom, YELLOW);
     }
 
     // Draw "Make Static" button
