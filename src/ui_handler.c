@@ -1,5 +1,6 @@
 #include "ui_handler.h"
 #include "raymath.h"
+#include "gravity_interactor.h"
 #include <math.h>
 #include <stdio.h>
 
