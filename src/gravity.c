@@ -125,7 +125,7 @@ Simulation init_simulation(SimulationOptions options) {
       double distance = sqrt(dx * dx + dy * dy);
       sim->particles[i].velocity.x = velocity_magnitude * (dx / distance);
       sim->particles[i].velocity.y = velocity_magnitude * (dy / distance);
-      sim->particles[i].mode = PARTICLE_MODE_DYNAMIC;
+      sim->particles[i].mode = PARTICLE_MODE_VERLET;
     } break;
 
     case VELOCITY_INIT_AWAY_FROM_ORIGIN: {
@@ -180,20 +180,20 @@ void resolve_collision(Particle *p1, Particle *p2) {
     double ny = dy / distance;
 
     // Determine how to resolve the collision based on particle modes
-    if (p1->mode == PARTICLE_MODE_DYNAMIC &&
-        p2->mode == PARTICLE_MODE_DYNAMIC) {
+    if (p1->mode == PARTICLE_MODE_VERLET &&
+        p2->mode == PARTICLE_MODE_VERLET) {
       // Both particles are dynamic, move each half the overlap
       p1->position.x -= 0.5 * overlap * nx;
       p1->position.y -= 0.5 * overlap * ny;
       p2->position.x += 0.5 * overlap * nx;
       p2->position.y += 0.5 * overlap * ny;
-    } else if (p1->mode == PARTICLE_MODE_DYNAMIC &&
+    } else if (p1->mode == PARTICLE_MODE_VERLET &&
                p2->mode == PARTICLE_MODE_STATIC) {
       // p1 is dynamic, p2 is static, move p1 full overlap
       p1->position.x -= overlap * nx;
       p1->position.y -= overlap * ny;
     } else if (p1->mode == PARTICLE_MODE_STATIC &&
-               p2->mode == PARTICLE_MODE_DYNAMIC) {
+               p2->mode == PARTICLE_MODE_VERLET) {
       // p1 is static, p2 is dynamic, move p2 full overlap
       p2->position.x += overlap * nx;
       p2->position.y += overlap * ny;
