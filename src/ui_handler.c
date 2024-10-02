@@ -112,30 +112,40 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
             int count;
 
             if (selection.type == SELECTION_RECTANGLE) {
+                DEBUG_LOG("Calling get_particles_in_rectangle with top_left (%.2f, %.2f), bottom_right (%.2f, %.2f)",
+                          selection.shape.rectangle.top_left.x, selection.shape.rectangle.top_left.y,
+                          selection.shape.rectangle.bottom_right.x, selection.shape.rectangle.bottom_right.y);
                 count = get_particles_in_rectangle(actor->sim, selection.shape.rectangle.top_left, selection.shape.rectangle.bottom_right, particle_ids, max_particles);
             } else {
+                DEBUG_LOG("Calling get_particles_in_circle with center (%.2f, %.2f), radius %.2f",
+                          selection.shape.circle.center.x, selection.shape.circle.center.y,
+                          selection.shape.circle.radius);
                 count = get_particles_in_circle(actor->sim, selection.shape.circle.center, selection.shape.circle.radius, particle_ids, max_particles);
             }
             DEBUG_LOG("Found %d particles in selection", count);
 
-            if (IsKeyDown(KEY_LEFT_SHIFT)) {
-                DEBUG_LOG("Adding to selection");
-                // Add to selection
-                for (int i = 0; i < count; i++) {
-                    toggle_particle_selection(state, particle_ids[i]);
-                }
-            } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
-                DEBUG_LOG("Removing from selection");
-                // Remove from selection
-                for (int i = 0; i < count; i++) {
-                    toggle_particle_selection(state, particle_ids[i]);
-                }
-            } else {
-                DEBUG_LOG("New selection");
-                // New selection
-                clear_selection(state);
-                for (int i = 0; i < count; i++) {
-                    toggle_particle_selection(state, particle_ids[i]);
+            if (count < 0) {
+                DEBUG_LOG("Error in particle selection, count is negative");
+            } else if (count > 0) {
+                if (IsKeyDown(KEY_LEFT_SHIFT)) {
+                    DEBUG_LOG("Adding to selection");
+                    // Add to selection
+                    for (int i = 0; i < count; i++) {
+                        toggle_particle_selection(state, particle_ids[i]);
+                    }
+                } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
+                    DEBUG_LOG("Removing from selection");
+                    // Remove from selection
+                    for (int i = 0; i < count; i++) {
+                        toggle_particle_selection(state, particle_ids[i]);
+                    }
+                } else {
+                    DEBUG_LOG("New selection");
+                    // New selection
+                    clear_selection(state);
+                    for (int i = 0; i < count; i++) {
+                        toggle_particle_selection(state, particle_ids[i]);
+                    }
                 }
             }
 
