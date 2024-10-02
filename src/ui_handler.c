@@ -124,6 +124,7 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
                 ERROR_LOG("Error in particle selection, count is negative");
             } else if (count == 0) {
                 DEBUG_LOG("No particles found in the selection area");
+                clear_selection(state);
             } else {
                 DEBUG_LOG("Particles found in selection:");
                 for (int i = 0; i < count && i < 10; i++) {
@@ -133,30 +134,25 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
                 if (count > 10) {
                     DEBUG_LOG("... and %d more", count - 10);
                 }
-                if (count > 0) {
-                    if (IsKeyDown(KEY_LEFT_SHIFT)) {
-                        DEBUG_LOG("Adding to selection");
-                        // Add to selection
-                        for (int i = 0; i < count; i++) {
-                            toggle_particle_selection(state, particle_ids[i]);
-                        }
-                    } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
-                        DEBUG_LOG("Removing from selection");
-                        // Remove from selection
-                        for (int i = 0; i < count; i++) {
-                            toggle_particle_selection(state, particle_ids[i]);
-                        }
-                    } else {
-                        DEBUG_LOG("New selection");
-                        // New selection
-                        clear_selection(state);
-                        for (int i = 0; i < count; i++) {
-                            toggle_particle_selection(state, particle_ids[i]);
-                        }
+                if (IsKeyDown(KEY_LEFT_SHIFT)) {
+                    DEBUG_LOG("Adding to selection");
+                    // Add to selection
+                    for (int i = 0; i < count; i++) {
+                        toggle_particle_selection(state, particle_ids[i]);
+                    }
+                } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
+                    DEBUG_LOG("Removing from selection");
+                    // Remove from selection
+                    for (int i = 0; i < count; i++) {
+                        toggle_particle_selection(state, particle_ids[i]);
                     }
                 } else {
-                    DEBUG_LOG("Empty selection, clearing current selection");
+                    DEBUG_LOG("New selection");
+                    // New selection
                     clear_selection(state);
+                    for (int i = 0; i < count; i++) {
+                        toggle_particle_selection(state, particle_ids[i]);
+                    }
                 }
             }
 
