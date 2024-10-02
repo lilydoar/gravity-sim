@@ -39,3 +39,39 @@
 ## Testing
 - **Core**
   - Integration tests. Make use of Raylib's event automation capabilities to write integration tests that simulate a user performing a specific action or actions. Use these tests to check for regressions.
+## Documentation
+- **Core**
+  - Create a comprehensive guide for setting up the development environment, including dependencies and build instructions.
+- **Enhancements**
+  - Document the `src/verlet.c` module, focusing on the `compute_velocity` function, to explain its role in the simulation.
+
+## User Interaction
+- **Enhancements**
+  - Implement a "gravity well" tool that allows users to create temporary gravitational fields by clicking and holding on the simulation space.
+  - Implement keyboard shortcuts for common actions like starting/stopping the simulation and switching selection modes.
+
+## Visuals
+- **Core**
+  - Develop a particle collision visualization feature that highlights particles upon collision.
+- **Optimizations**
+  - Add a color gradient legend to the UI that explains the color coding of particles based on their mass or velocity.
+  - Add particle trails to visually represent the path of particles over time.
+
+## Window Management
+- **Core**
+  - Ensure cross-platform compatibility by testing and fixing any window management issues on different operating systems.
+- **Enhancements**
+  - Develop a responsive UI layout that adapts to different screen sizes and orientations.
+  - Implement a settings menu to allow users to configure window size and fullscreen mode preferences.
+
+## Simulation
+- **Core**
+  - Refactor the simulation loop to improve efficiency and scalability.
+- **Enhancements**
+  - Introduce a "time warp" feature that allows users to speed up or slow down the simulation.
+  - Introduce a feature to save and load simulation states, allowing users to pause and resume their work.
+
+## Testing
+- **Enhancements**
+  - Create a test suite for the `src/logging.c` module to verify that log levels are set correctly.
+  - Develop unit tests for the particle interaction logic to ensure accuracy and prevent regressions.
