@@ -19,13 +19,21 @@ const char* action_type_to_string(ActionType type) {
 
 Action create_action(ArenaAllocator *frame_arena, ActionType type,
                      ParticleSelection selection) {
-  Action *action = arena_alloc(frame_arena, sizeof(Action));
-  if (action) {
-    action->type = type;
-    action->selection = selection;
+  Action action;
+  action.type = type;
+  action.selection = selection;
+  
+  if (frame_arena) {
+    Action *action_ptr = arena_alloc(frame_arena, sizeof(Action));
+    if (action_ptr) {
+      *action_ptr = action;
+      DEBUG_LOG("Created action of type %s", action_type_to_string(action_ptr->type));
+      return *action_ptr;
+    }
   }
-  DEBUG_LOG("Created action of type %s", action_type_to_string(action->type));
-  return *action;
+  
+  DEBUG_LOG("Created action of type %s", action_type_to_string(action.type));
+  return action;
 }
 
 void apply_action(Simulation sim, Action action) {

@@ -50,8 +50,8 @@ void test_apply_action() {
         }
     };
     
-    ArenaAllocator* mock_arena = malloc(sizeof(ArenaAllocator));
-    Action action = create_action(mock_arena, ACTION_MAKE_STATIC, selection);
+    // Use NULL for the arena in this test
+    Action action = create_action(NULL, ACTION_MAKE_STATIC, selection);
 
     // Apply the action
     apply_action(mock_sim, action);
@@ -59,8 +59,6 @@ void test_apply_action() {
     // Check if particles were set to static
     TEST_ASSERT_EQUAL(PARTICLE_MODE_STATIC, mock_particles[0].mode);
     TEST_ASSERT_EQUAL(PARTICLE_MODE_STATIC, mock_particles[1].mode);
-
-    free(mock_arena);
 }
 
 void setUp(void) {
