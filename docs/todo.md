@@ -1,7 +1,7 @@
 # TODO
 
 ## Documentation
-- **Core**
+- **Essential**
   - Make a README file with instructions for building, running, etc.
   - Add an open source license.
 
@@ -10,10 +10,10 @@
   - Do not do selection on click. Only click and drag. Implement some minimum drag distance in screen space. Want to reuse click for other actions.
   - Ability to click and drag individual (or groups) of particles to move them around.
   - Simulation start/stop support. This only plays or pauses the simulation step function. The simulation can still be interacted with when it is stopped.
-- **General**
+- **Enhancements**
   - User interaction: Circle area select mode. UI icon to switch between Rect mode and circle mode.
   - Add action types to spawn new particles. One action should spawn a single high mass particle where the user inputs the size by dragging out a particle's radius and the mass is proportional to the radius. One action should spawn clouds of particles within a region. Set size distribution, mass distribution, and spawn enough particles to "fill" the cursor region.
-- **Polish**
+- **Optimizations**
   - UI code hot reloading. The sim will not be hot reloaded. Hot reload the UI and user interactions code. This will improve development experience tremendously and unlock the future creation of an editor.
 
 ## Visuals
