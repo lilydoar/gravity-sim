@@ -1,11 +1,10 @@
 #include "ui_handler.h"
 #include "raymath.h"
 #include "gravity_interactor.h"
+#include "logging.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define DEBUG_LOG(fmt, ...) fprintf(stderr, "DEBUG: " fmt "\n", ##__VA_ARGS__)
 #define INITIAL_SELECTION_CAPACITY 100
 
 void init_ui_state(UIState* state) {
@@ -49,9 +48,9 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
     Vector2 mouse_pos = GetMousePosition();
     Vector2 world_mouse_pos = GetScreenToWorld2D(mouse_pos, camera);
 
-    DEBUG_LOG("Mouse position: (%f, %f)", mouse_pos.x, mouse_pos.y);
-    DEBUG_LOG("World mouse position: (%f, %f)", world_mouse_pos.x, world_mouse_pos.y);
-    DEBUG_LOG("Camera position: (%f, %f), zoom: %f", camera.target.x, camera.target.y, camera.zoom);
+    TRACE_LOG("Mouse position: (%f, %f)", mouse_pos.x, mouse_pos.y);
+    TRACE_LOG("World mouse position: (%f, %f)", world_mouse_pos.x, world_mouse_pos.y);
+    TRACE_LOG("Camera position: (%f, %f), zoom: %f", camera.target.x, camera.target.y, camera.zoom);
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         DEBUG_LOG("Left mouse button pressed");
@@ -158,9 +157,9 @@ void handle_input(UIState *state, SimulationActor actor, ArenaAllocator *frame_a
 
 void draw_ui(UIState state, SimulationActor actor) {
     extern Camera2D camera;
-    DEBUG_LOG("Drawing UI");
+    TRACE_LOG("Drawing UI");
     if (state.is_selecting) {
-        DEBUG_LOG("Drawing selection");
+        TRACE_LOG("Drawing selection");
         if (state.current_selection_type == SELECTION_RECTANGLE) {
             Vector2 start_screen = GetWorldToScreen2D((Vector2){state.start_pos.x, state.start_pos.y}, camera);
             Vector2 current_screen = GetWorldToScreen2D((Vector2){state.current_pos.x, state.current_pos.y}, camera);
@@ -169,17 +168,17 @@ void draw_ui(UIState state, SimulationActor actor) {
             float width = fabs(current_screen.x - start_screen.x);
             float height = fabs(current_screen.y - start_screen.y);
             DrawRectangleLines((int)x, (int)y, (int)width, (int)height, RED);
-            DEBUG_LOG("Drawing rectangle: (%f, %f, %f, %f)", x, y, width, height);
+            TRACE_LOG("Drawing rectangle: (%f, %f, %f, %f)", x, y, width, height);
         } else {
             Vector2 center_screen = GetWorldToScreen2D((Vector2){state.start_pos.x, state.start_pos.y}, camera);
             float radius = Vector2Distance(state.start_pos, state.current_pos) * camera.zoom;
             DrawCircleLines((int)center_screen.x, (int)center_screen.y, radius, RED);
-            DEBUG_LOG("Drawing circle: center (%f, %f), radius %f", center_screen.x, center_screen.y, radius);
+            TRACE_LOG("Drawing circle: center (%f, %f), radius %f", center_screen.x, center_screen.y, radius);
         }
     }
 
     // Draw selected particles
-    DEBUG_LOG("Drawing %d selected particles", state.selected_count);
+    TRACE_LOG("Drawing %d selected particles", state.selected_count);
     for (int i = 0; i < state.selected_count; i++) {
         Particle p = get_particle_state(actor->sim, state.selected_particles[i]);
         DrawCircleLines((int)p.position.x, (int)p.position.y, p.size + 2, YELLOW);

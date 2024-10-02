@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "ui_handler.h"
+#include "logging.h"
 #include <assert.h>
 #include <math.h>
 #include <stdint.h>
@@ -161,8 +162,11 @@ int main(void) {
   uint64_t particle_count = get_particle_count(sim);
   for (uint64_t i = 0; i < particle_count; i++) {
     Particle p = get_particle_state(sim, i);
-    printf("Initial mode of particle %llu: %d\n", i, p.mode);
+    DEBUG_LOG("Initial mode of particle %llu: %d", i, p.mode);
   }
+
+  // Set the current log level to DEBUG
+  set_log_level(LOG_LEVEL_DEBUG);
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
 

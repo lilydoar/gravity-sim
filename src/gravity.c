@@ -3,6 +3,7 @@
 
 #include "gravity.h"
 #include "verlet.h"
+#include "logging.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -369,7 +370,7 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left,
   int count = 0;
 
   if (!sim_struct || !particle_ids || max_count <= 0) {
-    fprintf(stderr, "ERROR: Invalid parameters in get_particles_in_rectangle\n");
+    ERROR_LOG("Invalid parameters in get_particles_in_rectangle");
     return 0;
   }
 
@@ -386,8 +387,8 @@ int get_particles_in_rectangle(Simulation sim, vec2s top_left,
     }
   }
 
-  fprintf(stderr, "DEBUG: Found %d particles in rectangle (%.2f, %.2f) to (%.2f, %.2f)\n",
-          count, min_x, min_y, max_x, max_y);
+  DEBUG_LOG("Found %d particles in rectangle (%.2f, %.2f) to (%.2f, %.2f)",
+            count, min_x, min_y, max_x, max_y);
 
   return count;
 }
