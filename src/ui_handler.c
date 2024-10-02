@@ -188,5 +188,5 @@ void draw_ui(UIState state, SimulationActor actor) {
     DrawRectangleRec(state.make_static_button, LIGHTGRAY);
     DrawRectangleLinesEx(state.make_static_button, 1, BLACK);
     DrawText("Make Static", (int)state.make_static_button.x + 10, (int)state.make_static_button.y + 5, 20, BLACK);
-    DEBUG_LOG("Drew Make Static button");
+    TRACE_LOG("Drew Make Static button");
 }
