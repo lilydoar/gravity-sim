@@ -256,9 +256,14 @@ void draw_ui(UIState state, SimulationActor actor) {
   }
 
   // Draw "Make Static" button
-  DrawRectangleRec(state.make_static_button, LIGHTGRAY);
-  DrawRectangleLinesEx(state.make_static_button, 1, BLACK);
-  DrawText("Make Static", (int)state.make_static_button.x + 10,
-           (int)state.make_static_button.y + 5, 20, BLACK);
-  TRACE_LOG("Drew Make Static button");
+  if (GuiButton(state.make_static_button, "Make Static")) {
+    DEBUG_LOG("Make static button clicked");
+    ParticleSelection selection = {.particle_ids = state.selected_particles,
+                                   .count = state.selected_count};
+    Action action = create_action(frame_arena, ACTION_MAKE_STATIC, selection);
+    enqueue_action(&actor->queue, action);
+    DEBUG_LOG("Created action to make %d particles static",
+              action.selection.count);
+  }
+  TRACE_LOG("Drew Make Static button using raygui");
 }
