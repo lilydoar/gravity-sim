@@ -9,7 +9,7 @@ void test_VerletParticleInitialization(void) {
     vec2s position = {{0.0, 0.0}};
     vec2s velocity = {{1.0, 1.0}};
     double dt = 0.1;
-    VerletParticle particle = init_verlet_particle(position, velocity, dt);
+    init_verlet_particle(position, velocity, dt);
 
     TEST_ASSERT_EQUAL_DOUBLE(position.x, particle.position.x);
     TEST_ASSERT_EQUAL_DOUBLE(position.y, particle.position.y);
