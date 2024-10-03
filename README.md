@@ -14,22 +14,25 @@ This project is a gravity simulation that models the interactions of particles u
 ## Installation
 
 1. **Clone the Repository**:
+
    ```bash
    git clone <repository-url>
    cd <repository-directory>
    ```
 
-2. **Install Dependencies**:
+1. **Install Dependencies**:
    Ensure you have the following dependencies installed:
+
    - GCC or Clang
    - Make
 
-3. **Set Up the Environment**:
+1. **Set Up the Environment**:
    Follow any additional setup instructions specific to your operating system.
 
 ## Building the Project
 
 To build the project, run the following command:
+
 ```bash
 make
 ```
@@ -37,6 +40,7 @@ make
 ## Running the Simulation
 
 After building the project, you can run the simulation with:
+
 ```bash
 ./bin/gravity-sim
 ```
@@ -44,6 +48,7 @@ After building the project, you can run the simulation with:
 ## Testing
 
 To run the tests, use the following command:
+
 ```bash
 make check
 ```
@@ -57,6 +62,7 @@ make check
 ## Contributing
 
 Contributions are welcome! Please follow the guidelines below:
+
 - Fork the repository
 - Create a new branch for your feature or bugfix
 - Submit a pull request with a detailed description of your changes
