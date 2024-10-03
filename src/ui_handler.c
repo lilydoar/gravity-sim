@@ -1,11 +1,12 @@
 #include "ui_handler.h"
 #include "gravity_interactor.h"
 #include "logging.h"
-#include "raymath.h"
 #include "raygui.h"
+#include "raymath.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #define INITIAL_SELECTION_CAPACITY 100
 
 void init_ui_state(UIState *state) {
@@ -219,7 +220,8 @@ void handle_input(UIState *state, SimulationActor actor,
   }
 }
 
-void draw_ui(UIState state, SimulationActor actor, ArenaAllocator *frame_arena) {
+void draw_ui(UIState state, SimulationActor actor,
+             ArenaAllocator *frame_arena) {
   extern Camera2D camera;
   TRACE_LOG("Drawing UI");
   if (state.is_selecting) {

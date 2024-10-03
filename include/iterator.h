@@ -2,22 +2,23 @@
 #define ITERATOR_H
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
 // Iterator structure definition
 typedef struct {
-  void *array;      // Generic array (pointer to any data type)
-  int element_size; // Size of each element in the array (in bytes)
-  int size;         // Number of elements in the array
-  int index;        // Current position in the array
+  void *array;         // Generic array (pointer to any data type)
+  size_t element_size; // Size of each element in the array (in bytes)
+  int size;            // Number of elements in the array
+  int index;           // Current position in the array
 } Iterator;
 
 // Function to create a new iterator for any array
 Iterator create_iterator(void *array, int size, int element_size);
 
 // Function to check if there are more elements
-bool has_next(Iterator *it);
+bool has_next(Iterator it);
 
 // Function to get the current element
 void *current(Iterator *it);
@@ -30,6 +31,7 @@ void *next(Iterator *it);
   for (type *value_ptr = next(&it); value_ptr != NULL; value_ptr = next(&it))
 
 // Implementation section
+#define ITERATOR_IMPLEMENTATION
 #ifdef ITERATOR_IMPLEMENTATION
 
 // Create a new iterator
@@ -43,7 +45,7 @@ Iterator create_iterator(void *array, int size, int element_size) {
 }
 
 // Check if there are more elements to iterate over
-bool has_next(Iterator *it) { return it->index < it->size; }
+inline bool has_next(Iterator it) { return it.index < it.size; }
 
 // Get the current element without advancing the iterator
 void *current(Iterator *it) {
@@ -56,7 +58,7 @@ void *current(Iterator *it) {
 
 // Move to the next element and return it
 void *next(Iterator *it) {
-  if (has_next(it)) {
+  if (has_next(*it)) {
     // Return the current element and advance the index
     void *current_element = current(it);
     it->index++; // Move to the next element

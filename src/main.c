@@ -10,8 +10,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
 // Use doubles for cglm types
@@ -132,8 +130,8 @@ Color interpolate_color(float t, float t_min, float t_max) {
 }
 
 int main(void) {
-  ArenaAllocator *app_arena = create_arena(APP_ARENA_SIZE);
-  ArenaAllocator *frame_arena = create_arena(FRAME_ARENA_SIZE);
+  ArenaAllocator *app_arena = init_arena(APP_ARENA_SIZE);
+  ArenaAllocator *frame_arena = init_arena(FRAME_ARENA_SIZE);
 
   Simulation sim = init_simulation((SimulationOptions){
       .time_step = 0.5,
@@ -213,8 +211,8 @@ int main(void) {
   deinit_simulation(sim);
   deinit_simulation_interactor(actor);
   deinit_ui_state(&ui_state);
-  destroy_arena(app_arena);
-  destroy_arena(frame_arena);
+  deinit_arena(app_arena);
+  deinit_arena(frame_arena);
   CloseWindow();
 
   return 0;

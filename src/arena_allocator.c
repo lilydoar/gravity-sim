@@ -7,7 +7,7 @@ struct ArenaAllocator {
   size_t used;
 };
 
-ArenaAllocator *create_arena(size_t size) {
+ArenaAllocator *init_arena(size_t size) {
   ArenaAllocator *arena = malloc(sizeof(ArenaAllocator));
   if (!arena)
     return NULL;
@@ -23,6 +23,11 @@ ArenaAllocator *create_arena(size_t size) {
   return arena;
 }
 
+void deinit_arena(ArenaAllocator *arena) {
+  free(arena->buffer);
+  free(arena);
+}
+
 void *arena_alloc(ArenaAllocator *arena, size_t size) {
   if (arena->used + size > arena->size) {
     return NULL; // Out of memory
@@ -34,8 +39,3 @@ void *arena_alloc(ArenaAllocator *arena, size_t size) {
 }
 
 void reset_arena(ArenaAllocator *arena) { arena->used = 0; }
-
-void destroy_arena(ArenaAllocator *arena) {
-  free(arena->buffer);
-  free(arena);
-}
