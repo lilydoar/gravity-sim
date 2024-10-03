@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define RAYGUI_IMPLEMENTATION
+#include "raygui.h"
+
 // Use doubles for cglm types
 #define CGLM_USE_DOUBLE
 
