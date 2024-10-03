@@ -1,6 +1,7 @@
 #ifndef VERLET_H
 #define VERLET_H
 
+#include "gravity.h"
 #include <cglm/struct.h>
 
 // Structure to represent a particle in 2D space
