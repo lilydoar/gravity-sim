@@ -20,7 +20,7 @@ clean:
 UNITY_DIR = tests/unity/Unity-2.6.0/src
 UNITY_SRC = $(UNITY_DIR)/unity.c
 TEST_SOURCES = tests/test_gravity_interactor.c src/gravity_interactor.c src/arena_allocator.c
-TEST_GRAVITY_SOURCES = tests/test_gravity.c src/gravity.c src/verlet.c
+TEST_GRAVITY_SOURCES = tests/test_gravity.c src/gravity.c src/verlet.c src/logging.c
 TEST_UI_SOURCES = tests/test_ui_handler.c src/ui_handler.c src/arena_allocator.c src/gravity_interactor.c src/gravity.c src/logging.c src/verlet.c
 TEST_TARGET = bin/test_gravity_interactor
 TEST_GRAVITY_TARGET = bin/test_gravity
