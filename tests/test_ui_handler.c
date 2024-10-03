@@ -2,6 +2,8 @@
 #include "unity.h"
 #include "raylib.h"
 
+Camera2D camera; // Mock camera for testing
+
 void setUp(void) {}
 void tearDown(void) {}
 
