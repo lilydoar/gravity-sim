@@ -1,3 +1,5 @@
+#define RAYGUI_IMPLEMENTATION
+#include "raygui.h"
 #include "ui_handler.h"
 #include "unity.h"
 #include "raylib.h"
