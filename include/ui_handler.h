@@ -25,6 +25,6 @@ void clear_selection(UIState *state);
 bool is_particle_selected(UIState *state, int particle_id);
 void handle_input(UIState *state, SimulationActor actor,
                   ArenaAllocator *frame_arena);
-void draw_ui(UIState state, SimulationActor actor);
+void draw_ui(UIState state, SimulationActor actor, ArenaAllocator *frame_arena);
 
 #endif // UI_HANDLER_H

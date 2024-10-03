@@ -2,6 +2,7 @@
 #include "gravity_interactor.h"
 #include "logging.h"
 #include "raymath.h"
+#include "raygui.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -218,7 +219,7 @@ void handle_input(UIState *state, SimulationActor actor,
   }
 }
 
-void draw_ui(UIState state, SimulationActor actor) {
+void draw_ui(UIState state, SimulationActor actor, ArenaAllocator *frame_arena) {
   extern Camera2D camera;
   TRACE_LOG("Drawing UI");
   if (state.is_selecting) {
