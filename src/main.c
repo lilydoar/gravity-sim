@@ -137,10 +137,9 @@ int main(void) {
   Simulation sim = init_simulation((SimulationOptions){
       .time_step = 0.01,
       .substeps = 10,
-      .enable_collisions = false,  // Disable collisions for now
       .collision_iterations = 2,
-      .gravitational_constant = 6.67430e-1,  // Increased for more noticeable effect
-      .particle_count = 400,
+      .gravitational_constant = 6.67430e-2,  
+      .particle_count = 250,
       .position_x_distribution = {.type = DISTRIBUTION_UNIFORM,
                                   .params.uniform = {.min = -1000.0,
                                                      .max = 1000.0}},
@@ -168,7 +167,7 @@ int main(void) {
   }
 
   // Set the current log level to TRACE
-  set_log_level(LOG_LEVEL_TRACE);
+  set_log_level(LOG_LEVEL_DEBUG);
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
   SetTargetFPS(60);
@@ -204,7 +203,7 @@ int main(void) {
 
     draw_ui(ui_state, actor, frame_arena);
     DrawFPS(10, 10);
-    DEBUG_LOG("Frame completed");
+    TRACE_LOG("Frame completed");
     EndDrawing();
 
     if (IsKeyPressed(KEY_R)) {

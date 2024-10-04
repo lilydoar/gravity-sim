@@ -14,10 +14,7 @@
 #define GRAVITATIONAL_CONSTANT 6.67430e-11
 
 typedef enum {
-  // Static particles are constant
   PARTICLE_MODE_STATIC,
-  // Verlet particles are updated using verlet integration and collision is
-  // resolved by displacing particles evenly
   PARTICLE_MODE_VERLET
   // ...
 } ParticleMode;

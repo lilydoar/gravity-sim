@@ -2,6 +2,7 @@
 #define GRAVITY_C
 
 #include "gravity.h"
+#include "cglm/struct/vec2.h"
 
 double sample_distribution(const Distribution *dist);
 #include "arena_allocator.h"
@@ -132,7 +133,8 @@ void step_simulation(Simulation s) {
   SimulationStruct *simulation = (SimulationStruct *)s;
 
   TRACE_LOG("Starting simulation step");
-  for (uint64_t substep = 0; substep < simulation->substeps; ++substep) {
+  for (uint64_t substep = 0; substep < simulation->options.substeps;
+       ++substep) {
     TRACE_LOG("Substep %llu", substep);
     for (uint64_t id = 0; id < simulation->particle_count; ++id) {
       set_particle_acceleration(simulation, id);
@@ -140,14 +142,12 @@ void step_simulation(Simulation s) {
     for (uint64_t id = 0; id < simulation->particle_count; ++id) {
       integrate_particle(simulation, id);
     }
-    // Collision resolution is commented out for now to focus on particle movement
-    /*
     for (uint64_t id_1 = 0; id_1 < simulation->particle_count; ++id_1) {
-      for (uint64_t id_2 = 0; id_2 < simulation->particle_count; ++id_2) {
+      for (uint64_t id_2 = id_1 + 1; id_2 < simulation->particle_count;
+           ++id_2) {
         resolve_collision(simulation, id_1, id_2);
       }
     }
-    */
   }
   TRACE_LOG("Simulation step completed");
 }
@@ -451,16 +451,17 @@ void set_particle_acceleration(SimulationStruct *s, uint64_t id) {
   if (p->mode == PARTICLE_MODE_VERLET) {
     p->params.VERLET.acceleration = (vec2s){0};
     for (uint64_t i = 0; i < s->particle_count; ++i) {
-      if (i == id) continue;
+      if (i == id)
+        continue;
       SimulationParticle *other = &s->particles[i];
-      vec2s force = calculate_force(p, other, s->options.gravitational_constant);
+      vec2s force =
+          calculate_force(p, other, s->options.gravitational_constant);
       p->params.VERLET.acceleration.x += force.x / p->params.VERLET.mass;
       p->params.VERLET.acceleration.y += force.y / p->params.VERLET.mass;
     }
 
     TRACE_LOG("Particle %llu acceleration: (%f, %f)", id,
-              p->params.VERLET.acceleration.x,
-              p->params.VERLET.acceleration.y);
+              p->params.VERLET.acceleration.x, p->params.VERLET.acceleration.y);
   }
 }
 
@@ -470,11 +471,8 @@ void integrate_particle(SimulationStruct *s, uint64_t id) {
 
   if (p->mode == PARTICLE_MODE_VERLET) {
     vec2s new_position = verlet_step(
-      p->params.VERLET.position,
-      p->params.VERLET.position_previous,
-      p->params.VERLET.acceleration,
-      s->options.time_step
-    );
+        p->params.VERLET.position, p->params.VERLET.position_previous,
+        p->params.VERLET.acceleration, s->options.time_step);
     TRACE_LOG("Particle %llu: Old pos (%f, %f), New pos (%f, %f)", id,
               p->params.VERLET.position.x, p->params.VERLET.position.y,
               new_position.x, new_position.y);
@@ -483,11 +481,73 @@ void integrate_particle(SimulationStruct *s, uint64_t id) {
   }
 }
 
-void resolve_collision(SimulationStruct *s, uint64_t id_1, uint64_t id_2) {
-  assert(id_1 < s->particle_count);
-  assert(id_2 < s->particle_count);
+void resolve_collision(SimulationStruct *s, uint64_t id1, uint64_t id2) {
+  assert(id1 < s->particle_count);
+  assert(id2 < s->particle_count);
 
-  // TODO: Resolve collision between the two particles
+  if (id1 == id2) {
+    return;
+  }
+
+  SimulationParticle *p1 = &s->particles[id1];
+  SimulationParticle *p2 = &s->particles[id2];
+
+  if (p1->mode == PARTICLE_MODE_STATIC && p2->mode == PARTICLE_MODE_STATIC) {
+    return;
+  }
+
+  vec2s p1_position;
+  vec2s p2_position;
+  double p1_radius;
+  double p2_radius;
+
+  switch (p1->mode) {
+  case PARTICLE_MODE_STATIC:
+    p1_position = p1->params.STATIC.position;
+    p1_radius = p1->params.STATIC.radius;
+    break;
+  case PARTICLE_MODE_VERLET:
+    p1_position = p1->params.VERLET.position;
+    p1_radius = p1->params.VERLET.radius;
+    break;
+  }
+  switch (p2->mode) {
+  case PARTICLE_MODE_STATIC:
+    p2_position = p2->params.STATIC.position;
+    p2_radius = p2->params.STATIC.radius;
+    break;
+  case PARTICLE_MODE_VERLET:
+    p2_position = p2->params.VERLET.position;
+    p2_radius = p2->params.VERLET.radius;
+    break;
+  }
+
+  double min_distance = p1_radius + p2_radius;
+  double distance = glms_vec2_distance(p1_position, p2_position);
+  if (distance >= min_distance) {
+    return;
+  }
+
+  double overlap = min_distance - distance;
+  double dx = p2_position.x - p1_position.x;
+  double dy = p2_position.y - p1_position.y;
+  double nx = dx / distance;
+  double ny = dy / distance;
+
+  if (p1->mode == PARTICLE_MODE_STATIC && p2->mode == PARTICLE_MODE_VERLET) {
+    p2->params.VERLET.position.x += overlap * nx;
+    p2->params.VERLET.position.y += overlap * ny;
+  } else if (p1->mode == PARTICLE_MODE_VERLET &&
+             p2->mode == PARTICLE_MODE_STATIC) {
+    p1->params.VERLET.position.x -= overlap * nx;
+    p1->params.VERLET.position.y -= overlap * ny;
+  } else if (p1->mode == PARTICLE_MODE_VERLET &&
+             p2->mode == PARTICLE_MODE_VERLET) {
+    p1->params.VERLET.position.x -= 0.5 * overlap * nx;
+    p1->params.VERLET.position.y -= 0.5 * overlap * ny;
+    p2->params.VERLET.position.x += 0.5 * overlap * nx;
+    p2->params.VERLET.position.y += 0.5 * overlap * ny;
+  }
 }
 
 /*Simulation init_simulation(SimulationOptions options) {*/
