@@ -579,17 +579,6 @@ void resolve_collision(SimulationStruct *s, uint64_t id_1, uint64_t id_2) {
 /*  return (Simulation)sim;*/
 /*}*/
 
-/*void deinit_simulation(Simulation sim) {*/
-/*  SimulationStruct *sim_struct = (SimulationStruct *)sim;*/
-/*  if (sim_struct) {*/
-/*    // Free the particles array*/
-/*    free(sim_struct->particles);*/
-/*    // Free the forces array*/
-/*    free(sim_struct->forces);*/
-/*    free(sim_struct);*/
-/*  }*/
-/*}*/
-
 /*void resolve_collision(Particle *p1, Particle *p2) {*/
 /*  double dx = p2->position.x - p1->position.x;*/
 /*  double dy = p2->position.y - p1->position.y;*/
@@ -648,85 +637,6 @@ void resolve_collision(SimulationStruct *s, uint64_t id_1, uint64_t id_2) {
 /*  }*/
 /*}*/
 
-/*void calculate_forces(SimulationStruct *sim_struct) {*/
-/*  for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {*/
-/*    Particle *p = &sim_struct->particles[i];*/
-/**/
-/*    // Skip force calculation for static particles*/
-/*    if (p->mode == PARTICLE_MODE_STATIC) {*/
-/*      sim_struct->forces[i] = (vec2s){{0.0, 0.0}};*/
-/*      continue;*/
-/*    }*/
-/**/
-/*    // Reset force accumulator*/
-/*    sim_struct->forces[i] = (vec2s){{0.0, 0.0}};*/
-/**/
-/*    for (uint64_t j = 0; j < sim_struct->particle_count; ++j) {*/
-/*      if (i == j)*/
-/*        continue; // Skip self-interaction*/
-/**/
-/*      Particle *other = &sim_struct->particles[j];*/
-/*      vec2s force =*/
-/*          calculate_force(p, other, sim_struct->gravitational_constant);*/
-/*      sim_struct->forces[i].x += force.x;*/
-/*      sim_struct->forces[i].y += force.y;*/
-/*    }*/
-/*  }*/
-/*}*/
-
-/*void integrate_particles(SimulationStruct *sim_struct, double substep_time)
- * {*/
-/*  for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {*/
-/*    Particle *p = &sim_struct->particles[i];*/
-/**/
-/*    switch (p->mode) {*/
-/*    case PARTICLE_MODE_STATIC: {*/
-/*      continue;*/
-/*    } break;*/
-/*case PARTICLE_MODE_DYNAMIC: {*/
-/*  verlet_integration(p, sim_struct->forces[i], substep_time);*/
-/*} break;*/
-/*    case PARTICLE_MODE_VERLET: {*/
-/*      VerletParticle vp =*/
-/*          init_verlet_particle(p->position, p->velocity, substep_time);*/
-/*      vp.acceleration = sim_struct->forces[i];*/
-/*      verlet_step(&vp, substep_time);*/
-/*      p->position = vp.position;*/
-/*      p->velocity = compute_velocity(vp, substep_time);*/
-/*    } break;*/
-/*    }*/
-/*  }*/
-/*}*/
-
-/*void step_simulation(Simulation sim) {*/
-/*  SimulationStruct *sim_struct = (SimulationStruct *)sim;*/
-/**/
-/*  // Loop over each substep*/
-/*  for (uint64_t substep = 0; substep < sim_struct->substeps; ++substep) {*/
-/*    calculate_forces(sim_struct);*/
-/*    double substep_time = sim_struct->time_step / sim_struct->substeps;*/
-/*    integrate_particle(sim_struct, substep_time);*/
-/*  }*/
-/**/
-/*  if (sim_struct->enable_collisions) {*/
-/*    for (uint64_t iter = 0; iter < sim_struct->collision_iterations; ++iter)
- * {*/
-/*      // Loop over each particle pair to check for collisions*/
-/*      for (uint64_t i = 0; i < sim_struct->particle_count; ++i) {*/
-/*        for (uint64_t j = i + 1; j < sim_struct->particle_count; ++j) {*/
-/*          if (i == j)*/
-/*            continue; // Skip self-interaction*/
-/**/
-/*          Particle *p1 = &sim_struct->particles[i];*/
-/*          Particle *p2 = &sim_struct->particles[j];*/
-/**/
-/*          resolve_collision(p1, p2);*/
-/*        }*/
-/*      }*/
-/*    }*/
-/*  }*/
-/*}*/
-
 double calculate_distance(vec2s *v1, vec2s *v2) {
   double dx = v2->x - v1->x;
   double dy = v2->y - v1->y;
@@ -737,31 +647,25 @@ vec2s calculate_force(SimulationParticle *p1, SimulationParticle *p2,
                       double gravitational_constant) {
   vec2s p1_pos;
   vec2s p2_pos;
-  double p1_size;
-  double p2_size;
   double p1_mass;
   double p2_mass;
   switch (p1->mode) {
   case PARTICLE_MODE_STATIC:
     p1_pos = p1->params.STATIC.position;
-    p1_size = p1->params.STATIC.radius;
     p1_mass = p1->params.STATIC.mass;
     break;
   case PARTICLE_MODE_VERLET:
     p1_pos = p1->params.VERLET.position;
-    p1_size = p1->params.VERLET.radius;
     p1_mass = p1->params.VERLET.mass;
     break;
   }
   switch (p2->mode) {
   case PARTICLE_MODE_STATIC:
     p2_pos = p2->params.STATIC.position;
-    p2_size = p2->params.STATIC.radius;
     p2_mass = p2->params.STATIC.mass;
     break;
   case PARTICLE_MODE_VERLET:
     p2_pos = p2->params.VERLET.position;
-    p2_size = p2->params.VERLET.radius;
     p2_mass = p2->params.VERLET.mass;
     break;
   }
@@ -771,169 +675,12 @@ vec2s calculate_force(SimulationParticle *p1, SimulationParticle *p2,
   double distance = calculate_distance(&p1_pos, &p2_pos);
   double distance_squared = distance * distance;
 
-  // TODO(lily): Scale the force down to zero as the overlap of the particles
-  // increases instead of disabling the force
-  double min_distance = p1_size + p2_size;
-  if (distance > min_distance) {
-    double force_magnitude =
-        gravitational_constant * (p1_mass * p2_mass) / distance_squared;
-    force.x = force_magnitude * (distance_vector.x / distance);
-    force.y = force_magnitude * (distance_vector.y / distance);
-  }
+  double force_magnitude =
+      gravitational_constant * (p1_mass * p2_mass) / distance_squared;
+  force.x = force_magnitude * (distance_vector.x / distance);
+  force.y = force_magnitude * (distance_vector.y / distance);
 
   return force;
 }
-
-/*void verlet_integration(Particle *p, vec2s total_force, double time_step) {*/
-/*  vec2s acceleration = {{total_force.x / p->mass, total_force.y / p->mass}};*/
-/**/
-/*  // Update position*/
-/*  p->position.x +=*/
-/*      p->velocity.x * time_step + 0.5 * acceleration.x * time_step *
- * time_step;*/
-/*  p->position.y +=*/
-/*      p->velocity.y * time_step + 0.5 * acceleration.y * time_step *
- * time_step;*/
-/**/
-/*  // Update velocity*/
-/*  p->velocity.x += acceleration.x * time_step;*/
-/*  p->velocity.y += acceleration.y * time_step;*/
-/*}*/
-
-/*void toggle_collisions(bool enable) {*/
-/*  (void)enable;*/
-/*  // Enable or disable collision handling*/
-/*}*/
-
-/*Particle get_particle_state(Simulation sim, int particle_id) {*/
-/*  SimulationStruct *sim_struct = (SimulationStruct *)sim;*/
-/*  if (particle_id < 0 || (uint64_t)particle_id >= sim_struct->particle_count)
- * {*/
-/*    // Handle invalid particle_id*/
-/*    Particle empty_particle = {0};*/
-/*    return empty_particle;*/
-/*  }*/
-/*  return sim_struct->particles[particle_id];*/
-/*}*/
-/**/
-/*void set_particle_state(Simulation sim, int particle_id, Particle p) {*/
-/*  SimulationStruct *sim_struct = (SimulationStruct *)sim;*/
-/*  if (particle_id >= 0 && (uint64_t)particle_id < sim_struct->particle_count)
- * {*/
-/*    sim_struct->particles[particle_id] = p;*/
-/*  }*/
-/*}*/
-/**/
-/*int get_particles_in_rectangle(Simulation sim, vec2s top_left,*/
-/*                               vec2s bottom_right, int *particle_ids,*/
-/*                               int max_count) {*/
-/*  SimulationStruct *sim_struct = (SimulationStruct *)sim;*/
-/*  int count = 0;*/
-/**/
-/*  if (!sim_struct || !particle_ids || max_count <= 0) {*/
-/*    ERROR_LOG("Invalid parameters in get_particles_in_rectangle: "*/
-/*              "sim_struct=%p, particle_ids=%p, max_count=%d",*/
-/*              (void *)sim_struct, (void *)particle_ids, max_count);*/
-/*    return -1;*/
-/*  }*/
-/**/
-/*  double min_x = fmin(top_left.x, bottom_right.x);*/
-/*  double max_x = fmax(top_left.x, bottom_right.x);*/
-/*  double min_y = fmin(top_left.y, bottom_right.y);*/
-/*  double max_y = fmax(top_left.y, bottom_right.y);*/
-/**/
-/*  DEBUG_LOG(*/
-/*      "Starting particle search in rectangle (%.2f, %.2f) to (%.2f, %.2f)",*/
-/*      min_x, min_y, max_x, max_y);*/
-/*  TRACE_LOG("Total particle count: %llu", sim_struct->particle_count);*/
-/**/
-/*  for (uint64_t i = 0; i < sim_struct->particle_count && count < max_count;*/
-/*       i++) {*/
-/*    Particle *p = &sim_struct->particles[i];*/
-/*    TRACE_LOG("Checking particle %llu at (%.2f, %.2f)", i, p->position.x,*/
-/*              p->position.y);*/
-/*    if (p->position.x >= min_x && p->position.x <= max_x &&*/
-/*        p->position.y >= min_y && p->position.y <= max_y) {*/
-/*      particle_ids[count++] = i;*/
-/*      DEBUG_LOG("Particle %llu at (%.2f, %.2f) is inside the rectangle", i,*/
-/*                p->position.x, p->position.y);*/
-/*    }*/
-/*  }*/
-/**/
-/*  DEBUG_LOG("Finished particle search. Found %d particles in rectangle (%.2f,
- * "*/
-/*            "%.2f) to (%.2f, %.2f)",*/
-/*            count, min_x, min_y, max_x, max_y);*/
-/**/
-/*  return count;*/
-/*}*/
-/**/
-/*int get_particles_in_circle(Simulation sim, vec2s center, float radius,*/
-/*                            int *particle_ids, int max_count) {*/
-/*  SimulationStruct *sim_struct = (SimulationStruct *)sim;*/
-/*  int count = 0;*/
-/*  float radius_squared = radius * radius;*/
-/**/
-/*  for (uint64_t i = 0; i < sim_struct->particle_count && count < max_count;*/
-/*       i++) {*/
-/*    Particle *p = &sim_struct->particles[i];*/
-/*    float dx = p->position.x - center.x;*/
-/*    float dy = p->position.y - center.y;*/
-/*    if (dx * dx + dy * dy <= radius_squared) {*/
-/*      particle_ids[count++] = i;*/
-/*    }*/
-/*  }*/
-/**/
-/*  return count;*/
-/*}*/
-
-/*// Adds a new particle to the simulation.*/
-/*void add_particle(double mass, double size, vec2s position, vec2s velocity)
- * {*/
-/*  (void)mass;*/
-/*  (void)size;*/
-/*  (void)position;*/
-/*  (void)velocity;*/
-/*  // Add a new particle with specified properties*/
-/*}*/
-/**/
-/*// Removes a particle from the simulation.*/
-/*void remove_particle(int particle_id) {*/
-/*  (void)particle_id;*/
-/*  // Remove the particle with the given ID*/
-/*}*/
-/**/
-/*// Applies an external force to a specific particle.*/
-/*void apply_force(int particle_id, vec2s force) {*/
-/*  (void)particle_id;*/
-/*  (void)force;*/
-/*  // Apply the specified force to the particle*/
-/*}*/
-/*void get_position_range(Simulation sim, vec2s *min, vec2s *max) {*/
-/*  SimulationStruct *sim_struct = (SimulationStruct *)sim;*/
-/**/
-/*  // Initialize min and max with the first particle's position*/
-/*  *min = sim_struct->particles[0].position;*/
-/*  *max = sim_struct->particles[0].position;*/
-/**/
-/*  // Iterate through all particles to find the actual min and max*/
-/*  for (uint64_t i = 1; i < sim_struct->particle_count; i++) {*/
-/*    vec2s pos = sim_struct->particles[i].position;*/
-/**/
-/*    if (pos.x < min->x)*/
-/*      min->x = pos.x;*/
-/*    if (pos.y < min->y)*/
-/*      min->y = pos.y;*/
-/*    if (pos.x > max->x)*/
-/*      max->x = pos.x;*/
-/*    if (pos.y > max->y)*/
-/*      max->y = pos.y;*/
-/*  }*/
-/*}*/
-/**/
-/*uint64_t get_particle_count(Simulation sim) {*/
-/*  SimulationStruct *sim_struct = (SimulationStruct *)sim;*/
-/*  return sim_struct->particle_count;*/
-/*}*/
 
 #endif // GRAVITY_C
