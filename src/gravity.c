@@ -2,6 +2,8 @@
 #define GRAVITY_C
 
 #include "gravity.h"
+
+double sample_distribution(const Distribution *dist);
 #include "arena_allocator.h"
 #include "cglm/types-struct.h"
 #include "iterator.h"
