@@ -2,21 +2,14 @@
 #include "cglm/types-struct.h"
 #include <cglm/struct.h>
 
-// Function to update the particle's position using Verlet integration
-void verlet_step(VerletParticle *p, double dt) {
+void verlet_step(vec2s *position, vec2s *previous_position, const vec2s acceleration, double dt) {
   vec2s new_position;
 
-  // Compute new position using Verlet integration
-  new_position.x = 2.0 * p->position.x - p->previous_position.x +
-                   p->acceleration.x * dt * dt;
-  new_position.y = 2.0 * p->position.y - p->previous_position.y +
-                   p->acceleration.y * dt * dt;
+  new_position.x = 2.0 * position->x - previous_position->x + acceleration.x * dt * dt;
+  new_position.y = 2.0 * position->y - previous_position->y + acceleration.y * dt * dt;
 
-  // Update previous position
-  p->previous_position = p->position;
-
-  // Update current position
-  p->position = new_position;
+  *previous_position = *position;
+  *position = new_position;
 }
 
 // Function to compute velocity based on position updates
