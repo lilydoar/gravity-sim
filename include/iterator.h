@@ -31,7 +31,6 @@ void *next(Iterator *it);
   for (type *value_ptr = next(&it); value_ptr != NULL; value_ptr = next(&it))
 
 // Implementation section
-#define ITERATOR_IMPLEMENTATION
 #ifdef ITERATOR_IMPLEMENTATION
 
 // Create a new iterator

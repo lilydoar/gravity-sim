@@ -2,7 +2,6 @@
 #include "gravity.h"
 #include "gravity_interactor.h"
 #include "logging.h"
-#include "raygui.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "ui_handler.h"
