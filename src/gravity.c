@@ -70,6 +70,35 @@ Simulation init_simulation(SimulationOptions options) {
   s->particle_count = 0;
   s->options = options;
 
+  // Temporary code to spawn initial particles
+  // This code is due to be removed; initial particle conditions will happen outside of the init function
+  s->particles = (SimulationParticle *)malloc(sizeof(SimulationParticle) * options.particle_count);
+  if (!s->particles) {
+    free(s);
+    return NULL; // Allocation failed
+  }
+  s->particle_count = options.particle_count;
+
+  for (uint64_t i = 0; i < s->particle_count; i++) {
+    s->particles[i].mode = options.initial_particle_mode;
+    switch (options.initial_particle_mode) {
+    case PARTICLE_MODE_STATIC:
+      s->particles[i].params.STATIC.position.x = sample_distribution(&options.position_x_distribution);
+      s->particles[i].params.STATIC.position.y = sample_distribution(&options.position_y_distribution);
+      s->particles[i].params.STATIC.mass = sample_distribution(&options.mass_distribution);
+      s->particles[i].params.STATIC.radius = sample_distribution(&options.size_distribution);
+      break;
+    case PARTICLE_MODE_VERLET:
+      s->particles[i].params.VERLET.position.x = sample_distribution(&options.position_x_distribution);
+      s->particles[i].params.VERLET.position.y = sample_distribution(&options.position_y_distribution);
+      s->particles[i].params.VERLET.position_previous = s->particles[i].params.VERLET.position;
+      s->particles[i].params.VERLET.acceleration = (vec2s){0};
+      s->particles[i].params.VERLET.mass = sample_distribution(&options.mass_distribution);
+      s->particles[i].params.VERLET.radius = sample_distribution(&options.size_distribution);
+      break;
+    }
+  }
+
   return (Simulation)s;
 }
 
