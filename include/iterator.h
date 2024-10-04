@@ -31,7 +31,6 @@ void *next(Iterator *it);
   for (type *value_ptr = next(&it); value_ptr != NULL; value_ptr = next(&it))
 
 // Implementation section
-#ifdef ITERATOR_IMPLEMENTATION
 
 // Create a new iterator
 Iterator create_iterator(void *array, int size, int element_size) {
@@ -66,6 +65,5 @@ void *next(Iterator *it) {
   return NULL; // No more elements
 }
 
-#endif // ITERATOR_IMPLEMENTATION
 
 #endif // ITERATOR_H
