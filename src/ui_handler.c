@@ -3,6 +3,7 @@
 #include "gravity_interactor.h"
 #include "iterator.h"
 #include "logging.h"
+#include <stdint.h>
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 #include "raymath.h"
@@ -142,13 +143,6 @@ void handle_input(UIState *state, SimulationActor actor,
                   selection.shape.circle.radius);
       }
 
-      int max_particles = 1000;
-      int *particle_ids = malloc(max_particles * sizeof(int));
-      if (particle_ids == NULL) {
-        DEBUG_LOG("Failed to allocate memory for particle_ids");
-        return;
-      }
-
       Iterator particle_iter;
       if (selection.type == SELECTION_RECTANGLE) {
         DEBUG_LOG("Calling get_particles_in_rectangle with top_left (%.2f, "
@@ -160,10 +154,6 @@ void handle_input(UIState *state, SimulationActor actor,
         particle_iter = simulation_get_particles_in_fixed_rect(
             actor->sim, frame_arena, selection.shape.rectangle.top_left,
             selection.shape.rectangle.bottom_right);
-        /*count = get_particles_in_rectangle(*/
-        /*    actor->sim, selection.shape.rectangle.top_left,*/
-        /*    selection.shape.rectangle.bottom_right, particle_ids,*/
-        /*    max_particles);*/
         DEBUG_LOG("get_particles_in_rectangle returned %d", particle_iter.size);
       } else {
         DEBUG_LOG("Calling get_particles_in_circle with center (%.2f, %.2f), "
@@ -174,9 +164,6 @@ void handle_input(UIState *state, SimulationActor actor,
         particle_iter = simulation_get_particles_in_circle(
             actor->sim, frame_arena, selection.shape.circle.center,
             selection.shape.circle.radius);
-        /*count = get_particles_in_circle(*/
-        /*    actor->sim, selection.shape.circle.center,*/
-        /*    selection.shape.circle.radius, particle_ids, max_particles);*/
       }
       DEBUG_LOG("Found %d particles in selection", particle_iter.size);
 
@@ -190,32 +177,36 @@ void handle_input(UIState *state, SimulationActor actor,
         if (IsKeyDown(KEY_LEFT_SHIFT)) {
           DEBUG_LOG("Adding to selection");
           // Add to selection
-          for (int i = 0; i < count; i++) {
-            add_to_selection(state, particle_ids[i]);
+          uint64_t *p_id;
+          ITERATE(particle_iter, uint64_t, p_id) {
+            add_to_selection(state, *p_id);
           }
         } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
           DEBUG_LOG("Toggling selection (CTRL pressed)");
           // Toggle selection
-          for (int i = 0; i < count; i++) {
-            if (is_particle_selected(state, particle_ids[i])) {
-              remove_from_selection(state, particle_ids[i]);
-              DEBUG_LOG("Removed particle %d from selection", particle_ids[i]);
+          uint64_t *p_id;
+          ITERATE(particle_iter, uint64_t, p_id) {
+            if (is_particle_selected(state, *p_id)) {
+              remove_from_selection(state, *p_id);
+              DEBUG_LOG("Removed particle %llu from selection", *p_id);
             } else {
-              add_to_selection(state, particle_ids[i]);
-              DEBUG_LOG("Added particle %d to selection", particle_ids[i]);
+              add_to_selection(state, *p_id);
+              DEBUG_LOG("Added particle %llu to selection", *p_id);
             }
+          }
+          for (int i = 0; i < count; i++) {
           }
         } else {
           DEBUG_LOG("New selection");
           // New selection
           clear_selection(state);
-          for (int i = 0; i < count; i++) {
-            add_to_selection(state, particle_ids[i]);
+          uint64_t *p_id;
+          ITERATE(particle_iter, uint64_t, p_id) {
+            add_to_selection(state, *p_id);
           }
         }
       }
 
-      free(particle_ids);
       DEBUG_LOG("Selected %d particles", state->selected_count);
     }
   }

@@ -28,7 +28,7 @@ void *next(Iterator *it);
 
 // Macro to simplify iteration over the iterator
 #define ITERATE(it, type, value_ptr)                                           \
-  for (type *value_ptr = next(&it); value_ptr != NULL; value_ptr = next(&it))
+  for (value_ptr = next(&it); value_ptr != NULL; value_ptr = next(&it))
 
 // Function declarations
 Iterator create_iterator(void *array, int size, int element_size);

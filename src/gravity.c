@@ -161,11 +161,7 @@ uint64_t simulation_get_particle_count(Simulation s) {
 SimulationParticle simulation_get_particle_state(Simulation s, uint64_t id) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
-  if (id >= simulation->particle_count) {
-    fprintf(stderr, "Error: Attempted to access particle with id %lu, but there are only %lu particles.\n", id, simulation->particle_count);
-    // Return a default particle or handle the error in a way that doesn't crash the program
-    return (SimulationParticle){0};
-  }
+  assert(id < simulation->particle_count);
   return simulation->particles[id];
 }
 

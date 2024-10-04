@@ -1,5 +1,8 @@
 # TODO
 
+- particles are not moving. Don't think their position is being updated. Maybe
+  no acceleration is happening
+
 ## Documentation
 
 - **Essential**

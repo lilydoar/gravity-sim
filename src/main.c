@@ -59,22 +59,25 @@ void draw_simulation(Simulation sim) {
   for (uint64_t i = 0; i < particle_count; i++) {
     SimulationParticle p = simulation_get_particle_state(sim, i);
     Color particle_color;
+    vec2s position;
+    float radius;
+
     switch (p.mode) {
     case PARTICLE_MODE_STATIC: {
       particle_color = (Color){127, 255, 212, 255};
-      DrawCircle((int)p.params.STATIC.position.x,
-                 (int)p.params.STATIC.position.y, p.params.STATIC.radius,
-                 particle_color);
+      position = p.params.STATIC.position;
+      radius = p.params.STATIC.radius;
     } break;
     case PARTICLE_MODE_VERLET: {
       float normalized_mass = (p.params.VERLET.mass - MASS_RANGE_MIN) /
                               (MASS_RANGE_MAX - MASS_RANGE_MIN);
       particle_color = interpolate_color(normalized_mass, 0, 1);
-      DrawCircle((int)p.params.VERLET.position.x,
-                 (int)p.params.VERLET.position.y, p.params.VERLET.radius,
-                 particle_color);
+      position = p.params.VERLET.position;
+      radius = p.params.VERLET.radius;
     } break;
     }
+    // TODO: Round instead of just casting
+    DrawCircle((int)position.x, (int)position.y, radius, particle_color);
   }
 }
 
