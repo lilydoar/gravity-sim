@@ -169,7 +169,41 @@ uint64_t simulation_get_particle_count_in_tri(Simulation s, vec2s p1, vec2s p2,
                                               vec2s p3);
 
 Iterator simulation_get_particles_in_circle(Simulation s, ArenaAllocator *arena,
-                                            vec2s center, double radius);
+                                            vec2s center, double radius) {
+  assert(s);
+  SimulationStruct *simulation = (SimulationStruct *)s;
+
+  uint64_t count = 0;
+  uint64_t *particles = NULL;
+
+  for (size_t id = 0; id < simulation->particle_count; ++id) {
+    SimulationParticle particle = simulation->particles[id];
+    vec2s position;
+    switch (particle.mode) {
+    case PARTICLE_MODE_STATIC:
+      position = particle.params.STATIC.position;
+      break;
+    case PARTICLE_MODE_VERLET:
+      position = particle.params.VERLET.position;
+      break;
+    }
+
+    double dx = position.x - center.x;
+    double dy = position.y - center.y;
+    double distance_squared = dx * dx + dy * dy;
+    if (distance_squared <= radius * radius) {
+      uint64_t *p = arena_alloc(arena, sizeof(uint64_t)); // Append
+      assert(p);
+      if (particles == NULL) {
+        particles = p;
+      }
+      *p = id;
+      count += 1;
+    }
+  }
+
+  return create_iterator(particles, count, sizeof(uint64_t));
+}
 
 Iterator simulation_get_particles_in_fixed_rect(Simulation s,
                                                 ArenaAllocator *arena,
