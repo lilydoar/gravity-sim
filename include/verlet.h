@@ -12,16 +12,15 @@ typedef struct {
 } VerletParticle;
 
 // Function to initialize a particle
-VerletParticle init_verlet_particle(const vec2s position, const vec2s velocity,
-                                    double dt);
+/*VerletParticle init_verlet_particle(const vec2s position, const vec2s
+ * velocity,*/
+/*                                    double dt);*/
 
-void verlet_integration(Particle *p, vec2s total_force, double time_step);
 void verlet_step(VerletParticle *p, double dt);
 
-// Function to compute velocity based on position updates
 vec2s compute_velocity(VerletParticle p, double dt);
-
-// Function to compute kinetic energy of the particle
+vec2s compute_previus_position(const vec2s position, const vec2s velocity,
+                               double dt);
 double compute_kinetic_energy(const VerletParticle p, double mass, double dt);
 
 #endif // VERLET_H

@@ -442,7 +442,6 @@ void set_particle_acceleration(SimulationStruct *s, uint64_t id) {
     s->particles[id].params.VERLET.acceleration.x += force.x;
     s->particles[id].params.VERLET.acceleration.y += force.y;
   }
-  // TODO: Loop through particles and accumulate acceleration
 }
 
 void integrate_particle(SimulationStruct *s, uint64_t id) {
