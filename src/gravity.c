@@ -133,7 +133,7 @@ void step_simulation(Simulation s) {
 
   TRACE_LOG("Starting simulation step");
   for (uint64_t substep = 0; substep < simulation->substeps; ++substep) {
-    TRACE_LOG("Substep %lu", substep);
+    TRACE_LOG("Substep %llu", substep);
     for (uint64_t id = 0; id < simulation->particle_count; ++id) {
       set_particle_acceleration(simulation, id);
     }
@@ -272,7 +272,7 @@ Iterator simulation_get_particles_in_fixed_rect(Simulation s,
 
   DEBUG_LOG("Searching for particles in rectangle: (%f, %f) to (%f, %f)",
             left_x, bottom_y, right_x, top_y);
-  DEBUG_LOG("Total particle count: %lu", simulation->particle_count);
+  DEBUG_LOG("Total particle count: %llu", simulation->particle_count);
 
   for (uint64_t id = 0; id < simulation->particle_count; ++id) {
     SimulationParticle particle = simulation->particles[id];
@@ -298,7 +298,7 @@ Iterator simulation_get_particles_in_fixed_rect(Simulation s,
     }
   }
 
-  DEBUG_LOG("Found %lu particles in rectangle", count);
+  DEBUG_LOG("Found %llu particles in rectangle", count);
 
   return create_iterator(particles, count, sizeof(uint64_t));
 }
@@ -458,7 +458,7 @@ void set_particle_acceleration(SimulationStruct *s, uint64_t id) {
       p->params.VERLET.acceleration.y += force.y / p->params.VERLET.mass;
     }
 
-    TRACE_LOG("Particle %lu acceleration: (%f, %f)", id,
+    TRACE_LOG("Particle %llu acceleration: (%f, %f)", id,
               p->params.VERLET.acceleration.x,
               p->params.VERLET.acceleration.y);
   }
@@ -475,7 +475,7 @@ void integrate_particle(SimulationStruct *s, uint64_t id) {
       p->params.VERLET.acceleration,
       s->options.time_step
     );
-    TRACE_LOG("Particle %lu: Old pos (%f, %f), New pos (%f, %f)", id,
+    TRACE_LOG("Particle %llu: Old pos (%f, %f), New pos (%f, %f)", id,
               p->params.VERLET.position.x, p->params.VERLET.position.y,
               new_position.x, new_position.y);
     p->params.VERLET.position_previous = p->params.VERLET.position;
