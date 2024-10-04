@@ -161,11 +161,7 @@ uint64_t simulation_get_particle_count(Simulation s) {
 SimulationParticle simulation_get_particle_state(Simulation s, uint64_t id) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
-  if (id >= simulation->particle_count) {
-    fprintf(stderr, "Error: Particle ID %lu out of bounds (max: %lu)\n", id, simulation->particle_count - 1);
-    // Return a default particle or handle the error as appropriate for your application
-    return (SimulationParticle){.mode = PARTICLE_MODE_STATIC, .params = {.STATIC = {.position = {0, 0}, .mass = 0, .radius = 0}}};
-  }
+  assert(id < simulation->particle_count);
   return simulation->particles[id];
 }
 
