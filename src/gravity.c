@@ -131,19 +131,25 @@ void step_simulation(Simulation s) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
 
+  DEBUG_LOG("Starting simulation step");
   for (uint64_t substep = 0; substep < simulation->substeps; ++substep) {
+    DEBUG_LOG("Substep %lu", substep);
     for (uint64_t id = 0; id < simulation->particle_count; ++id) {
       set_particle_acceleration(simulation, id);
     }
     for (uint64_t id = 0; id < simulation->particle_count; ++id) {
       integrate_particle(simulation, id);
     }
+    // Collision resolution is commented out for now to focus on particle movement
+    /*
     for (uint64_t id_1 = 0; id_1 < simulation->particle_count; ++id_1) {
       for (uint64_t id_2 = 0; id_2 < simulation->particle_count; ++id_2) {
         resolve_collision(simulation, id_1, id_2);
       }
     }
+    */
   }
+  DEBUG_LOG("Simulation step completed");
 }
 
 void simulation_set_options(Simulation s, SimulationOptions options) {
@@ -440,39 +446,40 @@ double sample_distribution(const Distribution *dist) {
 
 void set_particle_acceleration(SimulationStruct *s, uint64_t id) {
   assert(id < s->particle_count);
-  if (s->particles[id].mode == PARTICLE_MODE_STATIC) {
-    return;
-  }
+  SimulationParticle *p = &s->particles[id];
 
-  s->particles[id].params.VERLET.acceleration = (vec2s){0};
-  for (uint64_t i = 0; i < s->particle_count; ++i) {
-    if (i == id)
-      continue; // Skip self-interaction
+  if (p->mode == PARTICLE_MODE_VERLET) {
+    p->params.VERLET.acceleration = (vec2s){0};
+    for (uint64_t i = 0; i < s->particle_count; ++i) {
+      if (i == id) continue;
+      SimulationParticle *other = &s->particles[i];
+      vec2s force = calculate_force(p, other, s->options.gravitational_constant);
+      p->params.VERLET.acceleration.x += force.x / p->params.VERLET.mass;
+      p->params.VERLET.acceleration.y += force.y / p->params.VERLET.mass;
+    }
 
-    SimulationParticle *other = &s->particles[i];
-    vec2s force =
-        calculate_force(&s->particles[id], other, s->gravitational_constant);
-    s->particles[id].params.VERLET.acceleration.x += force.x;
-    s->particles[id].params.VERLET.acceleration.y += force.y;
+    DEBUG_LOG("Particle %lu acceleration: (%f, %f)", id,
+              p->params.VERLET.acceleration.x,
+              p->params.VERLET.acceleration.y);
   }
 }
 
 void integrate_particle(SimulationStruct *s, uint64_t id) {
   assert(id < s->particle_count);
+  SimulationParticle *p = &s->particles[id];
 
-  switch (s->particles[id].mode) {
-  case PARTICLE_MODE_STATIC: {
-    return;
-  } break;
-  case PARTICLE_MODE_VERLET: {
+  if (p->mode == PARTICLE_MODE_VERLET) {
     vec2s new_position = verlet_step(
-        s->particles[id].params.VERLET.position,
-        s->particles[id].params.VERLET.position_previous,
-        s->particles[id].params.VERLET.acceleration, s->options.time_step);
-    s->particles[id].params.VERLET.position_previous =
-        s->particles[id].params.VERLET.position;
-    s->particles[id].params.VERLET.position = new_position;
-  } break;
+      p->params.VERLET.position,
+      p->params.VERLET.position_previous,
+      p->params.VERLET.acceleration,
+      s->options.time_step
+    );
+    DEBUG_LOG("Particle %lu: Old pos (%f, %f), New pos (%f, %f)", id,
+              p->params.VERLET.position.x, p->params.VERLET.position.y,
+              new_position.x, new_position.y);
+    p->params.VERLET.position_previous = p->params.VERLET.position;
+    p->params.VERLET.position = new_position;
   }
 }
 

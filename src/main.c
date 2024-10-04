@@ -135,29 +135,29 @@ int main(void) {
   ArenaAllocator *frame_arena = init_arena(FRAME_ARENA_SIZE);
 
   Simulation sim = init_simulation((SimulationOptions){
-      .time_step = 0.5,
-      .substeps = 5,
-      .enable_collisions = true,
+      .time_step = 0.01,
+      .substeps = 10,
+      .enable_collisions = false,  // Disable collisions for now
       .collision_iterations = 2,
-      .gravitational_constant = 6.67430e-3,
+      .gravitational_constant = 6.67430e-1,  // Increased for more noticeable effect
       .particle_count = 400,
       .position_x_distribution = {.type = DISTRIBUTION_UNIFORM,
-                                  .params.uniform = {.min = -2000.0,
-                                                     .max = 2000.0}},
+                                  .params.uniform = {.min = -1000.0,
+                                                     .max = 1000.0}},
       .position_y_distribution = {.type = DISTRIBUTION_UNIFORM,
-                                  .params.uniform = {.min = -2000.0,
-                                                     .max = 2000.0}},
+                                  .params.uniform = {.min = -1000.0,
+                                                     .max = 1000.0}},
       .mass_distribution =
           {.type = DISTRIBUTION_NORMAL,
            .params.normal = {.mean = (MASS_RANGE_MIN + MASS_RANGE_MAX) / 2,
                              .stddev = (MASS_RANGE_MAX - MASS_RANGE_MIN) / 6}},
       .size_distribution = {.type = DISTRIBUTION_UNIFORM,
-                            .params.uniform = {.min = 10.0, .max = 60.0}},
+                            .params.uniform = {.min = 5.0, .max = 30.0}},
       .initial_particle_mode = PARTICLE_MODE_VERLET,
       .velocity_init_mode = VELOCITY_INIT_PERPENDICULAR_TO_ORIGIN,
       .velocity_magnitude_distribution = {
           .type = DISTRIBUTION_UNIFORM,
-          .params.uniform = {.min = 0.0, .max = 8.0}}});
+          .params.uniform = {.min = 0.0, .max = 20.0}}});  // Increased max velocity
   assert(sim != NULL);
 
   // Log initial particle modes
@@ -197,11 +197,14 @@ int main(void) {
     ClearBackground(SPACE_GREY);
 
     BeginMode2D(camera);
+    step_simulation(sim);
+    
     draw_simulation(sim);
     EndMode2D();
 
     draw_ui(ui_state, actor, frame_arena);
     DrawFPS(10, 10);
+    DEBUG_LOG("Frame completed");
     EndDrawing();
 
     if (IsKeyPressed(KEY_R)) {
