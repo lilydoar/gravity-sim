@@ -167,8 +167,8 @@ int main(void) {
     TRACE_LOG("Initial mode of particle %llu: %d", i, p.mode);
   }
 
-  // Set the current log level to DEBUG
-  set_log_level(LOG_LEVEL_DEBUG);
+  // Set the current log level to TRACE
+  set_log_level(LOG_LEVEL_TRACE);
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
   SetTargetFPS(60);

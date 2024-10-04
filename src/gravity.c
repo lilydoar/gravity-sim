@@ -131,9 +131,9 @@ void step_simulation(Simulation s) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
 
-  DEBUG_LOG("Starting simulation step");
+  TRACE_LOG("Starting simulation step");
   for (uint64_t substep = 0; substep < simulation->substeps; ++substep) {
-    DEBUG_LOG("Substep %lu", substep);
+    TRACE_LOG("Substep %lu", substep);
     for (uint64_t id = 0; id < simulation->particle_count; ++id) {
       set_particle_acceleration(simulation, id);
     }
@@ -149,7 +149,7 @@ void step_simulation(Simulation s) {
     }
     */
   }
-  DEBUG_LOG("Simulation step completed");
+  TRACE_LOG("Simulation step completed");
 }
 
 void simulation_set_options(Simulation s, SimulationOptions options) {
@@ -458,7 +458,7 @@ void set_particle_acceleration(SimulationStruct *s, uint64_t id) {
       p->params.VERLET.acceleration.y += force.y / p->params.VERLET.mass;
     }
 
-    DEBUG_LOG("Particle %lu acceleration: (%f, %f)", id,
+    TRACE_LOG("Particle %lu acceleration: (%f, %f)", id,
               p->params.VERLET.acceleration.x,
               p->params.VERLET.acceleration.y);
   }
@@ -475,7 +475,7 @@ void integrate_particle(SimulationStruct *s, uint64_t id) {
       p->params.VERLET.acceleration,
       s->options.time_step
     );
-    DEBUG_LOG("Particle %lu: Old pos (%f, %f), New pos (%f, %f)", id,
+    TRACE_LOG("Particle %lu: Old pos (%f, %f), New pos (%f, %f)", id,
               p->params.VERLET.position.x, p->params.VERLET.position.y,
               new_position.x, new_position.y);
     p->params.VERLET.position_previous = p->params.VERLET.position;
