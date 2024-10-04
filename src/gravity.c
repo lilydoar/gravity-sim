@@ -161,7 +161,11 @@ uint64_t simulation_get_particle_count(Simulation s) {
 SimulationParticle simulation_get_particle_state(Simulation s, uint64_t id) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
-  assert(id < simulation->particle_count);
+  if (id >= simulation->particle_count) {
+    fprintf(stderr, "Error: Particle ID %lu out of bounds (max: %lu)\n", id, simulation->particle_count - 1);
+    // Return a default particle or handle the error as appropriate for your application
+    return (SimulationParticle){.mode = PARTICLE_MODE_STATIC, .params = {.STATIC = {.position = {0, 0}, .mass = 0, .radius = 0}}};
+  }
   return simulation->particles[id];
 }
 
@@ -257,38 +261,34 @@ Iterator simulation_get_particles_in_fixed_rect(Simulation s,
   uint64_t count = 0;
   uint64_t *particles = NULL;
 
-  for (size_t id = 0; id < simulation->particle_count; ++id) {
+  // Ensure top_left.x is actually the leftmost x-coordinate
+  double left_x = fmin(top_left.x, bottom_right.x);
+  double right_x = fmax(top_left.x, bottom_right.x);
+  // Ensure top_left.y is actually the topmost y-coordinate
+  double top_y = fmax(top_left.y, bottom_right.y);
+  double bottom_y = fmin(top_left.y, bottom_right.y);
+
+  for (uint64_t id = 0; id < simulation->particle_count; ++id) {
     SimulationParticle particle = simulation->particles[id];
+    vec2s position;
     switch (particle.mode) {
     case PARTICLE_MODE_STATIC:
-      // TODO: Change fixed rects to bottom_left and top_right. Flip the Y axis
-      if (particle.params.STATIC.position.x > top_left.x &&
-          particle.params.STATIC.position.x < bottom_right.x &&
-          particle.params.STATIC.position.y > top_left.y &&
-          particle.params.STATIC.position.y < bottom_right.y) {
-        uint64_t *p = arena_alloc(arena, sizeof(uint64_t)); // Append
-        assert(p);
-        if (particles == NULL) {
-          particles = p;
-        }
-        *p = id;
-        count += 1;
-      }
+      position = particle.params.STATIC.position;
       break;
     case PARTICLE_MODE_VERLET:
-      if (particle.params.VERLET.position.x > top_left.x &&
-          particle.params.VERLET.position.x < bottom_right.x &&
-          particle.params.VERLET.position.y > top_left.y &&
-          particle.params.VERLET.position.y < bottom_right.y) {
-        uint64_t *p = arena_alloc(arena, sizeof(uint64_t)); // Append
-        assert(p);
-        if (particles == NULL) {
-          particles = p;
-        }
-        *p = id;
-        count += 1;
-      }
+      position = particle.params.VERLET.position;
       break;
+    }
+
+    if (position.x >= left_x && position.x <= right_x &&
+        position.y >= bottom_y && position.y <= top_y) {
+      uint64_t *p = arena_alloc(arena, sizeof(uint64_t)); // Append
+      assert(p);
+      if (particles == NULL) {
+        particles = p;
+      }
+      *p = id;
+      count += 1;
     }
   }
 
