@@ -463,12 +463,13 @@ void integrate_particle(SimulationStruct *s, uint64_t id) {
     return;
   } break;
   case PARTICLE_MODE_VERLET: {
-    s->particles[id].params.VERLET.position_previous =
-        s->particles[id].params.VERLET.position;
-    s->particles[id].params.VERLET.position = verlet_step(
+    vec2s new_position = verlet_step(
         s->particles[id].params.VERLET.position,
         s->particles[id].params.VERLET.position_previous,
         s->particles[id].params.VERLET.acceleration, s->options.time_step);
+    s->particles[id].params.VERLET.position_previous =
+        s->particles[id].params.VERLET.position;
+    s->particles[id].params.VERLET.position = new_position;
   } break;
   }
 }
