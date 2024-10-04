@@ -30,7 +30,7 @@ void *next(Iterator *it);
 #define ITERATE(it, type, value_ptr)                                           \
   for (type *value_ptr = next(&it); value_ptr != NULL; value_ptr = next(&it))
 
-// Implementation section
+// Function declarations
 
 // Create a new iterator
 Iterator create_iterator(void *array, int size, int element_size) {
