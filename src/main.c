@@ -2,6 +2,7 @@
 #include "gravity.h"
 #include "gravity_interactor.h"
 #include "logging.h"
+#include "raygui.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "ui_handler.h"
@@ -10,18 +11,12 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "raygui.h"
 
 // Use doubles for cglm types
 #define CGLM_USE_DOUBLE
 
 #define MASS_RANGE_MIN 10000.0f
 #define MASS_RANGE_MAX 50000.0f
-
-// Forward declarations
-Simulation init_simulation(SimulationOptions options);
-void step_simulation(Simulation sim);
-void deinit_simulation(Simulation sim);
 
 // New function declarations
 Camera2D camera; // Define the camera globally
@@ -61,22 +56,26 @@ void update_camera(Camera2D *camera);
 void reset_camera(Camera2D *camera);
 
 void draw_simulation(Simulation sim) {
-  vec2s min_pos, max_pos;
-  get_position_range(sim, &min_pos, &max_pos);
-
-  uint64_t particle_count = get_particle_count(sim);
+  uint64_t particle_count = simulation_get_particle_count(sim);
   for (uint64_t i = 0; i < particle_count; i++) {
-    Particle p = get_particle_state(sim, i);
+    SimulationParticle p = simulation_get_particle_state(sim, i);
     Color particle_color;
-    if (p.mode == PARTICLE_MODE_STATIC) {
-      particle_color =
-          (Color){127, 255, 212, 255}; // Aquamarine blue for static particles
-    } else {
-      float normalized_mass =
-          (p.mass - MASS_RANGE_MIN) / (MASS_RANGE_MAX - MASS_RANGE_MIN);
+    switch (p.mode) {
+    case PARTICLE_MODE_STATIC: {
+      particle_color = (Color){127, 255, 212, 255};
+      DrawCircle((int)p.params.STATIC.position.x,
+                 (int)p.params.STATIC.position.y, p.params.STATIC.radius,
+                 particle_color);
+    } break;
+    case PARTICLE_MODE_VERLET: {
+      float normalized_mass = (p.params.VERLET.mass - MASS_RANGE_MIN) /
+                              (MASS_RANGE_MAX - MASS_RANGE_MIN);
       particle_color = interpolate_color(normalized_mass, 0, 1);
+      DrawCircle((int)p.params.VERLET.position.x,
+                 (int)p.params.VERLET.position.y, p.params.VERLET.radius,
+                 particle_color);
+    } break;
     }
-    DrawCircle((int)p.position.x, (int)p.position.y, p.size, particle_color);
   }
 }
 
@@ -160,9 +159,9 @@ int main(void) {
   assert(sim != NULL);
 
   // Log initial particle modes
-  uint64_t particle_count = get_particle_count(sim);
+  uint64_t particle_count = simulation_get_particle_count(sim);
   for (uint64_t i = 0; i < particle_count; i++) {
-    Particle p = get_particle_state(sim, i);
+    SimulationParticle p = simulation_get_particle_state(sim, i);
     TRACE_LOG("Initial mode of particle %llu: %d", i, p.mode);
   }
 

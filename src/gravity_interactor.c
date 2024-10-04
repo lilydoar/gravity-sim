@@ -58,10 +58,10 @@ void apply_action(Simulation sim, Action action) {
 
     for (int i = 0; i < action.selection.count; i++) {
       int particle_id = action.selection.particle_ids[i];
-      Particle p = get_particle_state(sim, particle_id);
+      SimulationParticle p = simulation_get_particle_state(sim, particle_id);
       modified_ids[modified_count++] = particle_id;
       p.mode = PARTICLE_MODE_STATIC;
-      set_particle_state(sim, particle_id, p);
+      simulation_set_particle_state(sim, particle_id, p);
     }
 
     if (modified_count > 0) {

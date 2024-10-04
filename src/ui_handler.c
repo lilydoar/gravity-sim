@@ -1,5 +1,7 @@
 #include "ui_handler.h"
+#include "gravity.h"
 #include "gravity_interactor.h"
+#include "iterator.h"
 #include "logging.h"
 #include "raygui.h"
 #include "raymath.h"
@@ -145,8 +147,8 @@ void handle_input(UIState *state, SimulationActor actor,
         DEBUG_LOG("Failed to allocate memory for particle_ids");
         return;
       }
-      int count;
 
+      Iterator particle_iter;
       if (selection.type == SELECTION_RECTANGLE) {
         DEBUG_LOG("Calling get_particles_in_rectangle with top_left (%.2f, "
                   "%.2f), bottom_right (%.2f, %.2f)",
@@ -154,38 +156,36 @@ void handle_input(UIState *state, SimulationActor actor,
                   selection.shape.rectangle.top_left.y,
                   selection.shape.rectangle.bottom_right.x,
                   selection.shape.rectangle.bottom_right.y);
-        count = get_particles_in_rectangle(
-            actor->sim, selection.shape.rectangle.top_left,
-            selection.shape.rectangle.bottom_right, particle_ids,
-            max_particles);
-        DEBUG_LOG("get_particles_in_rectangle returned %d", count);
+        particle_iter = simulation_get_particles_in_fixed_rect(
+            actor->sim, frame_arena, selection.shape.rectangle.top_left,
+            selection.shape.rectangle.bottom_right);
+        /*count = get_particles_in_rectangle(*/
+        /*    actor->sim, selection.shape.rectangle.top_left,*/
+        /*    selection.shape.rectangle.bottom_right, particle_ids,*/
+        /*    max_particles);*/
+        DEBUG_LOG("get_particles_in_rectangle returned %d", particle_iter.size);
       } else {
         DEBUG_LOG("Calling get_particles_in_circle with center (%.2f, %.2f), "
                   "radius %.2f",
                   selection.shape.circle.center.x,
                   selection.shape.circle.center.y,
                   selection.shape.circle.radius);
-        count = get_particles_in_circle(
-            actor->sim, selection.shape.circle.center,
-            selection.shape.circle.radius, particle_ids, max_particles);
+        particle_iter = simulation_get_particles_in_circle(
+            actor->sim, frame_arena, selection.shape.circle.center,
+            selection.shape.circle.radius);
+        /*count = get_particles_in_circle(*/
+        /*    actor->sim, selection.shape.circle.center,*/
+        /*    selection.shape.circle.radius, particle_ids, max_particles);*/
       }
-      DEBUG_LOG("Found %d particles in selection", count);
+      DEBUG_LOG("Found %d particles in selection", particle_iter.size);
 
+      int count = particle_iter.size;
       if (count < 0) {
         ERROR_LOG("Error in particle selection, count is negative");
       } else if (count == 0) {
         DEBUG_LOG("No particles found in the selection area");
         clear_selection(state);
       } else {
-        DEBUG_LOG("Particles found in selection:");
-        for (int i = 0; i < count && i < 10; i++) {
-          Particle p = get_particle_state(actor->sim, particle_ids[i]);
-          DEBUG_LOG("Particle %d: position (%.2f, %.2f)", particle_ids[i],
-                    p.position.x, p.position.y);
-        }
-        if (count > 10) {
-          DEBUG_LOG("... and %d more", count - 10);
-        }
         if (IsKeyDown(KEY_LEFT_SHIFT)) {
           DEBUG_LOG("Adding to selection");
           // Add to selection
@@ -251,11 +251,24 @@ void draw_ui(UIState state, SimulationActor actor,
   // Draw selected particles
   TRACE_LOG("Drawing %d selected particles", state.selected_count);
   for (int i = 0; i < state.selected_count; i++) {
-    Particle p = get_particle_state(actor->sim, state.selected_particles[i]);
-    Vector2 screen_pos =
-        GetWorldToScreen2D((Vector2){p.position.x, p.position.y}, camera);
-    DrawCircleLines((int)screen_pos.x, (int)screen_pos.y,
-                    (p.size + 2) * camera.zoom, YELLOW);
+    SimulationParticle p =
+        simulation_get_particle_state(actor->sim, state.selected_particles[i]);
+    switch (p.mode) {
+    case PARTICLE_MODE_STATIC: {
+      Vector2 screen_pos = GetWorldToScreen2D(
+          (Vector2){p.params.STATIC.position.x, p.params.STATIC.position.y},
+          camera);
+      DrawCircleLines((int)screen_pos.x, (int)screen_pos.y,
+                      (p.params.STATIC.radius + 2) * camera.zoom, YELLOW);
+    } break;
+    case PARTICLE_MODE_VERLET: {
+      Vector2 screen_pos = GetWorldToScreen2D(
+          (Vector2){p.params.VERLET.position.x, p.params.VERLET.position.y},
+          camera);
+      DrawCircleLines((int)screen_pos.x, (int)screen_pos.y,
+                      (p.params.VERLET.radius + 2) * camera.zoom, YELLOW);
+    } break;
+    }
   }
 
   // Draw "Make Static" button

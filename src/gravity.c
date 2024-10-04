@@ -18,7 +18,7 @@
 #define GRAVITATIONAL_CONSTANT 6.67430e-11
 
 double calculate_distance(vec2s *v1, vec2s *v2);
-vec2s calculate_force(Particle *p1, Particle *p2,
+vec2s calculate_force(SimulationParticle *p1, SimulationParticle *p2,
                       double gravitational_constant);
 void verlet_integration(Particle *p, vec2s total_force, double time_step);
 #include <stddef.h>
@@ -36,7 +36,7 @@ typedef struct {
   vec2s *forces;            // Array to store forces for each particle
   double gravitational_constant; // Gravitational constant for the simulation
 
-  SimulationOptionsV2 options;
+  SimulationOptions options;
 } SimulationStruct;
 
 double random_uniform_double(double min, double max) {
@@ -60,7 +60,7 @@ void resolve_collision(SimulationStruct *s, uint64_t p1_id, uint64_t p2_id);
 // Simulation Functions
 //
 
-Simulation init_simulation(SimulationOptionsV2 options) {
+Simulation init_simulation(SimulationOptions options) {
   SimulationStruct *s = (SimulationStruct *)malloc(sizeof(SimulationStruct));
   if (s == NULL) {
     return NULL;
@@ -79,7 +79,7 @@ void deinit_simulation(Simulation s) {
   free(simulation);
 }
 
-SimulationOptionsV2 simulation_get_options(Simulation s) {
+SimulationOptions simulation_get_options(Simulation s) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
   return simulation->options;
@@ -104,7 +104,7 @@ void step_simulation(Simulation s) {
   }
 }
 
-void simulation_set_options(Simulation s, SimulationOptionsV2 options) {
+void simulation_set_options(Simulation s, SimulationOptions options) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
   simulation->options = options;
@@ -367,6 +367,16 @@ void set_particle_acceleration(SimulationStruct *s, uint64_t id) {
   }
 
   s->particles[id].params.VERLET.acceleration = (vec2s){0};
+  for (uint64_t i = 0; i < s->particle_count; ++i) {
+    if (i == id)
+      continue; // Skip self-interaction
+
+    SimulationParticle *other = &s->particles[i];
+    vec2s force =
+        calculate_force(&s->particles[id], other, s->gravitational_constant);
+    s->particles[id].params.VERLET.acceleration.x += force.x;
+    s->particles[id].params.VERLET.acceleration.y += force.y;
+  }
   // TODO: Loop through particles and accumulate acceleration
 }
 
@@ -634,27 +644,57 @@ double calculate_distance(vec2s *v1, vec2s *v2) {
   return sqrt(dx * dx + dy * dy);
 }
 
-/*vec2s calculate_force(Particle *p1, Particle *p2,*/
-/*                      double gravitational_constant) {*/
-/*  vec2s force = {{0.0, 0.0}};*/
-/*  vec2s distance_vector = {*/
-/*      {p2->position.x - p1->position.x, p2->position.y - p1->position.y}};*/
-/*  double distance = calculate_distance(&p1->position, &p2->position);*/
-/*  double distance_squared = distance * distance;*/
-/**/
-/*  // TODO(lily): Scale the force down to zero as the overlap of the
- * particles*/
-/*  // increases instead of disabling the force*/
-/*  double min_distance = p1->size + p2->size;*/
-/*  if (distance > min_distance) {*/
-/*    double force_magnitude =*/
-/*        gravitational_constant * (p1->mass * p2->mass) / distance_squared;*/
-/*    force.x = force_magnitude * (distance_vector.x / distance);*/
-/*    force.y = force_magnitude * (distance_vector.y / distance);*/
-/*  }*/
-/**/
-/*  return force;*/
-/*}*/
+vec2s calculate_force(SimulationParticle *p1, SimulationParticle *p2,
+                      double gravitational_constant) {
+  vec2s p1_pos;
+  vec2s p2_pos;
+  double p1_size;
+  double p2_size;
+  double p1_mass;
+  double p2_mass;
+  switch (p1->mode) {
+  case PARTICLE_MODE_STATIC:
+    p1_pos = p1->params.STATIC.position;
+    p1_size = p1->params.STATIC.radius;
+    p1_mass = p1->params.STATIC.mass;
+    break;
+  case PARTICLE_MODE_VERLET:
+    p1_pos = p1->params.VERLET.position;
+    p1_size = p1->params.VERLET.radius;
+    p1_mass = p1->params.VERLET.mass;
+    break;
+  }
+  switch (p2->mode) {
+  case PARTICLE_MODE_STATIC:
+    p2_pos = p2->params.STATIC.position;
+    p2_size = p2->params.STATIC.radius;
+    p2_mass = p2->params.STATIC.mass;
+    break;
+  case PARTICLE_MODE_VERLET:
+    p2_pos = p2->params.VERLET.position;
+    p2_size = p2->params.VERLET.radius;
+    p2_mass = p2->params.VERLET.mass;
+    break;
+  }
+
+  vec2s force = {{0.0, 0.0}};
+  vec2s distance_vector = {
+      {p2_pos.x - p1_pos.x, p2_pos.y - p1_pos.y}};
+  double distance = calculate_distance(&p1_pos, &p2_pos);
+  double distance_squared = distance * distance;
+
+  // TODO(lily): Scale the force down to zero as the overlap of the particles
+  // increases instead of disabling the force
+  double min_distance = p1_size + p2_size;
+  if (distance > min_distance) {
+    double force_magnitude =
+        gravitational_constant * (p1_mass * p2_mass) / distance_squared;
+    force.x = force_magnitude * (distance_vector.x / distance);
+    force.y = force_magnitude * (distance_vector.y / distance);
+  }
+
+  return force;
+}
 
 /*void verlet_integration(Particle *p, vec2s total_force, double time_step) {*/
 /*  vec2s acceleration = {{total_force.x / p->mass, total_force.y / p->mass}};*/

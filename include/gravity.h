@@ -114,13 +114,13 @@ typedef struct {
 // Simulation Functions
 //
 
-Simulation init_simulation(SimulationOptionsV2 options);
+Simulation init_simulation(SimulationOptions options);
 void deinit_simulation(Simulation s);
 
 void step_simulation(Simulation s);
 
-SimulationOptionsV2 simulation_get_options(Simulation s);
-void simulation_set_options(Simulation s, SimulationOptionsV2 options);
+SimulationOptions simulation_get_options(Simulation s);
+void simulation_set_options(Simulation s, SimulationOptions options);
 
 uint64_t simulation_get_particle_count(Simulation s);
 SimulationParticle simulation_get_particle_state(Simulation s, uint64_t id);
