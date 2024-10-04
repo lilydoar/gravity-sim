@@ -73,8 +73,10 @@ Simulation init_simulation(SimulationOptions options) {
   s->options = options;
 
   // Temporary code to spawn initial particles
-  // This code is due to be removed; initial particle conditions will happen outside of the init function
-  s->particles = (SimulationParticle *)malloc(sizeof(SimulationParticle) * options.particle_count);
+  // This code is due to be removed; initial particle conditions will happen
+  // outside of the init function
+  s->particles = (SimulationParticle *)malloc(sizeof(SimulationParticle) *
+                                              options.particle_count);
   if (!s->particles) {
     free(s);
     return NULL; // Allocation failed
@@ -85,18 +87,27 @@ Simulation init_simulation(SimulationOptions options) {
     s->particles[i].mode = options.initial_particle_mode;
     switch (options.initial_particle_mode) {
     case PARTICLE_MODE_STATIC:
-      s->particles[i].params.STATIC.position.x = sample_distribution(&options.position_x_distribution);
-      s->particles[i].params.STATIC.position.y = sample_distribution(&options.position_y_distribution);
-      s->particles[i].params.STATIC.mass = sample_distribution(&options.mass_distribution);
-      s->particles[i].params.STATIC.radius = sample_distribution(&options.size_distribution);
+      s->particles[i].params.STATIC.position.x =
+          sample_distribution(&options.position_x_distribution);
+      s->particles[i].params.STATIC.position.y =
+          sample_distribution(&options.position_y_distribution);
+      s->particles[i].params.STATIC.mass =
+          sample_distribution(&options.mass_distribution);
+      s->particles[i].params.STATIC.radius =
+          sample_distribution(&options.size_distribution);
       break;
     case PARTICLE_MODE_VERLET:
-      s->particles[i].params.VERLET.position.x = sample_distribution(&options.position_x_distribution);
-      s->particles[i].params.VERLET.position.y = sample_distribution(&options.position_y_distribution);
-      s->particles[i].params.VERLET.position_previous = s->particles[i].params.VERLET.position;
+      s->particles[i].params.VERLET.position.x =
+          sample_distribution(&options.position_x_distribution);
+      s->particles[i].params.VERLET.position.y =
+          sample_distribution(&options.position_y_distribution);
+      s->particles[i].params.VERLET.position_previous =
+          s->particles[i].params.VERLET.position;
       s->particles[i].params.VERLET.acceleration = (vec2s){0};
-      s->particles[i].params.VERLET.mass = sample_distribution(&options.mass_distribution);
-      s->particles[i].params.VERLET.radius = sample_distribution(&options.size_distribution);
+      s->particles[i].params.VERLET.mass =
+          sample_distribution(&options.mass_distribution);
+      s->particles[i].params.VERLET.radius =
+          sample_distribution(&options.size_distribution);
       break;
     }
   }
@@ -446,7 +457,20 @@ void set_particle_acceleration(SimulationStruct *s, uint64_t id) {
 
 void integrate_particle(SimulationStruct *s, uint64_t id) {
   assert(id < s->particle_count);
-  // TODO: Verlet step the particle
+
+  switch (s->particles[id].mode) {
+  case PARTICLE_MODE_STATIC: {
+    return;
+  } break;
+  case PARTICLE_MODE_VERLET: {
+    s->particles[id].params.VERLET.position_previous =
+        s->particles[id].params.VERLET.position;
+    s->particles[id].params.VERLET.position = verlet_step(
+        s->particles[id].params.VERLET.position,
+        s->particles[id].params.VERLET.position_previous,
+        s->particles[id].params.VERLET.acceleration, s->options.time_step);
+  } break;
+  }
 }
 
 void resolve_collision(SimulationStruct *s, uint64_t id_1, uint64_t id_2) {
@@ -742,8 +766,7 @@ vec2s calculate_force(SimulationParticle *p1, SimulationParticle *p2,
   }
 
   vec2s force = {{0.0, 0.0}};
-  vec2s distance_vector = {
-      {p2_pos.x - p1_pos.x, p2_pos.y - p1_pos.y}};
+  vec2s distance_vector = {{p2_pos.x - p1_pos.x, p2_pos.y - p1_pos.y}};
   double distance = calculate_distance(&p1_pos, &p2_pos);
   double distance_squared = distance * distance;
 

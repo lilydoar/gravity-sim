@@ -2,17 +2,14 @@
 #include "cglm/types-struct.h"
 #include <cglm/struct.h>
 
-void verlet_step(vec2s *position, vec2s *previous_position,
-                 const vec2s acceleration, double dt) {
+vec2s verlet_step(vec2s position, vec2s previous_position, vec2s acceleration,
+                  double dt) {
   vec2s new_position;
-
   new_position.x =
-      2.0 * position->x - previous_position->x + acceleration.x * dt * dt;
+      2.0 * position.x - previous_position.x + acceleration.x * dt * dt;
   new_position.y =
-      2.0 * position->y - previous_position->y + acceleration.y * dt * dt;
-
-  *previous_position = *position;
-  *position = new_position;
+      2.0 * position.y - previous_position.y + acceleration.y * dt * dt;
+  return new_position;
 }
 
 // Function to compute velocity based on position updates
