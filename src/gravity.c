@@ -161,7 +161,11 @@ uint64_t simulation_get_particle_count(Simulation s) {
 SimulationParticle simulation_get_particle_state(Simulation s, uint64_t id) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
-  assert(id < simulation->particle_count);
+  if (id >= simulation->particle_count) {
+    fprintf(stderr, "Error: Attempted to access particle with id %lu, but there are only %lu particles.\n", id, simulation->particle_count);
+    // Return a default particle or handle the error in a way that doesn't crash the program
+    return (SimulationParticle){0};
+  }
   return simulation->particles[id];
 }
 
@@ -264,6 +268,9 @@ Iterator simulation_get_particles_in_fixed_rect(Simulation s,
   double top_y = fmax(top_left.y, bottom_right.y);
   double bottom_y = fmin(top_left.y, bottom_right.y);
 
+  DEBUG_LOG("Searching for particles in rectangle: (%f, %f) to (%f, %f)", left_x, bottom_y, right_x, top_y);
+  DEBUG_LOG("Total particle count: %lu", simulation->particle_count);
+
   for (uint64_t id = 0; id < simulation->particle_count; ++id) {
     SimulationParticle particle = simulation->particles[id];
     vec2s position;
@@ -287,6 +294,8 @@ Iterator simulation_get_particles_in_fixed_rect(Simulation s,
       count += 1;
     }
   }
+
+  DEBUG_LOG("Found %lu particles in rectangle", count);
 
   return create_iterator(particles, count, sizeof(uint64_t));
 }
