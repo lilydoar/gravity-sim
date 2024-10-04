@@ -264,7 +264,8 @@ Iterator simulation_get_particles_in_fixed_rect(Simulation s,
   double top_y = fmax(top_left.y, bottom_right.y);
   double bottom_y = fmin(top_left.y, bottom_right.y);
 
-  DEBUG_LOG("Searching for particles in rectangle: (%f, %f) to (%f, %f)", left_x, bottom_y, right_x, top_y);
+  DEBUG_LOG("Searching for particles in rectangle: (%f, %f) to (%f, %f)",
+            left_x, bottom_y, right_x, top_y);
   DEBUG_LOG("Total particle count: %lu", simulation->particle_count);
 
   for (uint64_t id = 0; id < simulation->particle_count; ++id) {

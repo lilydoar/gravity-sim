@@ -1,4 +1,5 @@
 #include "gravity_interactor.h"
+#include "gravity.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,8 +61,9 @@ void apply_action(Simulation sim, Action action) {
       int particle_id = action.selection.particle_ids[i];
       SimulationParticle p = simulation_get_particle_state(sim, particle_id);
       modified_ids[modified_count++] = particle_id;
-      p.mode = PARTICLE_MODE_STATIC;
-      simulation_set_particle_state(sim, particle_id, p);
+      simulation_set_particle_state(
+          sim, particle_id,
+          simulation_particle_to_mode(p, PARTICLE_MODE_STATIC));
     }
 
     if (modified_count > 0) {
