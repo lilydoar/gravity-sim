@@ -1,7 +1,6 @@
 #include "ui_handler.h"
 #include "gravity.h"
 #include "gravity_interactor.h"
-#define ITERATOR_IMPLEMENTATION
 #include "iterator.h"
 #include "logging.h"
 #define RAYGUI_IMPLEMENTATION

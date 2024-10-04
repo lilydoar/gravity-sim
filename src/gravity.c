@@ -4,7 +4,6 @@
 #include "gravity.h"
 #include "arena_allocator.h"
 #include "cglm/types-struct.h"
-#define ITERATOR_IMPLEMENTATION
 #include "iterator.h"
 #include "logging.h"
 #include "verlet.h"
