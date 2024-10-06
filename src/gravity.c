@@ -3,6 +3,7 @@
 
 #include "gravity.h"
 #include "simulation/gravity.h"
+#include "simulation/gravity.h"
 
 double sample_distribution(const Distribution *dist);
 #include "arena_allocator.h"
