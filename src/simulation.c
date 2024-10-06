@@ -3,6 +3,7 @@
 #include "arena_allocator.h"
 
 #include <stdlib.h>
+#include <assert.h>
 
 // Forward declarations
 double calculate_force_gravity(Particle p1, Particle p2, double gravitational_constant);
@@ -49,6 +50,27 @@ void simulation_update(Simulation *simulation, ArenaAllocator *allocator, double
         Particle *p = &simulation->particles[i];
         p->velocity = vec2_add(p->velocity, vec2_scale(accelerations[i], time_step));
         p->position = vec2_add(p->position, vec2_scale(p->velocity, time_step));
+    }
+}
+
+// Get the particle at the index
+Particle *simulation_get_particle(Simulation *simulation, uint64_t index)
+{
+    return &simulation->particles[index];
+}
+
+// Add a new particle to the simulation
+void simulation_new_particle(Simulation *simulation, ArenaAllocator *allocator, Particle particle)
+{
+    assert(simulation);
+    assert(allocator);
+
+    Particle *new_particle = arena_alloc(allocator, sizeof(Particle));
+    *new_particle = particle;
+    simulation->particle_count++;
+
+    if (simulation->particles == NULL) {
+        simulation->particles = new_particle;
     }
 }
 

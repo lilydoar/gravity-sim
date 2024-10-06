@@ -33,4 +33,10 @@ void simulation_deinit(Simulation *simulation);
 // Update the simulation
 void simulation_update(Simulation *simulation, ArenaAllocator *allocator, double time_step);
 
+// Get the particle at the index
+Particle *simulation_get_particle(Simulation *simulation, uint64_t index);
+
+// Add a new particle to the simulation
+void simulation_new_particle(Simulation *simulation, ArenaAllocator *allocator, Particle particle);
+
 #endif // SIMULATION_H
