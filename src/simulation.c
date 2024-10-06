@@ -1,8 +1,11 @@
 #include "simulation.h"
+
+#include <cglm/struct.h>
+
 #include <math.h>
 #include <stdlib.h>
 
-#define BIG_G 6.67430e-11 // Gravitational constant
+#define GRAVITATIONAL_CONSTANT 6.67430e-11 // Gravitational constant
 
 void simulation_init(Simulation *simulation) {
     simulation->particles = NULL;
@@ -33,7 +36,7 @@ void simulation_update(Simulation *simulation, double dt) {
                     r_vector.y * r_vector.y
                 );
 
-                double acceleration = -BIG_G * other->mass / (r_mag * r_mag);
+                double acceleration = -GRAVITATIONAL_CONSTANT * other->mass / (r_mag * r_mag);
 
                 vec2s r_unit_vector = {{
                     r_vector.x / r_mag,

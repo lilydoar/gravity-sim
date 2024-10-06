@@ -11,7 +11,7 @@ RAYLIB_PATH           ?= extern/raylib
 RAYGUI_PATH           ?= extern/raygui
 
 # Define compiler flags: CFLAGS
-CFLAGS = -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -DRAYGUI_IMPLEMENTATION
+CFLAGS = -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -DCGLM_USE_DOUBLE -DRAYGUI_IMPLEMENTATION 
 
 # Define include paths for required headers: INCLUDE_PATHS
 INCLUDE_PATHS = -I. -I$(CGLM_PATH)/include -I$(RAYLIB_PATH)/include  -Iinclude -I$(RAYGUI_PATH)/src 

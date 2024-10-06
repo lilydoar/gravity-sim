@@ -1,7 +1,7 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include "cglm/struct.h"
+#include <cglm/struct.h>
 
 #include <stdint.h>
 

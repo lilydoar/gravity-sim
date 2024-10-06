@@ -1,10 +1,11 @@
-#include "raylib.h"
 #include "user_interface.h"
 #include "simulation.h"
 
+#include "raylib.h"
+
 int main(void)
 {
-    InitWindow(800, 450, "raylib [core] example - basic window");
+    InitWindow(800, 450, "Simulation");
     SetTargetFPS(60);
 
     UIState state;
