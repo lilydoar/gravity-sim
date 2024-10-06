@@ -1,42 +1,56 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -std=c17
-LFLAGS = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
-INCLUDE = -Iinclude/ -Itests/unity/Unity-2.6.0/src
-LIB = -Llib/ -lraylib
-TARGET = bin/gravity-sim
-SOURCES = $(shell find src -name '*.c' ! -name 'ui_handler.c')
+# Define required raylib variables
+PROJECT_NAME          ?= simulation
 
-all: $(TARGET)
+# Create build and bin directories
+BUILD_DIR = build
+BIN_DIR = bin
 
-$(TARGET): $(SOURCES)
-	$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE) $(LIB) -o $(TARGET) $(SOURCES)
+# Define paths to external libraries
+CGLM_PATH             ?= extern/cglm
+RAYLIB_PATH           ?= extern/raylib
+RAYGUI_PATH           ?= extern/raygui
 
-run: $(TARGET)
+# Define compiler flags: CFLAGS
+CFLAGS = -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -DRAYGUI_IMPLEMENTATION
+
+# Define include paths for required headers: INCLUDE_PATHS
+INCLUDE_PATHS = -I. -I$(CGLM_PATH)/include -I$(RAYLIB_PATH)/include  -Iinclude -I$(RAYGUI_PATH)/src 
+
+# Define library paths containing required libs: LDFLAGS
+LDFLAGS = -L$(CGLM_PATH)/lib -L$(RAYLIB_PATH)/lib 
+
+# Define libraries required on linking: LDLIBS
+# Adjusted for macOS
+LDLIBS = -lcglm -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+
+# Define source files
+SOURCES = $(wildcard src/*.c)
+OBJECTS = $(patsubst src/%.c,build/%.o,$(SOURCES))
+
+# Define the target executable
+TARGET = bin/$(PROJECT_NAME)
+
+# Default target
+all: create_dirs $(TARGET)
+
+# Create necessary directories
+create_dirs:
+	mkdir -p $(BUILD_DIR) $(BIN_DIR)
+
+# Linking the executable
+$(TARGET): $(OBJECTS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LDLIBS)
+
+# Compiling source files
+$(BUILD_DIR)/%.o: src/%.c
+	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS)
+
+# Run the executable
+run: all
 	./$(TARGET)
 
+# Cleaning up
 clean:
-	rm -f $(TARGET)
+	rm -rf $(BUILD_DIR) $(BIN_DIR)
 
-UNITY_DIR = tests/unity/Unity-2.6.0/src
-UNITY_SRC = $(UNITY_DIR)/unity.c
-TEST_SOURCES = tests/test_gravity_interactor.c src/gravity_interactor.c src/arena_allocator.c
-TEST_GRAVITY_SOURCES = tests/test_gravity.c src/gravity.c src/verlet.c src/logging.c
-TEST_UI_SOURCES = tests/test_ui.c src/ui.c src/arena_allocator.c src/gravity_interactor.c src/gravity.c src/logging.c src/verlet.c
-TEST_TARGET = bin/test_gravity_interactor
-TEST_GRAVITY_TARGET = bin/test_gravity
-TEST_UI_TARGET = bin/test_ui
-
-$(TEST_TARGET): $(TEST_SOURCES) $(UNITY_SRC)
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIB) $(LFLAGS) -o $(TEST_TARGET) $(TEST_SOURCES) $(UNITY_SRC)
-
-$(TEST_GRAVITY_TARGET): $(TEST_GRAVITY_SOURCES) $(UNITY_SRC)
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIB) $(LFLAGS) -o $(TEST_GRAVITY_TARGET) $(TEST_GRAVITY_SOURCES) $(UNITY_SRC)
-
-$(TEST_UI_TARGET): $(TEST_UI_SOURCES) $(UNITY_SRC)
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIB) $(LFLAGS) -o $(TEST_UI_TARGET) $(TEST_UI_SOURCES) $(UNITY_SRC)
-
-check: $(TEST_TARGET) $(TEST_UI_TARGET) $(TEST_GRAVITY_TARGET)
-	./$(TEST_TARGET)
-	./$(TEST_UI_TARGET)
-
-.PHONY: check
+.PHONY: all clean run create_dirs

@@ -1,6 +1,7 @@
 #include "arena_allocator.h"
 #include "ui.h"
 #include "raylib.h"
+#define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
 void init_ui_state(UIState *state, ArenaAllocator *tool_arena, ArenaAllocator *frame_arena)
