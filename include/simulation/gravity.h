@@ -11,6 +11,6 @@
 // m1, m2: Masses of objects
 // G: Gravitational constant
 // Returns: Force magnitude
-double calculate_force(Vec2 p1, Vec2 p2, double m1, double m2, double G);
+double gravity_calculate_force(Vec2 p1, Vec2 p2, double m1, double m2, double G);
 
 #endif // GRAVITY_H
