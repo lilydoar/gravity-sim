@@ -1,0 +1,78 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-std=c11",
+      "-I./include",
+      "-I./extern/raylib/include",
+      "-I./extern/raygui/include",
+      "-DRAYGUI_IMPLEMENTATION",
+      "-c",
+      "-o",
+      "build/main.o",
+      "src/main.c"
+    ],
+    "directory": "/Users/lily/Documents/code/gravity-sim",
+    "file": "/Users/lily/Documents/code/gravity-sim/src/main.c",
+    "output": "/Users/lily/Documents/code/gravity-sim/build/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-std=c11",
+      "-I./include",
+      "-I./extern/raylib/include",
+      "-I./extern/raygui/include",
+      "-DRAYGUI_IMPLEMENTATION",
+      "-c",
+      "-o",
+      "build/simulation.o",
+      "src/simulation.c"
+    ],
+    "directory": "/Users/lily/Documents/code/gravity-sim",
+    "file": "/Users/lily/Documents/code/gravity-sim/src/simulation.c",
+    "output": "/Users/lily/Documents/code/gravity-sim/build/simulation.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-std=c11",
+      "-I./include",
+      "-I./extern/raylib/include",
+      "-I./extern/raygui/include",
+      "-DRAYGUI_IMPLEMENTATION",
+      "-c",
+      "-o",
+      "build/user_interface.o",
+      "src/user_interface.c"
+    ],
+    "directory": "/Users/lily/Documents/code/gravity-sim",
+    "file": "/Users/lily/Documents/code/gravity-sim/src/user_interface.c",
+    "output": "/Users/lily/Documents/code/gravity-sim/build/user_interface.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-std=c11",
+      "-I./include",
+      "-I./extern/raylib/include",
+      "-I./extern/raygui/include",
+      "-DRAYGUI_IMPLEMENTATION",
+      "-c",
+      "-o",
+      "build/math/vector.o",
+      "src/math/vector.c"
+    ],
+    "directory": "/Users/lily/Documents/code/gravity-sim",
+    "file": "/Users/lily/Documents/code/gravity-sim/src/math/vector.c",
+    "output": "/Users/lily/Documents/code/gravity-sim/build/math/vector.o"
+  }
+]
