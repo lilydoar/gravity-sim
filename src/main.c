@@ -4,12 +4,13 @@
 #include "logging.h"
 #include "raylib.h"
 #include "raymath.h"
-#include "ui_handler.h"
+// #include "ui_handler.h"
 #include <assert.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "ui.h"
 
 // Use doubles for cglm types
 #define CGLM_USE_DOUBLE
@@ -24,12 +25,12 @@ void draw_simulation(Simulation sim);
 Camera2D setup_camera();
 void update_camera(Camera2D *camera);
 
-#define SPACE_GREY                                                             \
+#define SPACE_GREY \
   CLITERAL(Color) { 43, 52, 60, 255 }
 
-#define PARTICLE_COLOR_MIN                                                     \
+#define PARTICLE_COLOR_MIN \
   CLITERAL(Color) { 93, 82, 116, 255 }
-#define PARTICLE_COLOR_MAX                                                     \
+#define PARTICLE_COLOR_MAX \
   CLITERAL(Color) { 232, 204, 222, 255 }
 
 #define MASS_RANGE_MIN 10000.0f
@@ -54,34 +55,41 @@ Camera2D setup_camera();
 void update_camera(Camera2D *camera);
 void reset_camera(Camera2D *camera);
 
-void draw_simulation(Simulation sim) {
+void draw_simulation(Simulation sim)
+{
   uint64_t particle_count = simulation_get_particle_count(sim);
-  for (uint64_t i = 0; i < particle_count; i++) {
+  for (uint64_t i = 0; i < particle_count; i++)
+  {
     SimulationParticle p = simulation_get_particle_state(sim, i);
     Color particle_color;
     vec2s position;
     float radius;
 
-    switch (p.mode) {
-    case PARTICLE_MODE_STATIC: {
+    switch (p.mode)
+    {
+    case PARTICLE_MODE_STATIC:
+    {
       particle_color = (Color){127, 255, 212, 255};
       position = p.params.STATIC.position;
       radius = p.params.STATIC.radius;
-    } break;
-    case PARTICLE_MODE_VERLET: {
+    }
+    break;
+    case PARTICLE_MODE_VERLET:
+    {
       float normalized_mass = (p.params.VERLET.mass - MASS_RANGE_MIN) /
                               (MASS_RANGE_MAX - MASS_RANGE_MIN);
       particle_color = interpolate_color(normalized_mass, 0, 1);
       position = p.params.VERLET.position;
       radius = p.params.VERLET.radius;
-    } break;
     }
-    // TODO: Round instead of just casting
-    DrawCircle((int)position.x, (int)position.y, radius, particle_color);
+    break;
+    }
+    DrawCircle(round(position.x), round(position.y), radius, particle_color);
   }
 }
 
-Camera2D setup_camera() {
+Camera2D setup_camera()
+{
   Camera2D camera = {0};
   camera.target = (Vector2){0, 0};
   camera.offset = (Vector2){(float)SCREEN_WIDTH / 2, (float)SCREEN_HEIGHT / 2};
@@ -90,7 +98,8 @@ Camera2D setup_camera() {
   return camera;
 }
 
-void update_camera(Camera2D *camera) {
+void update_camera(Camera2D *camera)
+{
   if (IsKeyDown(KEY_W))
     camera->target.y -= CAMERA_MOVE_SPEED / camera->zoom;
   if (IsKeyDown(KEY_S))
@@ -101,7 +110,8 @@ void update_camera(Camera2D *camera) {
     camera->target.x += CAMERA_MOVE_SPEED / camera->zoom;
 
   float wheel = GetMouseWheelMove();
-  if (wheel != 0) {
+  if (wheel != 0)
+  {
     Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), *camera);
     camera->offset = GetMousePosition();
     camera->target = mouseWorldPos;
@@ -113,12 +123,14 @@ void update_camera(Camera2D *camera) {
   }
 }
 
-void reset_camera(Camera2D *camera) {
+void reset_camera(Camera2D *camera)
+{
   camera->target = (Vector2){0, 0};
   camera->zoom = DEFAULT_ZOOM;
 }
 
-Color interpolate_color(float t, float t_min, float t_max) {
+Color interpolate_color(float t, float t_min, float t_max)
+{
   float normalized_t = (t - t_min) / (t_max - t_min);
   return (Color){
       PARTICLE_COLOR_MIN.r +
@@ -130,7 +142,8 @@ Color interpolate_color(float t, float t_min, float t_max) {
       255};
 }
 
-int main(void) {
+int main(void)
+{
   ArenaAllocator *app_arena = init_arena(APP_ARENA_SIZE);
   ArenaAllocator *frame_arena = init_arena(FRAME_ARENA_SIZE);
 
@@ -138,7 +151,7 @@ int main(void) {
       .time_step = 0.01,
       .substeps = 10,
       .collision_iterations = 2,
-      .gravitational_constant = 6.67430e-2,  
+      .gravitational_constant = 6.67430e-2,
       .particle_count = 250,
       .position_x_distribution = {.type = DISTRIBUTION_UNIFORM,
                                   .params.uniform = {.min = -1000.0,
@@ -156,12 +169,13 @@ int main(void) {
       .velocity_init_mode = VELOCITY_INIT_PERPENDICULAR_TO_ORIGIN,
       .velocity_magnitude_distribution = {
           .type = DISTRIBUTION_UNIFORM,
-          .params.uniform = {.min = 0.0, .max = 20.0}}});  // Increased max velocity
+          .params.uniform = {.min = 0.0, .max = 20.0}}}); // Increased max velocity
   assert(sim != NULL);
 
   // Log initial particle modes
   uint64_t particle_count = simulation_get_particle_count(sim);
-  for (uint64_t i = 0; i < particle_count; i++) {
+  for (uint64_t i = 0; i < particle_count; i++)
+  {
     SimulationParticle p = simulation_get_particle_state(sim, i);
     TRACE_LOG("Initial mode of particle %llu: %d", i, p.mode);
   }
@@ -169,20 +183,25 @@ int main(void) {
   // Set the current log level to TRACE
   set_log_level(LOG_LEVEL_DEBUG);
 
+  UIState ui_state;
+  init_ui_state(&ui_state, app_arena, frame_arena);
+
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
   SetTargetFPS(60);
 
   camera = setup_camera();
   SimulationActor actor = init_simulation_interactor(app_arena, sim);
-  UIState ui_state;
-  init_ui_state(&ui_state);
+  // UIState ui_state;
+  // init_ui_state(&ui_state);
 
-  while (!WindowShouldClose()) {
+  while (!WindowShouldClose())
+  {
     reset_arena(frame_arena);
 
-    handle_input(&ui_state, actor, frame_arena);
+    // handle_input(&ui_state, actor, frame_arena);
 
-    for (int i = 0; i < MAX_ACTIONS_PER_FRAME; i++) {
+    for (int i = 0; i < MAX_ACTIONS_PER_FRAME; i++)
+    {
       Action action = dequeue_action(&actor->queue);
       if (action.type == ACTION_EMPTY)
         break;
@@ -197,16 +216,18 @@ int main(void) {
 
     BeginMode2D(camera);
     step_simulation(sim);
-    
+
     draw_simulation(sim);
     EndMode2D();
 
-    draw_ui(ui_state, actor, frame_arena);
+    // draw_ui(ui_state, actor, frame_arena);
+    draw_ui(&ui_state);
     DrawFPS(10, 10);
     TRACE_LOG("Frame completed");
     EndDrawing();
 
-    if (IsKeyPressed(KEY_R)) {
+    if (IsKeyPressed(KEY_R))
+    {
       reset_camera(&camera);
     }
   }
