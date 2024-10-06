@@ -15,6 +15,7 @@ typedef struct
     Vec2 position;
     Vec2 velocity;
     double mass;
+    double radius;
 } Particle;
 
 typedef struct
@@ -25,7 +26,7 @@ typedef struct
 } Simulation;
 
 // Initialize the simulation struct
-Simulation simulation_init();
+Simulation simulation_init(double gravitational_constant);
 
 // Deinitialize the simulation struct
 void simulation_deinit(Simulation *simulation);
