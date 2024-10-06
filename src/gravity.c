@@ -19,7 +19,7 @@ double sample_distribution(const Distribution *dist);
 #define GRAVITATIONAL_CONSTANT 6.67430e-11
 
 double calculate_distance(Vec2 *v1, Vec2 *v2);
-Vec2 calculate_force(SimulationParticle *p1, SimulationParticle *p2,
+Vec2 get_force_vector(SimulationParticle *p1, SimulationParticle *p2,
                       double gravitational_constant);
 void verlet_integration(Particle *p, Vec2 total_force, double time_step);
 #include <stddef.h>
@@ -453,7 +453,7 @@ void set_particle_acceleration(SimulationStruct *s, uint64_t id) {
         continue;
       SimulationParticle *other = &s->particles[i];
       Vec2 force =
-          calculate_force(p, other, s->options.gravitational_constant);
+          get_force_vector(p, other, s->options.gravitational_constant);
       p->params.VERLET.acceleration.x += force.x / p->params.VERLET.mass;
       p->params.VERLET.acceleration.y += force.y / p->params.VERLET.mass;
     }
@@ -712,7 +712,7 @@ double calculate_distance(Vec2 *v1, Vec2 *v2) {
 
 #include "simulation/gravity.h"
 
-Vec2 calculate_force(SimulationParticle *p1, SimulationParticle *p2,
+Vec2 get_force_vector(SimulationParticle *p1, SimulationParticle *p2,
                      double gravitational_constant) {
   Vec2 p1_pos, p2_pos;
   double p1_mass, p2_mass;
