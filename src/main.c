@@ -17,6 +17,11 @@
 
 #define PARTICLE_DENSITY 1
 
+#define CAMERA_MOVE_SPEED 200.0f
+#define CAMERA_ZOOM_SPEED 0.1f
+#define CAMERA_MIN_ZOOM 0.1f
+#define CAMERA_MAX_ZOOM 10.0f
+
 // Forward declarations
 Camera2D camera_setup();
 void simulation_apply_input(Simulation *simulation, ArenaAllocator *sim_arena,
@@ -36,13 +41,12 @@ float calculate_particle_mass(float radius) {
 
 // Convert a screen position to a simulation position
 Vec2 screen_to_simulation_space(Camera2D camera, Vector2 screen_position) {
-  Vector2 offset = Vector2Subtract(screen_position, camera.offset);
-  return (Vec2){offset.x, offset.y};
+  Vector2 world_pos = GetScreenToWorld2D(screen_position, camera);
+  return (Vec2){world_pos.x, world_pos.y};
 }
 // Convert a simulation position to a screen position
 Vector2 simulation_to_screen_space(Camera2D camera, Vec2 position) {
-  Vec2 offset = vec2_add(position, (Vec2){camera.offset.x, camera.offset.y});
-  return (Vector2){offset.x, offset.y};
+  return GetWorldToScreen2D((Vector2){position.x, position.y}, camera);
 }
 
 int main(void) {
@@ -67,6 +71,9 @@ int main(void) {
 
     double time_step = GetFrameTime();
     collect_input(&user_input);
+    
+    update_camera(&camera, time_step);
+    
     simulation_apply_input(&simulation, sim_arena, user_input, ui_state,
                            camera);
     simulation_update(&simulation, frame_arena, time_step);
@@ -99,8 +106,31 @@ Camera2D camera_setup() {
   camera.offset = (Vector2){(float)SCREEN_WIDTH / 2, (float)SCREEN_HEIGHT / 2};
   camera.target = (Vector2){0, 0};
   camera.rotation = 0;
-  camera.zoom = 1;
+  camera.zoom = 1.0f;
   return camera;
+}
+
+void update_camera(Camera2D *camera, float delta_time) {
+  // Camera pan with WASD keys
+  if (IsKeyDown(KEY_W)) camera->target.y -= CAMERA_MOVE_SPEED * delta_time / camera->zoom;
+  if (IsKeyDown(KEY_S)) camera->target.y += CAMERA_MOVE_SPEED * delta_time / camera->zoom;
+  if (IsKeyDown(KEY_A)) camera->target.x -= CAMERA_MOVE_SPEED * delta_time / camera->zoom;
+  if (IsKeyDown(KEY_D)) camera->target.x += CAMERA_MOVE_SPEED * delta_time / camera->zoom;
+
+  // Camera zoom with scroll wheel, relative to mouse position
+  float wheel = GetMouseWheelMove();
+  if (wheel != 0) {
+    Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), *camera);
+    
+    camera->offset = GetMousePosition();
+    camera->target = mouseWorldPos;
+
+    camera->zoom += (wheel * CAMERA_ZOOM_SPEED * camera->zoom);
+    camera->zoom = Clamp(camera->zoom, CAMERA_MIN_ZOOM, CAMERA_MAX_ZOOM);
+
+    Vector2 newMouseWorldPos = GetScreenToWorld2D(GetMousePosition(), *camera);
+    camera->target = Vector2Add(camera->target, Vector2Subtract(mouseWorldPos, newMouseWorldPos));
+  }
 }
 
 // Apply commands to the simulation
