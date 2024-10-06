@@ -735,7 +735,7 @@ Vec2 get_force_vector(SimulationParticle *p1, SimulationParticle *p2,
   }
 
   // Calculate the force using the function from the new header
-  double force_magnitude = calculate_force(p1_pos, p2_pos, p1_mass, p2_mass, gravitational_constant);
+  double force_magnitude = gravity_calculate_force(p1_pos, p2_pos, p1_mass, p2_mass, gravitational_constant);
 
   // Calculate the direction vector
   Vec2 r = vec2_sub(p2_pos, p1_pos);
