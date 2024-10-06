@@ -1,4 +1,7 @@
 .aider*
+.vscode/
 .cache/
 .venv/
 bin/
+build/
+compile_commands.json
