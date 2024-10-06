@@ -12,11 +12,11 @@ typedef struct {
   SelectionType type;
   union {
     struct {
-      vec2s top_left;
-      vec2s bottom_right;
+      Vec2 top_left;
+      Vec2 bottom_right;
     } rectangle;
     struct {
-      vec2s center;
+      Vec2 center;
       float radius;
     } circle;
   } shape;

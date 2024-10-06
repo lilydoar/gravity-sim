@@ -1,5 +1,7 @@
 #include "vector.h"
 
+#include <math.h>
+
 Vec2 vec2_zero() {
     return (Vec2){0, 0};
 }

@@ -2,13 +2,11 @@
 #define GRAVITY_H
 
 #include "arena_allocator.h"
-#include "cglm/types-struct.h"
 #include "iterator.h"
+#include "vector.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-
-#include <cglm/struct.h>
 
 // Newtons * Meters squared / Kilograms squared
 #define GRAVITATIONAL_CONSTANT 6.67430e-11
@@ -23,14 +21,14 @@ typedef struct {
   ParticleMode mode;
   union {
     struct {
-      vec2s position;
+      Vec2 position;
       double mass;
       double radius;
     } STATIC;
     struct {
-      vec2s position;
-      vec2s position_previous;
-      vec2s acceleration;
+      Vec2 position;
+      Vec2 position_previous;
+      Vec2 acceleration;
       double mass;
       double radius;
     } VERLET;
@@ -44,8 +42,8 @@ typedef struct {
 
 typedef struct Particle {
   ParticleMode mode;
-  vec2s position;
-  vec2s velocity;
+  Vec2 position;
+  Vec2 velocity;
   double mass;
   double size;
 } Particle;
@@ -124,42 +122,42 @@ SimulationParticle simulation_get_particle_state(Simulation s, uint64_t id);
 void simulation_set_particle_state(Simulation s, uint64_t id,
                                    SimulationParticle particle);
 
-uint64_t simulation_get_particle_count_in_circle(Simulation s, vec2s center,
+uint64_t simulation_get_particle_count_in_circle(Simulation s, Vec2 center,
                                                  double radius);
 uint64_t simulation_get_particle_count_in_fixed_rect(Simulation s,
-                                                     vec2s top_left,
-                                                     vec2s bottom_right);
-uint64_t simulation_get_particle_count_in_tri(Simulation s, vec2s p1, vec2s p2,
-                                              vec2s p3);
+                                                     Vec2 top_left,
+                                                     Vec2 bottom_right);
+uint64_t simulation_get_particle_count_in_tri(Simulation s, Vec2 p1, Vec2 p2,
+                                              Vec2 p3);
 
 Iterator simulation_get_particles_in_circle(Simulation s, ArenaAllocator *arena,
-                                            vec2s center, double radius);
+                                            Vec2 center, double radius);
 Iterator simulation_get_particles_in_fixed_rect(Simulation s,
                                                 ArenaAllocator *arena,
-                                                vec2s top_left,
-                                                vec2s bottom_right);
+                                                Vec2 top_left,
+                                                Vec2 bottom_right);
 Iterator simulation_get_particles_in_tri(Simulation s, ArenaAllocator *arena,
-                                         vec2s p1, vec2s p2, vec2s p3);
+                                         Vec2 p1, Vec2 p2, Vec2 p3);
 
 Iterator simulation_get_particle_states_in_circle(Simulation s,
                                                   ArenaAllocator *arena,
-                                                  vec2s center, double radius);
+                                                  Vec2 center, double radius);
 Iterator simulation_get_particle_states_in_fixed_rect(Simulation s,
                                                       ArenaAllocator *arena,
-                                                      vec2s top_left,
-                                                      vec2s bottom_right);
+                                                      Vec2 top_left,
+                                                      Vec2 bottom_right);
 Iterator simulation_get_particle_states_in_tri(Simulation s,
-                                               ArenaAllocator *arena, vec2s p1,
-                                               vec2s p2, vec2s p3);
+                                               ArenaAllocator *arena, Vec2 p1,
+                                               Vec2 p2, Vec2 p3);
 
-void simulation_set_particles_states_in_circle(Simulation s, vec2s center,
+void simulation_set_particles_states_in_circle(Simulation s, Vec2 center,
                                                double radius,
                                                SimulationParticleDiff diff);
-void simulation_set_particle_states_in_fixed_rect(Simulation s, vec2s top_left,
-                                                  vec2s bottom_right,
+void simulation_set_particle_states_in_fixed_rect(Simulation s, Vec2 top_left,
+                                                  Vec2 bottom_right,
                                                   SimulationParticleDiff diff);
-void simulation_set_particle_states_in_tri(Simulation s, vec2s p1, vec2s p2,
-                                           vec2s p3,
+void simulation_set_particle_states_in_tri(Simulation s, Vec2 p1, Vec2 p2,
+                                           Vec2 p3,
                                            SimulationParticleDiff diff);
 
 void simulation_new_particle(Simulation s, SimulationParticle particle);
@@ -182,12 +180,12 @@ void simulation_new_particle_batch_in_tri(Simulation s,
 SimulationParticle simulation_particle_to_mode(SimulationParticle p,
                                                ParticleMode to_mode);
 
-/*int get_particles_in_rectangle(Simulation sim, vec2s top_left,*/
-/*                               vec2s bottom_right, int *particle_ids,*/
+/*int get_particles_in_rectangle(Simulation sim, Vec2 top_left,*/
+/*                               Vec2 bottom_right, int *particle_ids,*/
 /*                               int max_count);*/
-/*int get_particles_in_circle(Simulation sim, vec2s center, float radius,*/
+/*int get_particles_in_circle(Simulation sim, Vec2 center, float radius,*/
 /*                            int *particle_ids, int max_count);*/
-/*void get_position_range(Simulation sim, vec2s *min, vec2s *max);*/
+/*void get_position_range(Simulation sim, Vec2 *min, Vec2 *max);*/
 /*uint64_t get_particle_count(Simulation sim);*/
 /*Particle get_particle_state(Simulation sim, int particle_id);*/
 /*void set_particle_state(Simulation sim, int particle_id, Particle p);*/

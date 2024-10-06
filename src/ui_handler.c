@@ -1,4 +1,5 @@
 #include "ui_handler.h"
+#include "vector.h"
 #include "gravity.h"
 #include "gravity_interactor.h"
 #include "iterator.h"
@@ -122,10 +123,10 @@ void handle_input(UIState *state, SimulationActor actor,
 
       if (selection.type == SELECTION_RECTANGLE) {
         selection.shape.rectangle.top_left =
-            (vec2s){{fmin(state->start_pos.x, state->current_pos.x),
+            (Vec2){{fmin(state->start_pos.x, state->current_pos.x),
                      fmin(state->start_pos.y, state->current_pos.y)}};
         selection.shape.rectangle.bottom_right =
-            (vec2s){{fmax(state->start_pos.x, state->current_pos.x),
+            (Vec2){{fmax(state->start_pos.x, state->current_pos.x),
                      fmax(state->start_pos.y, state->current_pos.y)}};
         DEBUG_LOG("Ended rectangle selection: (%f, %f) to (%f, %f)",
                   selection.shape.rectangle.top_left.x,
@@ -134,7 +135,7 @@ void handle_input(UIState *state, SimulationActor actor,
                   selection.shape.rectangle.bottom_right.y);
       } else {
         selection.shape.circle.center =
-            (vec2s){{state->start_pos.x, state->start_pos.y}};
+            (Vec2){{state->start_pos.x, state->start_pos.y}};
         selection.shape.circle.radius =
             Vector2Distance(state->start_pos, state->current_pos);
         DEBUG_LOG("Ended circle selection: center (%f, %f), radius %f",

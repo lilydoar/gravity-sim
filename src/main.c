@@ -5,6 +5,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "ui_handler.h"
+#include "vector.h"
 #include <assert.h>
 #include <math.h>
 #include <stdint.h>
@@ -59,7 +60,7 @@ void draw_simulation(Simulation sim) {
   for (uint64_t i = 0; i < particle_count; i++) {
     SimulationParticle p = simulation_get_particle_state(sim, i);
     Color particle_color;
-    vec2s position;
+    Vec2 position;
     float radius;
 
     switch (p.mode) {

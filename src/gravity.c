@@ -2,7 +2,6 @@
 #define GRAVITY_C
 
 #include "gravity.h"
-#include "cglm/struct/vec2.h"
 
 double sample_distribution(const Distribution *dist);
 #include "arena_allocator.h"
@@ -10,20 +9,19 @@ double sample_distribution(const Distribution *dist);
 #include "iterator.h"
 #include "logging.h"
 #include "verlet.h"
+#include "vector.h"
 
 #include <assert.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#include <cglm/struct.h>
-
 #define GRAVITATIONAL_CONSTANT 6.67430e-11
 
-double calculate_distance(vec2s *v1, vec2s *v2);
-vec2s calculate_force(SimulationParticle *p1, SimulationParticle *p2,
+double calculate_distance(Vec2 *v1, Vec2 *v2);
+Vec2 calculate_force(SimulationParticle *p1, SimulationParticle *p2,
                       double gravitational_constant);
-void verlet_integration(Particle *p, vec2s total_force, double time_step);
+void verlet_integration(Particle *p, Vec2 total_force, double time_step);
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -36,7 +34,7 @@ typedef struct {
   uint64_t substeps;             // Number of substeps
   uint64_t
       collision_iterations; // Number of iterations for collision resolution
-  vec2s *forces;            // Array to store forces for each particle
+  Vec2 *forces;            // Array to store forces for each particle
   double gravitational_constant; // Gravitational constant for the simulation
 
   SimulationOptions options;
@@ -104,7 +102,7 @@ Simulation init_simulation(SimulationOptions options) {
           sample_distribution(&options.position_y_distribution);
       s->particles[i].params.VERLET.position_previous =
           s->particles[i].params.VERLET.position;
-      s->particles[i].params.VERLET.acceleration = (vec2s){0};
+      s->particles[i].params.VERLET.acceleration = (Vec2){0};
       s->particles[i].params.VERLET.mass =
           sample_distribution(&options.mass_distribution);
       s->particles[i].params.VERLET.radius =
@@ -179,11 +177,11 @@ void simulation_set_particle_state(Simulation s, uint64_t id,
   simulation->particles[id] = particle;
 }
 
-uint64_t simulation_get_particle_count_in_circle(Simulation s, vec2s center,
+uint64_t simulation_get_particle_count_in_circle(Simulation s, Vec2 center,
                                                  double radius);
 uint64_t simulation_get_particle_count_in_fixed_rect(Simulation s,
-                                                     vec2s top_left,
-                                                     vec2s bottom_right) {
+                                                     Vec2 top_left,
+                                                     Vec2 bottom_right) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
 
@@ -213,11 +211,11 @@ uint64_t simulation_get_particle_count_in_fixed_rect(Simulation s,
   return count;
 }
 
-uint64_t simulation_get_particle_count_in_tri(Simulation s, vec2s p1, vec2s p2,
-                                              vec2s p3);
+uint64_t simulation_get_particle_count_in_tri(Simulation s, Vec2 p1, Vec2 p2,
+                                              Vec2 p3);
 
 Iterator simulation_get_particles_in_circle(Simulation s, ArenaAllocator *arena,
-                                            vec2s center, double radius) {
+                                            Vec2 center, double radius) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
 
@@ -226,7 +224,7 @@ Iterator simulation_get_particles_in_circle(Simulation s, ArenaAllocator *arena,
 
   for (size_t id = 0; id < simulation->particle_count; ++id) {
     SimulationParticle particle = simulation->particles[id];
-    vec2s position;
+    Vec2 position;
     switch (particle.mode) {
     case PARTICLE_MODE_STATIC:
       position = particle.params.STATIC.position;
@@ -255,8 +253,8 @@ Iterator simulation_get_particles_in_circle(Simulation s, ArenaAllocator *arena,
 
 Iterator simulation_get_particles_in_fixed_rect(Simulation s,
                                                 ArenaAllocator *arena,
-                                                vec2s top_left,
-                                                vec2s bottom_right) {
+                                                Vec2 top_left,
+                                                Vec2 bottom_right) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
 
@@ -276,7 +274,7 @@ Iterator simulation_get_particles_in_fixed_rect(Simulation s,
 
   for (uint64_t id = 0; id < simulation->particle_count; ++id) {
     SimulationParticle particle = simulation->particles[id];
-    vec2s position;
+    Vec2 position;
     switch (particle.mode) {
     case PARTICLE_MODE_STATIC:
       position = particle.params.STATIC.position;
@@ -304,15 +302,15 @@ Iterator simulation_get_particles_in_fixed_rect(Simulation s,
 }
 
 Iterator simulation_get_particles_in_tri(Simulation s, ArenaAllocator *arena,
-                                         vec2s p1, vec2s p2, vec2s p3);
+                                         Vec2 p1, Vec2 p2, Vec2 p3);
 
 Iterator simulation_get_particle_states_in_circle(Simulation s,
                                                   ArenaAllocator *arena,
-                                                  vec2s center, double radius);
+                                                  Vec2 center, double radius);
 Iterator simulation_get_particle_states_in_fixed_rect(Simulation s,
                                                       ArenaAllocator *arena,
-                                                      vec2s top_left,
-                                                      vec2s bottom_right) {
+                                                      Vec2 top_left,
+                                                      Vec2 bottom_right) {
   assert(s);
   SimulationStruct *simulation = (SimulationStruct *)s;
 
@@ -359,17 +357,17 @@ Iterator simulation_get_particle_states_in_fixed_rect(Simulation s,
   return create_iterator(particles, count, sizeof(SimulationParticle));
 }
 Iterator simulation_get_particle_states_in_tri(Simulation s,
-                                               ArenaAllocator *arena, vec2s p1,
-                                               vec2s p2, vec2s p3);
+                                               ArenaAllocator *arena, Vec2 p1,
+                                               Vec2 p2, Vec2 p3);
 
-void simulation_set_particles_states_in_circle(Simulation s, vec2s center,
+void simulation_set_particles_states_in_circle(Simulation s, Vec2 center,
                                                double radius,
                                                SimulationParticleDiff diff);
-void simulation_set_particle_states_in_fixed_rect(Simulation s, vec2s top_left,
-                                                  vec2s bottom_right,
+void simulation_set_particle_states_in_fixed_rect(Simulation s, Vec2 top_left,
+                                                  Vec2 bottom_right,
                                                   SimulationParticleDiff diff);
-void simulation_set_particle_states_in_tri(Simulation s, vec2s p1, vec2s p2,
-                                           vec2s p3,
+void simulation_set_particle_states_in_tri(Simulation s, Vec2 p1, Vec2 p2,
+                                           Vec2 p3,
                                            SimulationParticleDiff diff);
 
 void simulation_new_particle(Simulation s, SimulationParticle particle);
@@ -402,7 +400,7 @@ SimulationParticle simulation_particle_to_mode(SimulationParticle p,
       result.mode = PARTICLE_MODE_VERLET;
       result.params.VERLET.position = p.params.STATIC.position;
       result.params.VERLET.position_previous = p.params.STATIC.position;
-      result.params.VERLET.acceleration = (vec2s){0};
+      result.params.VERLET.acceleration = (Vec2){0};
       result.params.VERLET.mass = p.params.STATIC.mass;
       result.params.VERLET.radius = p.params.STATIC.radius;
       break;
@@ -449,12 +447,12 @@ void set_particle_acceleration(SimulationStruct *s, uint64_t id) {
   SimulationParticle *p = &s->particles[id];
 
   if (p->mode == PARTICLE_MODE_VERLET) {
-    p->params.VERLET.acceleration = (vec2s){0};
+    p->params.VERLET.acceleration = (Vec2){0};
     for (uint64_t i = 0; i < s->particle_count; ++i) {
       if (i == id)
         continue;
       SimulationParticle *other = &s->particles[i];
-      vec2s force =
+      Vec2 force =
           calculate_force(p, other, s->options.gravitational_constant);
       p->params.VERLET.acceleration.x += force.x / p->params.VERLET.mass;
       p->params.VERLET.acceleration.y += force.y / p->params.VERLET.mass;
@@ -470,7 +468,7 @@ void integrate_particle(SimulationStruct *s, uint64_t id) {
   SimulationParticle *p = &s->particles[id];
 
   if (p->mode == PARTICLE_MODE_VERLET) {
-    vec2s new_position = verlet_step(
+    Vec2 new_position = verlet_step(
         p->params.VERLET.position, p->params.VERLET.position_previous,
         p->params.VERLET.acceleration, s->options.time_step);
     TRACE_LOG("Particle %llu: Old pos (%f, %f), New pos (%f, %f)", id,
@@ -496,8 +494,8 @@ void resolve_collision(SimulationStruct *s, uint64_t id1, uint64_t id2) {
     return;
   }
 
-  vec2s p1_position;
-  vec2s p2_position;
+  Vec2 p1_position;
+  Vec2 p2_position;
   double p1_radius;
   double p2_radius;
 
@@ -523,7 +521,7 @@ void resolve_collision(SimulationStruct *s, uint64_t id1, uint64_t id2) {
   }
 
   double min_distance = p1_radius + p2_radius;
-  double distance = glms_vec2_distance(p1_position, p2_position);
+  double distance = vec2_dist(p1_position, p2_position);
   if (distance >= min_distance) {
     return;
   }
@@ -638,7 +636,7 @@ void resolve_collision(SimulationStruct *s, uint64_t id1, uint64_t id2) {
 /*  }*/
 /**/
 /*  // Allocate memory for forces*/
-/*  sim->forces = (vec2s *)malloc(sizeof(vec2s) * sim->particle_count);*/
+/*  sim->forces = (Vec2 *)malloc(sizeof(Vec2) * sim->particle_count);*/
 /*  if (!sim->forces) {*/
 /*    free(sim->particles);*/
 /*    free(sim);*/
@@ -706,16 +704,16 @@ void resolve_collision(SimulationStruct *s, uint64_t id1, uint64_t id2) {
 /*  }*/
 /*}*/
 
-double calculate_distance(vec2s *v1, vec2s *v2) {
+double calculate_distance(Vec2 *v1, Vec2 *v2) {
   double dx = v2->x - v1->x;
   double dy = v2->y - v1->y;
   return sqrt(dx * dx + dy * dy);
 }
 
-vec2s calculate_force(SimulationParticle *p1, SimulationParticle *p2,
+Vec2 calculate_force(SimulationParticle *p1, SimulationParticle *p2,
                       double gravitational_constant) {
-  vec2s p1_pos;
-  vec2s p2_pos;
+  Vec2 p1_pos;
+  Vec2 p2_pos;
   double p1_mass;
   double p2_mass;
   switch (p1->mode) {
@@ -739,8 +737,8 @@ vec2s calculate_force(SimulationParticle *p1, SimulationParticle *p2,
     break;
   }
 
-  vec2s force = {{0.0, 0.0}};
-  vec2s distance_vector = {{p2_pos.x - p1_pos.x, p2_pos.y - p1_pos.y}};
+  Vec2 force = {{0.0, 0.0}};
+  Vec2 distance_vector = {{p2_pos.x - p1_pos.x, p2_pos.y - p1_pos.y}};
   double distance = calculate_distance(&p1_pos, &p2_pos);
   double distance_squared = distance * distance;
 
