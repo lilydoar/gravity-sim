@@ -2,7 +2,6 @@
 #include "simulation.h"
 #include "raylib.h"
 
-#include <stdio.h>
 #include <math.h>
 
 #define APP_ARENA_SIZE (1024 * 1024)   // 1 MB
@@ -11,7 +10,7 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
-#define PARTICLE_DENSITY 1e-3
+#define PARTICLE_DENSITY 1
 
 // Forward declarations
 Camera2D setup_camera();
@@ -31,14 +30,7 @@ int main(void)
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
 
-  Particle sun = {
-      .position = (Vec2){0, 0},
-      .velocity = (Vec2){0, 0},
-      .mass = 1,
-  };
   Simulation simulation = simulation_init();
-  simulation_new_particle(&simulation, simulation_arena, sun);
-
   Camera2D camera = setup_camera();
 
   while (!WindowShouldClose())
