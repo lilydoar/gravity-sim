@@ -20,16 +20,13 @@ void simulation_update(Simulation *simulation, double dt) {
     for (uint64_t i = 0; i < simulation->particle_count; i++) {
         Particle *particle = &simulation->particles[i];
 
-        vec2s a_g = {{0.0f, 0.0f}};
+        Vec2 a_g = vec2_zero();
 
         for (uint64_t j = 0; j < simulation->particle_count; j++) {
             if (j != i) {
                 Particle *other = &simulation->particles[j];
-                
-                vec2s r_vector = {{
-                    particle->position.x - other->position.x,
-                    particle->position.y - other->position.y
-                }};
+
+                Vec2 r_vector = vec2_sub(particle->position, other->position);
 
                 double r_mag = sqrt(
                     r_vector.x * r_vector.x +
@@ -38,10 +35,7 @@ void simulation_update(Simulation *simulation, double dt) {
 
                 double acceleration = -GRAVITATIONAL_CONSTANT * other->mass / (r_mag * r_mag);
 
-                vec2s r_unit_vector = {{
-                    r_vector.x / r_mag,
-                    r_vector.y / r_mag
-                }};
+                Vec2 r_unit_vector = vec2_div(r_vector, r_mag);
 
                 a_g.x += acceleration * r_unit_vector.x;
                 a_g.y += acceleration * r_unit_vector.y;

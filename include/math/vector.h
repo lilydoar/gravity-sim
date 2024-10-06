@@ -1,7 +1,9 @@
+#ifndef VEC_T
+#define VEC_T double
+#endif
+
 #ifndef VECTOR_H
 #define VECTOR_H
-
-#define VEC_T double
 
 typedef struct
 {

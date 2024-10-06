@@ -21,7 +21,7 @@ int main(void)
         simulation_update(&simulation, frame_time);
 
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(BLACK);
         draw_ui(&state);
         EndDrawing();
     }
