@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -std=c11 -I./include -I./extern/raylib/include -I./extern/raygui/include
+CFLAGS := -Wall -Wextra -std=c11 -I./include -I./extern/raylib/include -I./extern/raygui/include -DRAYGUI_IMPLEMENTATION
 LDFLAGS := -L./extern/raylib/lib -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -lm
 
 SRC_DIR := src
