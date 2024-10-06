@@ -25,7 +25,6 @@ all: $(BIN_DIR)/$(TARGET)
 $(BIN_DIR)/$(TARGET): $(OBJS)
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(LFLAGS)
-	@install_name_tool -change @rpath/libraylib.dylib @executable_path/../extern/raylib/lib/libraylib.dylib $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(BUILD_DIR)
