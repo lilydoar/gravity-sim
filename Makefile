@@ -4,7 +4,7 @@ LFLAGS = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT 
 INCLUDE = -Iinclude/ -Itests/unity/Unity-2.6.0/src
 LIB = -Llib/ -lraylib
 TARGET = bin/gravity-sim
-SOURCES = $(shell find src -name '*.c')
+SOURCES = $(shell find src -name '*.c' ! -name 'ui_handler.c')
 
 all: $(TARGET)
 
