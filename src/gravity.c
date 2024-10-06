@@ -2,6 +2,7 @@
 #define GRAVITY_C
 
 #include "gravity.h"
+#include "simulation/gravity.h"
 
 double sample_distribution(const Distribution *dist);
 #include "arena_allocator.h"
@@ -709,42 +710,39 @@ double calculate_distance(Vec2 *v1, Vec2 *v2) {
   return sqrt(dx * dx + dy * dy);
 }
 
+#include "simulation/gravity.h"
+
 Vec2 calculate_force(SimulationParticle *p1, SimulationParticle *p2,
-                      double gravitational_constant) {
-  Vec2 p1_pos;
-  Vec2 p2_pos;
-  double p1_mass;
-  double p2_mass;
-  switch (p1->mode) {
-  case PARTICLE_MODE_STATIC:
+                     double gravitational_constant) {
+  Vec2 p1_pos, p2_pos;
+  double p1_mass, p2_mass;
+
+  // Get positions and masses based on particle mode
+  if (p1->mode == PARTICLE_MODE_STATIC) {
     p1_pos = p1->params.STATIC.position;
     p1_mass = p1->params.STATIC.mass;
-    break;
-  case PARTICLE_MODE_VERLET:
+  } else {
     p1_pos = p1->params.VERLET.position;
     p1_mass = p1->params.VERLET.mass;
-    break;
   }
-  switch (p2->mode) {
-  case PARTICLE_MODE_STATIC:
+
+  if (p2->mode == PARTICLE_MODE_STATIC) {
     p2_pos = p2->params.STATIC.position;
     p2_mass = p2->params.STATIC.mass;
-    break;
-  case PARTICLE_MODE_VERLET:
+  } else {
     p2_pos = p2->params.VERLET.position;
     p2_mass = p2->params.VERLET.mass;
-    break;
   }
 
-  Vec2 force = {{0.0, 0.0}};
-  Vec2 distance_vector = {{p2_pos.x - p1_pos.x, p2_pos.y - p1_pos.y}};
-  double distance = calculate_distance(&p1_pos, &p2_pos);
-  double distance_squared = distance * distance;
+  // Calculate the force using the function from the new header
+  double force_magnitude = calculate_force(p1_pos, p2_pos, p1_mass, p2_mass, gravitational_constant);
 
-  double force_magnitude =
-      gravitational_constant * (p1_mass * p2_mass) / distance_squared;
-  force.x = force_magnitude * (distance_vector.x / distance);
-  force.y = force_magnitude * (distance_vector.y / distance);
+  // Calculate the direction vector
+  Vec2 r = vec2_sub(p2_pos, p1_pos);
+  double distance = vec2_len(r);
+
+  // Calculate the force vector
+  Vec2 force = vec2_scale(r, force_magnitude / distance);
 
   return force;
 }
