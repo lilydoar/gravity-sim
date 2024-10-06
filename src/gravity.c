@@ -5,7 +5,6 @@
 
 double sample_distribution(const Distribution *dist);
 #include "arena_allocator.h"
-#include "cglm/types-struct.h"
 #include "iterator.h"
 #include "logging.h"
 #include "verlet.h"
