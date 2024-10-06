@@ -40,6 +40,9 @@ VECTOR_T vec2_len(Vec2 a) {
 VECTOR_T vec2_dist(Vec2 a, Vec2 b) {
     return vec2_len(vec2_sub(a, b));
 }
+VECTOR_T vec2_dist_squared(Vec2 a, Vec2 b) {
+    return vec2_dot(vec2_sub(a, b), vec2_sub(a, b));
+}
 Vec2 vec2_lerp(Vec2 a, Vec2 b, VECTOR_T t) {
     return vec2_add(a, vec2_scale(vec2_sub(b, a), t));
 }

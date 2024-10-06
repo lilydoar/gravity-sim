@@ -22,6 +22,7 @@ Vec2 vec2_norm(Vec2 a);
 VECTOR_T vec2_dot(Vec2 a, Vec2 b);
 VECTOR_T vec2_len(Vec2 a);
 VECTOR_T vec2_dist(Vec2 a, Vec2 b);
+VECTOR_T vec2_dist_squared(Vec2 a, Vec2 b);
 Vec2 vec2_lerp(Vec2 a, Vec2 b, VECTOR_T t);
 
 #endif // VECTOR_H
