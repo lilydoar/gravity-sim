@@ -1,6 +1,6 @@
 #include "simulation.h"
 
-#include <cglm/struct.h>
+#include "math/vector.h"
 
 #include <math.h>
 #include <stdlib.h>
