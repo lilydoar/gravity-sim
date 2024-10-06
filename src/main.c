@@ -15,15 +15,18 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
+#define G 100
 #define PARTICLE_DENSITY 1
+#define PARTICLE_MIN_RADIUS 0.1
 
 #define CAMERA_MOVE_SPEED 200.0f
 #define CAMERA_ZOOM_SPEED 0.1f
-#define CAMERA_MIN_ZOOM 0.1f
+#define CAMERA_MIN_ZOOM 0.01f
 #define CAMERA_MAX_ZOOM 10.0f
 
 // Forward declarations
 Camera2D camera_setup();
+void camera_update(Camera2D *camera, float delta_time);
 void simulation_apply_input(Simulation *simulation, ArenaAllocator *sim_arena,
                             UserInput input, UIState state, Camera2D camera);
 void simulation_draw(Simulation *simulation);
@@ -55,7 +58,7 @@ int main(void) {
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Gravity Simulation");
 
-  Simulation simulation = simulation_init(6.67430e-6);
+  Simulation simulation = simulation_init(G);
   Camera2D camera = camera_setup();
 
   UIState ui_state = (UIState){.current_tool = UI_TOOL_SELECT,
@@ -71,9 +74,9 @@ int main(void) {
 
     double time_step = GetFrameTime();
     collect_input(&user_input);
-    
-    update_camera(&camera, time_step);
-    
+
+    camera_update(&camera, time_step);
+
     simulation_apply_input(&simulation, sim_arena, user_input, ui_state,
                            camera);
     simulation_update(&simulation, frame_arena, time_step);
@@ -110,18 +113,22 @@ Camera2D camera_setup() {
   return camera;
 }
 
-void update_camera(Camera2D *camera, float delta_time) {
+void camera_update(Camera2D *camera, float delta_time) {
   // Camera pan with WASD keys
-  if (IsKeyDown(KEY_W)) camera->target.y -= CAMERA_MOVE_SPEED * delta_time / camera->zoom;
-  if (IsKeyDown(KEY_S)) camera->target.y += CAMERA_MOVE_SPEED * delta_time / camera->zoom;
-  if (IsKeyDown(KEY_A)) camera->target.x -= CAMERA_MOVE_SPEED * delta_time / camera->zoom;
-  if (IsKeyDown(KEY_D)) camera->target.x += CAMERA_MOVE_SPEED * delta_time / camera->zoom;
+  if (IsKeyDown(KEY_W))
+    camera->target.y -= CAMERA_MOVE_SPEED * delta_time / camera->zoom;
+  if (IsKeyDown(KEY_S))
+    camera->target.y += CAMERA_MOVE_SPEED * delta_time / camera->zoom;
+  if (IsKeyDown(KEY_A))
+    camera->target.x -= CAMERA_MOVE_SPEED * delta_time / camera->zoom;
+  if (IsKeyDown(KEY_D))
+    camera->target.x += CAMERA_MOVE_SPEED * delta_time / camera->zoom;
 
   // Camera zoom with scroll wheel, relative to mouse position
   float wheel = GetMouseWheelMove();
   if (wheel != 0) {
     Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), *camera);
-    
+
     camera->offset = GetMousePosition();
     camera->target = mouseWorldPos;
 
@@ -129,7 +136,8 @@ void update_camera(Camera2D *camera, float delta_time) {
     camera->zoom = Clamp(camera->zoom, CAMERA_MIN_ZOOM, CAMERA_MAX_ZOOM);
 
     Vector2 newMouseWorldPos = GetScreenToWorld2D(GetMousePosition(), *camera);
-    camera->target = Vector2Add(camera->target, Vector2Subtract(mouseWorldPos, newMouseWorldPos));
+    camera->target = Vector2Add(
+        camera->target, Vector2Subtract(mouseWorldPos, newMouseWorldPos));
   }
 }
 
@@ -141,14 +149,17 @@ void simulation_apply_input(Simulation *simulation, ArenaAllocator *arena,
     if (input.mouse_left_released) {
       Vec2 start = screen_to_simulation_space(camera, input.mouse_start);
       Vec2 end = screen_to_simulation_space(camera, input.mouse_current);
-      simulation_new_particle(
-          simulation, arena,
-          (Particle){.position = (Vec2){start.x, start.y},
-                     .velocity = (Vec2){0, 0},
-                     .mass = calculate_particle_mass(vec2_dist(start, end)),
-                     .radius = vec2_dist(start, end)});
-      printf("spawned particle with mass %f\n",
-             simulation->particles[simulation->particle_count - 1].mass);
+      double radius = vec2_dist(start, end);
+      if (radius >= PARTICLE_MIN_RADIUS) {
+        simulation_new_particle(
+            simulation, arena,
+            (Particle){.position = (Vec2){start.x, start.y},
+                       .velocity = (Vec2){0, 0},
+                       .mass = calculate_particle_mass(radius),
+                       .radius = radius});
+        printf("spawned particle with mass %f\n",
+               simulation->particles[simulation->particle_count - 1].mass);
+      }
     }
   }
 }

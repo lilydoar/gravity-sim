@@ -1,8 +1,10 @@
 #include "simulation.h"
 
 #include "arena_allocator.h"
+#include "vector.h"
 
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 // Forward declarations
@@ -27,20 +29,32 @@ void simulation_update(Simulation *simulation, ArenaAllocator *allocator,
   Vec2 *accelerations =
       arena_alloc(allocator, sizeof(Vec2) * simulation->particle_count);
 
+  // Initialize accelerations to zero
+  for (uint64_t i = 0; i < simulation->particle_count; i++) {
+    accelerations[i] = vec2_zero();
+  }
+
   // Calculate the acceleration for each particle
   for (uint64_t i = 0; i < simulation->particle_count; i++) {
     Particle *p1 = &simulation->particles[i];
 
-    for (uint64_t j = 0; j < simulation->particle_count; j++) {
+    for (uint64_t j = i + 1; j < simulation->particle_count; j++) {
       Particle *p2 = &simulation->particles[j];
-      if (i == j)
-        continue;
 
+      // Calculate the gravitational force magnitude
       double force =
           calculate_force_gravity(*p1, *p2, simulation->gravitational_constant);
-      Vec2 force_vector = vec2_norm(vec2_sub(p2->position, p1->position));
-      accelerations[i] =
-          vec2_add(accelerations[i], vec2_scale(force_vector, force));
+
+      // Calculate the normalized direction vector from p1 to p2
+      Vec2 direction = vec2_norm(vec2_sub(p2->position, p1->position));
+
+      // Calculate accelerations
+      Vec2 acceleration_p1 = vec2_scale(direction, force / p1->mass);
+      Vec2 acceleration_p2 = vec2_scale(direction, -force / p2->mass);
+
+      // Update accelerations
+      accelerations[i] = vec2_add(accelerations[i], acceleration_p1);
+      accelerations[j] = vec2_add(accelerations[j], acceleration_p2);
     }
   }
 
@@ -57,30 +71,43 @@ void simulation_update(Simulation *simulation, ArenaAllocator *allocator,
     Particle *p1 = &simulation->particles[i];
     for (uint64_t j = i + 1; j < simulation->particle_count; j++) {
       Particle *p2 = &simulation->particles[j];
-      if (i == j)
-        continue;
 
-      double distance = vec2_dist(p1->position, p2->position);
-      if (distance < p1->radius + p2->radius) {
-        Vec2 overlap =
-            vec2_scale(vec2_norm(vec2_sub(p1->position, p2->position)),
-                       p1->radius + p2->radius - distance);
-        // Calculate the new position of each particle
-        p1->position = vec2_add(p1->position, vec2_scale(overlap, 0.5));
-        p2->position = vec2_sub(p2->position, vec2_scale(overlap, 0.5));
+      Vec2 diff = vec2_sub(p1->position, p2->position);
+      double distance = vec2_len(diff);
+      double radius_sum = p1->radius + p2->radius;
 
-        // Calculate the new velocity of each particle
-        Vec2 normal = vec2_norm(vec2_sub(p1->position, p2->position));
+      if (distance < radius_sum) {
+        Vec2 collision_normal = vec2_norm(diff);
+        double overlap = radius_sum - distance;
+        double total_inverse_mass = (1.0 / p1->mass) + (1.0 / p2->mass);
+
+        // Corrected separation calculation
+        Vec2 separation =
+            vec2_scale(collision_normal, overlap / total_inverse_mass);
+
+        // Corrected position adjustments
+        p1->position =
+            vec2_add(p1->position, vec2_scale(separation, 1.0 / p1->mass));
+        p2->position =
+            vec2_sub(p2->position, vec2_scale(separation, 1.0 / p2->mass));
+
         Vec2 relative_velocity = vec2_sub(p1->velocity, p2->velocity);
-        double relative_velocity_normal = vec2_dot(relative_velocity, normal);
-        
-        // Calculate the impulse magnitude
-        double impulse_magnitude = (2 * relative_velocity_normal) / (1/p1->mass + 1/p2->mass);
-        Vec2 impulse = vec2_scale(normal, impulse_magnitude);
-        
-        // Apply impulse to each particle, inversely proportional to their mass
-        p1->velocity = vec2_sub(p1->velocity, vec2_scale(impulse, 1 / p1->mass));
-        p2->velocity = vec2_add(p2->velocity, vec2_scale(impulse, 1 / p2->mass));
+        double normal_velocity = vec2_dot(relative_velocity, collision_normal);
+
+        if (normal_velocity > 0) {
+          continue;
+        }
+
+        double restitution = 1.0;
+        double impulse_scalar =
+            -(1 + restitution) * normal_velocity / total_inverse_mass;
+        Vec2 impulse = vec2_scale(collision_normal, impulse_scalar);
+
+        // Corrected velocity adjustments
+        p1->velocity =
+            vec2_add(p1->velocity, vec2_scale(impulse, 1.0 / p1->mass));
+        p2->velocity =
+            vec2_sub(p2->velocity, vec2_scale(impulse, 1.0 / p2->mass));
       }
     }
   }
